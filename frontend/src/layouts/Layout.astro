@@ -1,0 +1,52 @@
+---
+import "../styles/global.css";
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = "PixelShrinkAI - Fast, Private Image Tools",
+  description =
+    "Modern online image tools that are fast, private and free. Compress, resize, crop and convert images directly in your browser."
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="en"> 
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>{title}</title>
+    <meta name="description" content={description} />
+
+    <meta
+      name="keywords"
+      content="image compressor,image resize,image crop,image converter,online image tools"
+    />
+
+    <meta name="theme-color" content="#2563eb" />
+
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+
+    <link
+      rel="preconnect"
+      href="https://fonts.gstatic.com"
+      crossorigin
+    />
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+
+  <body class="bg-white text-slate-900 antialiased">
+    <slot />
+  </body>
+</html>

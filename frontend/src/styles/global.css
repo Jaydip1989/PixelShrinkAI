@@ -1,0 +1,31 @@
+@import "tailwindcss";
+
+@theme {
+
+  --color-primary:#2563EB;
+  --color-secondary:#4F46E5;
+  --color-accent:#EC4899;
+
+  --color-background:#F8FAFC;
+
+  --color-heading:#0F172A;
+
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  
+    font-family:"Plus Jakarta Sans",sans-serif;
+
+    background:#F8FAFC;
+
+
+}
+
+::selection {
+  background: #2563eb;
+  color: white;
+}
