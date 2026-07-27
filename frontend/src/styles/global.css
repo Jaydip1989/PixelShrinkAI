@@ -2,13 +2,14 @@
 
 @theme {
 
-  --color-primary:#2563EB;
-  --color-secondary:#4F46E5;
-  --color-accent:#EC4899;
+  /* Brand */
+  --color-primary: #2563EB;
+  --color-secondary: #4F46E5;
+  --color-accent: #EC4899;
 
-  --color-background:#F8FAFC;
-
-  --color-heading:#0F172A;
+  /* Surface */
+  --color-background: #F8FAFC;
+  --color-surface: #FFFFFF;
 
 }
 

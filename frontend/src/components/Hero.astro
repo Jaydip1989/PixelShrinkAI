@@ -1,40 +1,62 @@
-<section class="bg-gradient-to-b from-white via-blue-50 to-white">
-  <div class="mx-auto max-w-7xl px-6 pt-44 pb-24 text-center">
+<section class="relative overflow-hidden py-24">
+  <div class = "mx-auto grid max-w-7xl items-center gap-16 px-6 lg:grid-cols-2">
+    <!-- LEFT COLUMN -->
+      <div class="max-w-[620px]">
+          <!-- Launch Badge -->
+          <span 
+            class = "inline-flex items-center rounded-full border border-blue-200 bg-blue-100 px-4 py-1 text-sm 
+            font-medium text-blue-700"
+          >
+            🚀 Launching Soon
+          </span>
 
-    <span class="inline-flex rounded-full border border-blue-200 bg-blue-100 px-4 py-1 text-sm font-medium text-blue-700">
-      🚀 Launching Soon
-    </span>
+          <!-- Heading -->
+          <h1
+            class = "mt-8 text-5xl font-extrabold leading-tight tracking-tight text-slate=900 md:text-5xl"
+          >
+            Powerful Image Tools.
+            <span
+              class = "block bg-gradient-to-r from-blue-500 via-indigo-600 to-pink-500 bg-clip-text text-transparent"
+            >
+            Fast. Private. Free.
+            </span>
+          </h1>
 
-    <h1 class="mt-8 text-5xl font-extrabold tracking-tight text-slate-900 md:text-7xl">
-      Powerful Image Tools.
-      <span class="block text-blue-600">
-        Fast. Private. Free.
-      </span>
-    </h1>
- 
-    <p class="mx-auto mt-8 max-w-3xl text-lg leading-8 text-slate-600">
-      PixelShrinkAI is building a modern collection of online image tools to
-      help you compress, resize, crop, convert and optimize images directly in
-      your browser — with speed, privacy and simplicity.
-    </p>
+          <!-- Description -->
+          <p class="mt-8 text-lg leading-8 text-slate-600">
+            PixelShrinkAI is building a modern collection of online image tools
+            to help you compress, resize, crop, convert and optimize images
+            directly in your browser - with speed, privacy and simplicity.
+          </p>
 
-    <div class="mt-12 flex flex-col items-center justify-center gap-4 sm:flex-row">
-
-      <a
-        href="#notify"
-        class="rounded-xl bg-blue-600 px-8 py-4 font-semibold text-white transition hover:bg-blue-700"
-      >
-        Notify Me
-      </a>
-
-      <a
-        href="#tools"
-        class="rounded-xl border border-slate-300 px-8 py-4 font-semibold text-slate-700 transition hover:border-blue-600 hover:text-blue-600"
-      >
-        Upcoming Tools
-      </a>
-
-    </div>
-
+          <!-- Buttons -->
+          <div class = "mt-10 flex flex-col gap-4 sm:flex-row">
+            <a
+              href = "#notify"
+              class = "rounded-2xl bg-blue-600 px-8 py-4 font-semibold text-white transition-all
+              duration-300 hover:-translate-y-1 hover:bg-blue-700 hover:shadow-lg"
+            >
+              Notify Me
+            </a>
+            <a
+              href="#tools"
+              class = "rounded-2xl border border-slate-300 px-8 py-4 font-semibold text-slate-700 transition-all
+              duration-300 hover:border-blue-600 hover:text-blue-600"
+            >
+              Upcoming Tools
+            </a>
+          </div>
+      </div>
+      <!-- RIGHT COLUMN -->
+      <div class = "flex justify-center">
+        <div
+          class="flex h-[420px] w-full max-w-[520px] items-center justify-center rounded-[32px] 
+          border border-slate-200 bg-white shadow-[0_20px_60px_rgba(37, 99, 235, 0.12)]"
+        >
+          <span class="text-lg font-semibold text-slate-400">
+            Compressor Preview
+          </span>
+        </div>
+      </div>
   </div>
 </section>
