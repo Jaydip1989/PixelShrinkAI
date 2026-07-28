@@ -1,7 +1,14 @@
+---
+import UploadCard from "./UploadCard.astro";
+---
+
 <section class="relative overflow-hidden bg-gradient-to-b from-white via-blue-50 to-white
   dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 pt-32 pb-24">
 
-  <div class = "mx-auto grid max-w-7xl items-center gap-16 px-6 lg:grid-cols-2">
+  <div
+    class="mx-auto grid max-w-7xl items-center gap-20 px-6
+    lg:grid-cols-[1.05fr_0.95fr]"
+  >
     <!-- LEFT COLUMN -->
       <div class="max-w-[620px]">
           <!-- Launch Badge -->
@@ -51,13 +58,8 @@
       </div>
       <!-- RIGHT COLUMN -->
       <div class = "flex justify-center">
-        <div
-          class="flex h-[420px] w-full max-w-[520px] items-center justify-center rounded-[32px] 
-          border border-slate-200 bg-white dark:bg-slate-800 shadow-[0_20px_60px_rgba(37, 99, 235, 0.12)]"
-        >
-          <span class="text-lg font-semibold text-slate-400">
-            Compressor Preview
-          </span>
+        <div class="flex justify-end">
+          <UploadCard />
         </div>
       </div>
   </div>
