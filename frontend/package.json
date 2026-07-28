@@ -1,5 +1,5 @@
 {
-  "name": "",
+  "name": "pixelshrinkai",
   "type": "module",
   "version": "0.0.1",
   "engines": {
@@ -17,3 +17,4 @@
     "tailwindcss": "^4.3.3"
   }
 }
+ 

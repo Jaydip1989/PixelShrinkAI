@@ -1,4 +1,6 @@
 ---
+import ThemeToggle from "./ThemeToggle.astro";
+
 const navItems = [
   { name: "Tools", href: "#tools" },
   { name: "Features", href: "#features" },
@@ -8,17 +10,23 @@ const navItems = [
 ];
 ---
 
-<header class="fixed inset-x-0 top-0 z-50 bg-white">
+<header class="fixed inset-x-0 top-0 z-50 bg-white dark:bg-slate-900
+    dark:border-slate-800  transition-colors duration-300">
   <div class="mx-auto max-w-[1400px] px-6 py-5">
     <nav
-      class="flex h-[60px] 
+      class="flex 
+      h-[60px]  
       items-center 
       justify-between 
       rounded-[28px] 
       border 
       border-slate-200 
-      bg-white px-10 
-      shadow-[0_12px_35px_rgba(37,99,235,0.08)]"
+      bg-white 
+      dark:bg-slate-900
+      dark:border-slate-700
+      px-10 
+      shadow-[0_12px_35px_rgba(37,99,235,0.08)]
+      dark:shadow-[0_12px_35px_rgba(0,0,0,0.45)]"
     >
 
       <!-- Logo -->
@@ -26,11 +34,19 @@ const navItems = [
         aria-label = "Go to PixelShrinkAI homepage"
         class="flex items-center justify-center"
       >
-        <img
-          src="/logo/logo.svg"
-          alt="PixelShrinkAI"
-          class="h-[46px] w-auto"
-        />
+        <!-- Light Logo -->
+          <img
+            src="/logo/logo.svg"
+            alt="PixelShrinkAI"
+            class="block h-[46px] w-auto dark:hidden"
+          />
+
+          <!-- Dark Logo -->
+          <img
+            src="/logo/logo-dark.svg"
+            alt="PixelShrinkAI"
+            class="hidden h-[46px] w-auto dark:block"
+          />
       </a>
 
       <!-- Desktop Navigation -->
@@ -39,7 +55,7 @@ const navItems = [
           navItems.map((item) => (
             <a
               href={item.href}
-              class="text-[16px] font-medium text-slate-800 transition-colors duration-200 hover:text-blue-600"
+              class="text-[16px] font-medium text-slate-800 dark:text-slate-200 transition-colors duration-200 hover:text-blue-600"
             >
               {item.name}
             </a>
@@ -48,6 +64,9 @@ const navItems = [
       </div>
 
       <!-- CTA -->
+
+      <ThemeToggle />
+
       <a
         href="#notify"
         class="inline-flex items-center gap-2 rounded-2xl
@@ -59,7 +78,7 @@ const navItems = [
         font-semibold
         text-white
         shadow-lg
-        shadow-blue-300/40
+        shadow-md
         transition-all
         duration-300
         hover:-translate-y-0.5

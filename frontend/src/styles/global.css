@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+/* Use class-based dark mode*/
+@custom-variant dark (&:where(.dark, .dark *));
+
+
 @theme {
 
   /* Brand */
@@ -11,7 +15,7 @@
   --color-background: #F8FAFC;
   --color-surface: #FFFFFF;
 
-}
+} 
 
 html {
   scroll-behavior: smooth;
@@ -20,10 +24,13 @@ html {
 body {
   
     font-family:"Plus Jakarta Sans",sans-serif;
-
     background:#F8FAFC;
-
-
+    color: #0F172A;
+    transition: background-color 0.3s ease,color, 0.3s ease;
+}
+.dark body{
+  background: #020617;
+  color: #F8FAFC;
 }
 
 ::selection {
