@@ -2,7 +2,7 @@
     class="    
     w-full    
     max-w-[640px]    
-    h-[410px]     
+    min-h-[520px]     
     rounded-[30px]    
     border   
     border-slate-200   
@@ -13,9 +13,10 @@
     dark:bg-slate-800    
     dark:shadow-[0_20px_60px_rgba(0,0,0,0.35)]  ">
 
-    <label    
+    <label 
+        id="upload-zone"   
         for="image-upload"     
-        class="flex        
+        class="group flex        
         h-full        
         flex-col        
         items-center        
@@ -36,7 +37,7 @@
         <input            
             id="image-upload"            
             type="file"            
-            accept="image/*"            
+            accept=".jpg,.jpeg,.png,.webp,.avif"            
             class="hidden" />
 
         <!-- Upload Icon -->
@@ -85,6 +86,7 @@
         >             
             Upload Image         
         </h3>
+
 
         <!-- Description -->         
         <p            
@@ -154,7 +156,7 @@
                 rounded-2xl                 
                 bg-gradient-to-r                
                 from-blue-600                
-                to-indigo-600                 
+                to-indigo-600
                 px-8                
                 py-4                 
                 text-lg                
@@ -167,7 +169,7 @@
             </span>
             </div>
         <!-- File Size -->         
-        <p            
+        <p           
             class="mt-5             
             text-sm             
             font-medium             
@@ -175,5 +177,14 @@
             dark:text-slate-400">             
                 Maximum file size: 25 MB        
         </p> 
+        <p
+            id="upload-error"
+            class="mt-2 hidden text-sm font-medium text-red-500"
+        >
+        </p>
     </label>
+<script type="module" >
+    import "../../scripts/imageUploader";
+</script>
+    
 </section>

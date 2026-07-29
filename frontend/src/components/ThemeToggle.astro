@@ -1,6 +1,7 @@
 <button
   id="theme-toggle"
-  aria-label="Toggle theme"
+  type="button"
+  aria-label="Change theme"
   class="
     flex h-10 w-10 items-center justify-center
     rounded-full
@@ -19,26 +20,60 @@
     dark:hover:bg-slate-700
   "
 >
-  🌙
+  💻
 </button>
 
 <script>
-    const button = document.getElementById("theme-toggle");
+    const button = document.getElementById("theme-toggle")!;
+    const root = document.documentElement;
 
-    button?.addEventListener("click", () => {
-        const root = document.documentElement;
+    const themes = ["system", "light", "dark"] as const;
+    let index = 0;
 
-        root.classList.toggle("dark");
+    type Theme = (typeof themes)[number];
+    
+    function applyTheme(theme: "system" | "light" | "dark") {
+      if (theme === "system") {
+        const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
 
-        const isDark = root.classList.contains("dark");
+        root.classList.toggle("dark", prefersDark);
 
-        localStorage.setItem("theme", isDark? "dark": "light");
+        button.textContent = "💻";
+      }
 
-        button.textContent = isDark?  "☀️" : "🌙";
+      if (theme === "light") {
+        root.classList.remove("dark");
+        button.textContent = "🌙";
+      }
 
+      if (theme === "dark") {
+        root.classList.add('dark');
+        button.textContent = "☀️";
+      }
+
+      localStorage.setItem("theme", theme);
+    }
+
+    
+
+    const savedTheme =
+      (localStorage.getItem("theme") as Theme | null) ?? "system";
+
+    index = themes.indexOf(savedTheme);
+
+    applyTheme(savedTheme as (typeof themes)[number]);
+
+    button?.addEventListener("click", () =>{
+      index = (index + 1) % themes.length;
+
+      applyTheme(themes[index]);
     });
 
-    const isDark = document.documentElement.classList.contains("dark");
-
-    button.textContent = isDark?  "☀️" : "🌙";
+    window
+      .matchMedia("(prefers-color-scheme: dark)")
+      .addEventListener("change", () => {
+          if (localStorage.getItem("theme") === "system"){
+            applyTheme("system");
+          }
+      });
 </script>
