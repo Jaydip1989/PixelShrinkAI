@@ -1,0 +1,35 @@
+---
+interface Props {
+    imageUrl:string;
+    fileName:string;
+}
+
+const {imageUrl, fileName} = Astro.props;
+---
+
+<div
+    id="image-preview"
+    class="
+        hidden
+        mt-6
+        overflow-hidden
+        rounded-2xl
+        border
+        border-slate-200
+        bg-slate-50
+        dark:border-slate-700
+        dark:bg-slate-900
+    "
+>
+    <img
+        id="preview-image"
+        src = {imageUrl}
+        alt = {alt}
+        class = "
+          h-72
+          w-full
+          object-contain
+          p-4
+        "
+    >
+</div>

@@ -1,22 +1,39 @@
 import { validateImage } from "../utils/fileValidation";
-import { formatFileSize, getImageDimensions } from "../utils/imageHelpers";
+import {
+    getImageDimensions,
+    formatFileSize,
+} from "../utils/imageHelpers";
 
-const uploadZone = document.getElementById("upload-zone") as HTMLLabelElement | null;
-const fileInput = document.getElementById("image-upload") as HTMLInputElement | null;
-const errorText = document.getElementById("upload-error") as HTMLParagraphElement | null;
+/* ======================================================
+    DOM Elements
+====================================================== */
 
-function showError(message: string) {
-    if (!errorText) return;
-    errorText.textContent = message;
-    errorText?.classList.remove("hidden");
+const uploadZone = document.getElementById(
+    "upload-zone"
+) as HTMLLabelElement | null; 
+
+const fileInput = document.getElementById(
+    "image-upload"
+) as HTMLInputElement | null;
+
+const errorText = document.getElementById(
+    "upload-error"
+) as HTMLParagraphElement | null;
+
+/* ======================================================
+    Uploaded Image Inetrface
+====================================================== */
+
+interface UploadedImage {
+    file: File;
+    previewURL: string;
+    width: number;
+    height: number;
 }
 
-function clearError() {
-    if (!errorText) return;
-    errorText.textContent = "";
-    errorText?.classList.add("hidden");
-}
-
+/* ======================================================
+    Initialization
+====================================================== */
 if (!uploadZone || !fileInput || !errorText) {
     console.warn("Image uploader elements not found.");
 } else {
@@ -31,14 +48,21 @@ function initializeUploader() {
     uploadZone?.addEventListener("drop", handleDrop);
 }
 
-function handleFileSelection(event: Event){
+/* ======================================================
+    File Selection
+====================================================== */
+
+function handleFileSelection(event: Event) {
     const input = event.target as HTMLInputElement;
 
-    if (!input.files?.length) return;
+    if(!input.files?.length) return;
 
     processFile(input.files[0]);
 }
 
+/* ======================================================
+    Drag & Drop
+====================================================== */
 function handleDragOver(event: DragEvent) {
     event.preventDefault();
 
@@ -69,32 +93,103 @@ function handleDrop(event: DragEvent) {
     );
 
     const files = event.dataTransfer?.files;
+    if(!files?.length) return;
 
-    if (!files?.length) return;
-
-    processFile(files[0]);
+    processFile(files[0])
 }
 
+/* ======================================================
+    Main Upload Logic
+====================================================== */
 async function processFile(file: File) {
     clearError();
 
     const validation = validateImage(file);
 
-    if(!validation.valid) {
+    if (!validation.valid) {
         showError(validation.message);
         return;
     }
 
     const dimensions = await getImageDimensions(file);
 
-    console.log("File:", file.name);
-    console.log("Size:", formatFileSize(file.size));
-    console.log("Dimensions:", dimensions.width, "x", dimensions.height);
-    console.log("Type:", file.type);
+    const uploadedImage:UploadedImage = {
+        file,
 
-    // ImagePreview will be connected here next
+        previewURL: URL.createObjectURL(file),
+
+        width: dimensions.width,
+        
+        height: dimensions.height,
+    };
+
+    console.log(uploadedImage);
+    updateImagePreview(uploadedImage);
+    updateFileInfo(uploadedImage);
 }
 
 
+/* ======================================================
+    Image Preview
+====================================================== */
+function updateImagePreview(uploadedImage:UploadedImage) {
+    const previewContainer = 
+        document.getElementById("image-preview") as HTMLDivElement | null;
+    
+    const previewImage = 
+        document.getElementById("preview-image") as HTMLImageElement | null;
+    
+    if(!previewContainer || !previewImage) return ;
 
+    previewImage.src = uploadedImage.previewURL;
+    previewImage.alt = uploadedImage.file.name;
+    previewContainer.classList.remove('hidden');
 
+}
+
+/* ======================================================
+    File Information
+====================================================== */
+
+function updateFileInfo(uploadedImage:UploadedImage) {
+
+    const fileInfo = 
+        document.getElementById("file-info") as HTMLDivElement | null;
+    
+    if(!fileInfo) return ;
+
+    fileInfo.classList.remove("hidden");
+    (
+        document.getElementById("file-name") as HTMLParagraphElement
+    ).textContent = uploadedImage.file.name;
+
+    (
+        document.getElementById("file-type") as HTMLParagraphElement
+    ).textContent = uploadedImage.file.type;
+
+    (
+        document.getElementById("file-size") as HTMLParagraphElement
+    ).textContent = formatFileSize(uploadedImage.file.size);
+
+    (
+        document.getElementById("image-dimensions") as HTMLParagraphElement
+    ).textContent = `${uploadedImage.width} x ${uploadedImage.height}`;
+}
+
+/* ======================================================
+    Error Handling
+====================================================== */
+
+function showError(message: string) {
+    if (!errorText) return ;
+
+    errorText.textContent = message;
+    errorText.classList.remove("hidden");
+}
+
+function clearError() {
+    if (!errorText) return;
+
+    errorText.textContent = "";
+    errorText.classList.add("hidden");
+}
