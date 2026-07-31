@@ -1,12 +1,13 @@
 ---
 import UploadCard from "./compressor/UploadCard.astro";
+import CompressorWorkspace from "./compressor/CompressorWorkspace.astro";
 ---
 
 <section class="relative overflow-hidden bg-gradient-to-b from-white via-blue-50 to-white
-  dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 pt-32 pb-24">
+  dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 pt-20 pb-24">
 
   <div
-    class="mx-auto grid max-w-7xl items-center gap-20 px-6
+    class="mx-auto grid max-w-7xl items-center gap-16 px-6
     lg:grid-cols-[1.05fr_0.95fr]"
   >
     <!-- LEFT COLUMN -->
@@ -57,10 +58,11 @@ import UploadCard from "./compressor/UploadCard.astro";
           </div>
       </div>
       <!-- RIGHT COLUMN -->
-      <div class = "flex justify-center">
-        <div class="flex justify-end">
-          <UploadCard />
-        </div>
+      <div class = "flex justify-center lg:justify-end">
+
+          <CompressorWorkspace />
+
+        
       </div>
   </div>
 </section>

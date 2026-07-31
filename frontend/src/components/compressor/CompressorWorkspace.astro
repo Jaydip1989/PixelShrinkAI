@@ -1,0 +1,26 @@
+---
+import WorkspaceHeader from "./WorkspaceHeader.astro";
+import WorkspaceBody from "./WorkspaceBody.astro";
+import WorkspaceFooter from "./WorkspaceFooter.astro";
+---
+
+<section
+    class = "
+        w-full
+        max-w-[640px]
+        rounded-[30px]
+        border
+        border-slate-200
+        bg-white
+        shadow-[0_20px_60px_rgba(37, 99, 235, 0.12)]
+
+        dark:border-slate-700
+        dark:bg-slate-800
+        dark:shadow-[0_20px_60px_rgba(0,0,0,0.65)]
+    "
+>
+    <WorkspaceHeader />
+    <WorkspaceBody />
+    <WorkspaceFooter />
+
+</section>

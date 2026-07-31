@@ -1,10 +1,10 @@
 ---
-interface Props {
-    imageUrl:string;
-    fileName:string;
+export interface Props {
+    imageUrl?:string;
+    alt?:string;
 }
 
-const {imageUrl, fileName} = Astro.props;
+const {imageUrl = " ", alt="Uploaded Image"} = Astro.props;
 ---
 
 <div
@@ -13,7 +13,7 @@ const {imageUrl, fileName} = Astro.props;
         hidden
         mt-6
         overflow-hidden
-        rounded-2xl
+        rounded-3xl
         border
         border-slate-200
         bg-slate-50
@@ -29,7 +29,7 @@ const {imageUrl, fileName} = Astro.props;
           h-72
           w-full
           object-contain
-          p-4
+          p-5
         "
     >
 </div>

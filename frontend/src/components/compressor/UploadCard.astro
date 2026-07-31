@@ -1,6 +1,10 @@
 ---
 import ImageUploader from "./ImageUploader.astro";
+import ImagePreview from "./ImagePreview.astro";
+import FileInfo from "./FileInfo.astro";
+
 ---
+
 
 <div
     class="
@@ -10,4 +14,7 @@ import ImageUploader from "./ImageUploader.astro";
     "
 >
     <ImageUploader />
+    <ImagePreview />
+    <FileInfo />
 </div>
+<script type="module" src="../../scripts/imageUploader.ts"></script>
