@@ -3,6 +3,8 @@ import {
     getImageDimensions,
     formatFileSize,
 } from "../utils/imageHelpers";
+import { setWorkspaceImage } from "./workspaceData";
+import { setWorkspaceState } from "./workspaceState";
 
 /* ======================================================
     DOM Elements
@@ -126,6 +128,25 @@ async function processFile(file: File) {
     console.log(uploadedImage);
     updateImagePreview(uploadedImage);
     updateFileInfo(uploadedImage);
+
+    const imageURL = URL.createObjectURL(file);
+
+    setWorkspaceImage({
+        file,
+
+        url: imageURL,
+
+        width: dimensions.width,
+
+        height: dimensions.height,
+
+        name: file.name,
+
+        size:file.size,
+
+        type:file.type
+    });
+    setWorkspaceState("preview");
 }
 
 

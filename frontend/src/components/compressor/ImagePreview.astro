@@ -1,35 +1,38 @@
 ---
-export interface Props {
-    imageUrl?:string;
+interface Props {
+    imageUrl?: string;
     alt?:string;
 }
 
-const {imageUrl = " ", alt="Uploaded Image"} = Astro.props;
+const {imageUrl = "", 
+alt= "Uploaded Image",
+} = Astro.props;
 ---
 
 <div
-    id="image-preview"
-    class="
-        hidden
-        mt-6
-        overflow-hidden
-        rounded-3xl
-        border
-        border-slate-200
-        bg-slate-50
-        dark:border-slate-700
-        dark:bg-slate-900
-    "
->
-    <img
-        id="preview-image"
-        src = {imageUrl}
-        alt = {alt}
-        class = "
-          h-72
-          w-full
-          object-contain
-          p-5
+        class="
+            flex
+            h-[220px]
+            items-center
+            justify-center
+            overflow-hidden
+            rounded-2xl
+            bg-slate-200
+            dark:bg-slate-800
         "
     >
+    {
+        imageUrl? (
+            <img
+                src = {imageUrl}
+                alt = {alt}
+                class = "h-full w-full object-contain"
+            />
+        ):(
+            <span class="text-slate-400"
+            >
+                No Preview
+            </span>
+        )
+    }
 </div>
