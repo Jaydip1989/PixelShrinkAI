@@ -1,3 +1,4 @@
+console.log("ImageUploader loaded");
 import { validateImage } from "../utils/fileValidation";
 import {
     getImageDimensions,
@@ -15,8 +16,12 @@ const uploadZone = document.getElementById(
 ) as HTMLLabelElement | null; 
 
 const fileInput = document.getElementById(
-    "image-upload"
+    "file-input"
 ) as HTMLInputElement | null;
+
+const selectButton = document.getElementById(
+    " select-image-button"
+) as HTMLButtonElement | null;
 
 const errorText = document.getElementById(
     "upload-error"
@@ -44,6 +49,7 @@ if (!uploadZone || !fileInput || !errorText) {
 
 function initializeUploader() {
     fileInput?.addEventListener("change", handleFileSelection);
+    selectButton?.addEventListener("click", () => fileInput?.click());
 
     uploadZone?.addEventListener("dragover", handleDragOver);
     uploadZone?.addEventListener("dragleave", handleDragLeave);
