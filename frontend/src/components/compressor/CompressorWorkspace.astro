@@ -1,6 +1,6 @@
 ---
 import WorkspaceHeader from "./WorkspaceHeader.astro";
-import WorkspaceBody from "./WorkspaceBody.astro";
+import WorkspaceBody from "./WorkspaceBody.tsx";
 import WorkspaceFooter from "./WorkspaceFooter.astro";
 ---
 
@@ -21,7 +21,7 @@ import WorkspaceFooter from "./WorkspaceFooter.astro";
     "
 >
     <WorkspaceHeader />
-    <WorkspaceBody />
+    <WorkspaceBody client:load />
     <WorkspaceFooter />
 
 </section>
