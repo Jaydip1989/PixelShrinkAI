@@ -1,38 +1,36 @@
----
-interface Props {
-    imageUrl?: string;
-    alt?:string;
+import type { ImageAsset } from "../../../types/image";
+
+interface ImagePreviewProps {
+    image: ImageAsset | null;
 }
 
-const {imageUrl = "", 
-alt= "Uploaded Image",
-} = Astro.props;
----
+export default function ImagePreview ({
+    image,
+}: ImagePreviewProps) {
+    return (
+        <div
+            className="
+                flex
+                h-[220px]
+                items-center
+                justify-center
+                overflow-hidden
+                rounded-2xl
+                bg-slate-200
+                dark:bg-slate-800
+            ">
+                {image ? (
+                    <img 
+                        src = {image.previewUrl}
+                        alt={image.name}
+                        className = "h-full w-full object-contain"
+                    />
+                ):(
+                    <span className="text-slate-400">
+                        No Preview
+                    </span>
+                )}
+            </div>
+    );          
 
-<div
-        class="
-            flex
-            h-[220px]
-            items-center
-            justify-center
-            overflow-hidden
-            rounded-2xl
-            bg-slate-200
-            dark:bg-slate-800
-        "
-    >
-    {
-        imageUrl? (
-            <img
-                src = {imageUrl}
-                alt = {alt}
-                class = "h-full w-full object-contain"
-            />
-        ):(
-            <span class="text-slate-400"
-            >
-                No Preview
-            </span>
-        )
-    }
-</div>
+}

@@ -1,4 +1,15 @@
-export default function UploadView() {
+import type { ImageAsset } from "../../../types/image";
+
+interface UploadViewProps {
+    image: ImageAsset | null;
+    error: string
+    onSelectImage: () => void;
+}
+
+export default function UploadView({
+    image,
+    onSelectImage,
+}: UploadViewProps) {
     return (
         <div className="flex flex-col">
 
@@ -6,7 +17,7 @@ export default function UploadView() {
             <div
                 className="
                     flex
-                    flex-col
+                    flex-col 
                     items-center
                     border-b
                     border-slate-200
@@ -95,12 +106,14 @@ export default function UploadView() {
                     dark:text-slate-400
                 "
             >
-                No Image Selected
+                {image ? image.name: "No Image Selected"}
             </div>
             
             {/* Button */}
             <div className="p-3">
                 <button
+                    type = "button"
+                    onClick={onSelectImage}
                     className="
                         w-full
                         rounded-2xl

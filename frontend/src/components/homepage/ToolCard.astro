@@ -1,0 +1,100 @@
+---
+interface Props {
+    title:string;
+    description: string;
+    icon:string;
+    status: "live"| "coming" | "planned";
+    href?: string;
+}
+
+const {
+    title,
+    description,
+    icon,
+    status,
+    href = "#",
+} = Astro.props;
+
+const statusStyles = {
+    live: {
+        text: "Live",
+        badge:
+            "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300",
+    },
+
+    coming: {
+        text: "Coming Soon",
+        badge:
+            "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300",
+    },
+
+    planned: {
+        text: "Planned",
+        badge:
+            "bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300",
+    },
+};
+
+const current = statusStyles[status];
+---
+
+<a
+    href = {href}
+    class="
+        group
+        flex
+        flex-col
+        rounded-3xl
+        border
+        border-slate-200
+        bg-white
+        p-6
+        transition-all
+        duration-300
+        hover:-translate-y-1
+        hover:shadow-xl
+        dark:border-slate-700
+        dark:bg-slate-900
+    "
+>
+    <!-- Icon -->
+    <div
+        class="
+            mb-5
+            flex
+            h-16
+            w-16
+            items-center
+            justify-center
+            rounded-2xl
+            bg-gradient-to-br
+            from-blue-500
+            via-purple-500
+            to-pink-500
+            text-3xl
+            text-white
+        "
+    >
+        {icon}
+    </div>
+
+    <!-- Title -->
+    <h3 class="text-lg font-semibold text-slate-900 dark:text-white">
+        {title}
+    </h3>
+
+    <!-- Description -->
+    <p class="mt-2 text-sm leading-6 text-slate-600 dark:text-slate-400">
+        {description}
+    </p>
+
+    <!-- Status -->
+    <span
+        class:list={[
+            "mt-6 inline-flex w-fit rounded-full px-3 py-1 text-xs font-semibold",
+            current.badge
+        ]}
+    >
+        {current.text}
+    </span>
+</a>

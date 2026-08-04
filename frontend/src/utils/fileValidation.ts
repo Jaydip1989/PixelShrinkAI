@@ -6,10 +6,10 @@ import {
 export interface ValidationResult {
     valid:boolean;
     message:string;
-}
+} 
 
 export function validateImage(file: File): ValidationResult {
-    if(!SUPPORTED_IMAGE_TYPES.includes(file.type as any)) {
+    if(!SUPPORTED_IMAGE_TYPES.includes(file.type as typeof SUPPORTED_IMAGE_TYPES[number])) {
         return {
             valid:false,
             message:
