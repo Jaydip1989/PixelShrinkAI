@@ -12,7 +12,6 @@ export default function UploadView({
 }: UploadViewProps) {
     return (
         <div className="flex flex-col">
-
             {/* Upload Area */}
             <div
                 className="
