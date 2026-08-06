@@ -1,0 +1,93 @@
+---
+interface Props {
+  title: string;
+  description: string;
+  status: "coming-soon" | "planned";
+  variant: "emerald" | "blue" | "orange" | "violet" | "rose" | "amber";
+  featured?: boolean;
+}
+
+const {
+  title,
+  description,
+  status,
+  variant,
+  featured = false,
+} = Astro.props;
+
+const variants = {
+  emerald: {
+    icon: "bg-emerald-100 text-emerald-600 dark:bg-emerald-500/15 dark:text-emerald-300",
+    border: "hover:border-emerald-300 dark:hover:border-emerald-500/40",
+    pill: "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300",
+    dot: "bg-emerald-500",
+  },
+
+  blue: {
+    icon: "bg-blue-100 text-blue-600 dark:bg-blue-500/15 dark:text-blue-300",
+    border: "hover:border-blue-300 dark:hover:border-blue-500/40",
+    pill: "bg-blue-100 text-blue-700 dark:bg-blue-500/15 dark:text-blue-300",
+    dot: "bg-blue-500",
+  },
+
+  orange: {
+    icon: "bg-orange-100 text-orange-600 dark:bg-orange-500/15 dark:text-orange-300",
+    border: "hover:border-orange-300 dark:hover:border-orange-500/40",
+    pill: "bg-orange-100 text-orange-700 dark:bg-orange-500/15 dark:text-orange-300",
+    dot: "bg-orange-500",
+  },
+
+  violet: {
+    icon: "bg-violet-100 text-violet-600 dark:bg-violet-500/15 dark:text-violet-300",
+    border: "hover:border-violet-300 dark:hover:border-violet-500/40",
+    pill: "bg-violet-100 text-violet-700 dark:bg-violet-500/15 dark:text-violet-300",
+    dot: "bg-violet-500",
+  },
+
+  rose: {
+    icon: "bg-rose-100 text-rose-600 dark:bg-rose-500/15 dark:text-rose-300",
+    border: "hover:border-rose-300 dark:hover:border-rose-500/40",
+    pill: "bg-rose-100 text-rose-700 dark:bg-rose-500/15 dark:text-rose-300",
+    dot: "bg-rose-500",
+  },
+
+  amber: {
+    icon: "bg-amber-100 text-amber-600 dark:bg-amber-500/15 dark:text-amber-300",
+    border: "hover:border-amber-300 dark:hover:border-amber-500/40",
+    pill: "bg-amber-100 text-amber-700 dark:bg-amber-500/15 dark:text-amber-300",
+    dot: "bg-amber-500",
+  },
+};
+
+const style = variants[variant];
+---
+
+<article
+  class={`group flex flex-col items-center rounded-3xl border bg-white p-5 text-center shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg dark:bg-slate-900 dark:border-slate-800 ${style.border} ${
+    featured
+      ? "border-emerald-200 dark:border-emerald-500/30"
+      : "border-slate-200"
+  }`}
+>
+
+  <div class={`flex h-14 w-14 items-center justify-center rounded-2xl transition-transform duration-300 group-hover:scale-105 ${style.icon}`}>
+    <slot />
+  </div>
+
+  <h3 class="mt-4 text-base font-bold text-slate-900 dark:text-white">
+    {title}
+  </h3>
+
+  <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">
+    {description}
+  </p>
+
+  <span class={`mt-4 inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-semibold ${style.pill}`}>
+    <span class={`h-2 w-2 rounded-full ${style.dot}`}></span>
+
+    {status === "coming-soon"
+      ? "Coming Soon"
+      : "Planned"}
+  </span>
+
+</article>

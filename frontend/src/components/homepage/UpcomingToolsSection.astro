@@ -1,0 +1,111 @@
+---
+import {
+  Crop,
+  Image,
+  Scaling,
+  ScanSearch,
+  Stamp,
+  WandSparkles,
+} from "lucide-preact";
+
+import UpcomingTool from "./UpcomingTool.astro";
+---
+
+<section id="tools" class="relative -translate-y-6 pb-24">
+
+  <div class="mx-auto max-w-7xl px-6">
+
+    <!-- Header -->
+
+    <div class="mb-12 text-center">
+
+      <span class="inline-flex items-center rounded-full border border-blue-200 bg-blue-50 px-4 py-1 text-sm font-semibold text-blue-700 dark:border-blue-900 dark:bg-blue-950/40 dark:text-blue-300">
+        Our Roadmap
+      </span>
+
+      <h2 class="mt-5 text-3xl font-bold tracking-tight text-slate-900 dark:text-white md:text-4xl">
+        Upcoming Tools
+      </h2>
+
+      <p class="mt-3 text-base text-slate-500 dark:text-slate-400">
+        More powerful image tools are coming soon.
+      </p>
+
+    </div>
+
+    <!-- Desktop : 6 Columns -->
+    <!-- Tablet : 3 Columns -->
+    <!-- Mobile : 2 Columns -->
+
+    <div class="grid grid-cols-2 gap-5 md:grid-cols-3 xl:grid-cols-6">
+
+      <UpcomingTool
+        title="Compressor"
+        description="Reduce image size"
+        status="coming-soon"
+        variant="emerald"
+        featured
+      >
+        <Image size={28} strokeWidth={2.2} />
+      </UpcomingTool>
+
+      <UpcomingTool
+        title="Resizer"
+        description="Resize instantly"
+        status="planned"
+        variant="blue"
+      >
+        <Scaling size={28} strokeWidth={2.2} />
+      </UpcomingTool>
+
+      <UpcomingTool
+        title="Crop"
+        description="Crop precisely"
+        status="planned"
+        variant="orange"
+      >
+        <Crop size={28} strokeWidth={2.2} />
+      </UpcomingTool>
+
+      <UpcomingTool
+        title="Converter"
+        description="Convert formats"
+        status="planned"
+        variant="violet"
+      >
+        <ScanSearch size={28} strokeWidth={2.2} />
+      </UpcomingTool>
+
+      <UpcomingTool
+        title="Watermark"
+        description="Protect images"
+        status="planned"
+        variant="rose"
+      >
+        <Stamp size={28} strokeWidth={2.2} />
+      </UpcomingTool>
+
+      <UpcomingTool
+        title="AI Remove"
+        description="Remove backgrounds"
+        status="planned"
+        variant="amber"
+      >
+        <WandSparkles size={28} strokeWidth={2.2} />
+      </UpcomingTool>
+
+    </div>
+
+    <!-- Footer Note -->
+
+    <div class="mt-12 text-center">
+
+      <p class="text-sm text-slate-500 dark:text-slate-400">
+        More tools will continue to be added as PixelShrinkAI evolves. 🚀
+      </p>
+
+    </div>
+
+  </div>
+
+</section>

@@ -1,0 +1,21 @@
+---
+const rows = 5;
+const cols = 5;
+---
+
+<div class="grid grid-cols-5 gap-3 opacity-90 pl-2 pt-5">
+  {
+    Array.from({ length: rows * cols }).map((_, index) => (
+      <span
+        class:list={[
+          "h-1.5 w-1.5 rounded-full bg-blue-300 dark:bg-blue-500",
+          index % 5 === 0 && "opacity-100",
+          index % 5 === 1 && "opacity-80",
+          index % 5 === 2 && "opacity-60",
+          index % 5 === 3 && "opacity-80",
+          index % 5 === 4 && "opacity-100",
+        ]}
+      />
+    ))
+  }
+</div>

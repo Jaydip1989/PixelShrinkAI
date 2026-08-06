@@ -1,0 +1,55 @@
+---
+import FooterBrand from "./FooterBrand.astro";
+import FooterBottom from "./FooterBottom.astro";
+import FooterLinks from "./FooterLinks.astro";
+
+const product = [
+  { label: "Image Compressor", href: "#" },
+  { label: "Image Resizer", href: "#" },
+  { label: "Crop Images", href: "#" },
+  { label: "Format Converter", href: "#" },
+];
+
+const company = [
+  { label: "About", href: "#" },
+  { label: "Roadmap", href: "#tools" },
+  { label: "Contact", href: "#" },
+  { label: "Blog", href: "#" },
+];
+
+const legal = [
+  { label: "Privacy Policy", href: "#" },
+  { label: "Terms & Conditions", href: "#" },
+  { label: "Cookie Policy", href: "#" },
+];
+
+const support = [
+  { label: "FAQ", href: "#" },
+  { label: "Changelog", href: "#" },
+  { label: "Status", href: "#" },
+];
+---
+
+<footer class="border-t border-slate-200 bg-white py-24 -translate-y-12 dark:border-slate-800 dark:bg-slate-950">
+
+  <div class="mx-auto max-w-7xl px-6">
+
+    <div class="grid gap-14 lg:grid-cols-[1.6fr_1fr_1fr_1fr_1fr]">
+
+      <FooterBrand />
+
+      <FooterLinks title="Product" links={product} />
+
+      <FooterLinks title="Company" links={company} />
+
+      <FooterLinks title="Legal" links={legal} />
+
+      <FooterLinks title="Support" links={support} />
+
+    </div>
+
+    <FooterBottom />
+
+  </div>
+
+</footer>

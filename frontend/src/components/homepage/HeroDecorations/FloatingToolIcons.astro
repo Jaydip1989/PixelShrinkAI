@@ -1,0 +1,64 @@
+---
+import { Crop, Expand, Image } from "lucide-preact";
+---
+
+<div class="absolute inset-0 z-30 hidden lg:block">
+
+  <!-- Image Tool -->
+  <div
+    class="absolute right-[43%] 
+            top-[58px] 
+            flex 
+            h-20 w-20 
+            -rotate-12 items-center justify-center 
+            rounded-[28px] 
+            bg-gradient-to-br
+            from-pink-500 via-rose-500 to-orange-400 
+            shadow-[0_24px_50px_rgba(236,72,153,0.35)] 
+            transition-transform duration-500 
+            hover:scale-105"
+  >
+    <Image class="text-white" size={34} strokeWidth={2.2} />
+  </div>
+
+  <!-- Crop Tool -->
+  <div
+    class="absolute 
+        left-[54%] top-[50%] 
+        flex 
+        h-16 w-16 
+        -rotate-12 
+        items-center 
+        justify-center 
+        rounded-[24px] 
+        bg-gradient-to-br 
+        from-orange-400 
+        to-yellow-400 
+        shadow-[0_18px_40px_rgba(251,146,60,0.30)] 
+        transition-transform duration-500 
+        hover:scale-105"
+  >
+    <Crop class="text-white" size={28} strokeWidth={2.2} />
+  </div>
+
+  <!-- Resize Tool -->
+  <div
+    class="absolute 
+    bottom-[70px] 
+    right-[30px] 
+    flex 
+    h-20 w-20 
+    rotate-12 
+    items-center 
+    justify-center 
+    rounded-[28px] 
+    bg-gradient-to-br
+    from-blue-500 to-cyan-400 
+    shadow-[0_24px_50px_rgba(59,130,246,0.30)] 
+    transition-transform duration-500 
+    hover:scale-105"
+  >
+    <Expand class="text-white" size={34} strokeWidth={2.2} />
+  </div>
+
+</div>

@@ -1,0 +1,48 @@
+---
+import { Globe, Lock, Sparkles, Zap } from "lucide-preact";
+import FeatureCard from "./FeatureCard.astro";
+---
+
+<section class="relative -mt-2 -translate-y-10">
+
+  <div class="mx-auto max-w-7xl px-4">
+
+    <div class="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
+
+      <FeatureCard
+        title="Lightning Fast"
+        description="Optimized for speed. Get results in seconds."
+        variant="amber"
+      >
+        <Zap slot="icon" size={30} strokeWidth={2.2} />
+      </FeatureCard>
+
+      <FeatureCard
+        title="Privacy First"
+        description="Your images never leave your device."
+        variant="emerald"
+      >
+        <Lock slot="icon" size={30} strokeWidth={2.2} />
+      </FeatureCard>
+
+      <FeatureCard
+        title="High Quality"
+        description="Best compression with perfect quality."
+        variant="violet"
+      >
+        <Sparkles slot="icon" size={30} strokeWidth={2.2} />
+      </FeatureCard>
+
+      <FeatureCard
+        title="Works Everywhere"
+        description="Works on all devices and browsers."
+        variant="blue"
+      >
+        <Globe slot="icon" size={30} strokeWidth={2.2} />
+      </FeatureCard>
+
+    </div>
+
+  </div>
+
+</section>
