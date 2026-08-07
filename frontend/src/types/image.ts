@@ -20,3 +20,13 @@ export type WorkspaceStep =
     | "preview"
     | "processing"
     | "download";
+
+export type OutputFormat = 
+    | "original"
+    | "jpeg"
+    | "webp";
+
+export interface CompressionSettings {
+    quality: number;
+    outputFormat: OutputFormat;
+}

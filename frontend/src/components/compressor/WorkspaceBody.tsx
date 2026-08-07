@@ -11,9 +11,14 @@ import { useWorkspace } from "./hooks/useWorkspace";
 
 export default function WorkspaceBody() { 
   const {step, setStep} = useWorkspace();
+
   const {
     image, 
-    error, 
+    error,
+    
+    settings,
+    setSettings,
+
     fileInputRef, 
     selectImage, 
     handleFileChange
@@ -36,7 +41,11 @@ export default function WorkspaceBody() {
         
         case "preview":
           return image ? (
-            <PreviewView image={image} />
+            <PreviewView 
+            image={image} 
+            settings={settings}
+            setSettings={setSettings}
+            />
           ):(
             <UploadView 
               image = {image}
