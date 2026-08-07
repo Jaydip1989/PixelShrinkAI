@@ -38,14 +38,14 @@ const navItems = [
           <img
             src="/logo/logo.svg"
             alt="PixelShrinkAI"
-            class="block h-[46px] w-auto dark:hidden"
+            class="block h-8 sm:h-10 lg:h-[46px] w-auto dark:hidden"
           />
 
           <!-- Dark Logo -->
           <img
             src="/logo/logo-dark.svg"
             alt="PixelShrinkAI"
-            class="hidden h-[46px] w-auto dark:block"
+            class="hidden h-8 sm:h-10 lg:h-[46px] w-auto dark:block"
           />
       </a>
 
@@ -69,21 +69,29 @@ const navItems = [
 
       <a
         href="#notify"
-        class="inline-flex items-center gap-2 rounded-2xl
-        bg-gradient-to-r
-        from-blue-600
-        to-indigo-600
-        px-7 
-        py-3
-        text-sm
-        font-semibold
-        text-white
-        shadow-md
-        transition-all
-        duration-300
-        hover:-translate-y-0.5
-        hover:bg-blue-700
-        hover:shadow-lg">
+        class="
+          inline-flex items-center justify-center gap-1.5
+          rounded-2xl
+          bg-gradient-to-r
+          from-blue-600
+          to-indigo-600
+
+          px-2.5 py-2
+          min-[400px]:px-3
+          sm:px-5
+          lg:px-7
+
+          text-xs
+          min-[400px]:text-sm
+          font-semibold
+          text-white
+          shadow-md
+          transition-all
+          duration-300
+          hover:-translate-y-0.5
+          hover:shadow-lg
+        "
+      >
 
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -101,7 +109,15 @@ const navItems = [
           <path d="M10.3 21a2 2 0 0 0 3.4 0" />
         </svg>
 
-        Notify Me
+        <!-- Desktop -->
+        <span class="hidden sm:inline">
+          Notify Me
+        </span>
+
+        <!-- Mobile -->
+        <span class="sm:hidden">
+          Notify
+        </span>
 
       </a>
 
