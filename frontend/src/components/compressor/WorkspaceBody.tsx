@@ -1,90 +1,74 @@
-import {useEffect} from "preact/hooks";
-
-
+import type { ImageAsset } from "../../types/image";
 import UploadView from "./views/UploadView";
 import PreviewView from "./views/PreviewView";
 import ProcessingView from "./views/ProcessingView";
 import DownloadView from "./views/DownloadView";
 
-import { useCompressor } from "./hooks/useCompressor";
-import { useWorkspace } from "./hooks/useWorkspace";
+interface WorkspaceBodyProps {
+  step: "upload" | "preview" | "processing" | "download";
+  image: ImageAsset | null;
+  error: string;
+  settings: Parameters<typeof PreviewView>[0]["settings"];
+  setSettings: Parameters<typeof PreviewView>[0]["setSettings"];
+  
+  selectImage: () => void;
+  handleFileChange: (event: Event) => void;
+}
 
-export default function WorkspaceBody() { 
-  const {step, setStep} = useWorkspace();
-
-  const {
-    image, 
-    error,
-    
-    settings,
-    setSettings,
-
-    fileInputRef, 
-    selectImage, 
-    handleFileChange
-  } = useCompressor();
-
-  useEffect(() =>{
-    if (image && step === "upload") {
-      setStep("preview");
-    }
-  }, [image, step, setStep]);
-
+export default function WorkspaceBody({
+  step,
+  image,
+  error,
+  settings,
+  setSettings,
+  
+  selectImage,
+  handleFileChange,
+}: WorkspaceBodyProps) {
   function renderView() {
-    switch (step) 
-    {
-        case "upload":
-          return <UploadView 
+    switch (step) {
+      case "upload":
+        return (
+          <UploadView image={image} error={error} onSelectImage={selectImage} 
+          />
+        );
+
+      case "preview":
+        return image ? (
+          <PreviewView
             image={image}
-            error = {error}
-            onSelectImage={selectImage}/>;
-        
-        case "preview":
-          return image ? (
-            <PreviewView 
-            image={image} 
             settings={settings}
             setSettings={setSettings}
-            />
-          ):(
-            <UploadView 
-              image = {image}
-              error = {error}
-              onSelectImage={selectImage}
-            />
-          );
+          />
+        ) : (
+          <UploadView
+            image={image}
+            error={error}
+            onSelectImage={selectImage}
+          />
+        );
 
+      case "processing":
+        return <ProcessingView />;
 
-        case "processing":
-          return <ProcessingView/>;
+      case "download":
+        return <DownloadView />;
 
-        case "download":
-          return <DownloadView />;
-        
-          default:
-            return <UploadView 
-              image={image}
-              error = {error}
-              onSelectImage={selectImage}/>;
-      }
+      default:
+        return (
+          <UploadView
+            image={image}
+            error={error}
+            onSelectImage={selectImage}
+          />
+        );
     }
-  return(
-    <div
-      className="
-        flex
-        h-[380px]
-        flex-col
-      "
-    >
+  }
+
+  return (
+    <div className="flex flex-col">
       {renderView()}
-      {/* Hidden file picker */}
-      <input 
-        ref = {fileInputRef}
-        type="file"
-        accept="image/*"
-        className="hidden"
-        onChange={handleFileChange}
-      />
+
     </div>
   );
 }

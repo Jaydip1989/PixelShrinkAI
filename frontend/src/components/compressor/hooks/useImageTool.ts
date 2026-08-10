@@ -1,34 +1,44 @@
 import {useRef, useState} from "preact/hooks";
-import type { CompressionSettings,ImageAsset} from "../../../types/image";
-import { loadImage } from "../../../utils/imageHelpers";
+
+import type {
+    CompressionSettings,
+    ImageAsset,
+    WorkspaceStep,
+} from "../../../types/image";
+
+import {loadImage} from "../../../utils/imageHelpers";
 import { validateImage } from "../../../utils/fileValidation";
 
-export function useCompressor() {
+export function useImageTool() {
+    const [step, setStep] = useState<WorkspaceStep>("upload");
     const [image, setImage] = useState<ImageAsset | null>(null);
-    const fileInputRef = useRef<HTMLInputElement>(null);
     const [error, setError] = useState("");
+
     const [settings, setSettings] = useState<CompressionSettings>({
-        quality:80,
+        quality: 80,
         outputFormat: "original",
     });
-    async function selectImage() {
+
+    const fileInputRef = useRef<HTMLInputElement>(null);
+
+    function selectImage() {
         fileInputRef.current?.click();
     }
 
-    async function handleFileChange(
-        event: Event
-    ){
-        const input = event.target as HTMLInputElement;
 
-        if(!input.files?.length) return;
+    async function handleFileChange(event: Event) {
+        const input = event.currentTarget as HTMLInputElement;
+        const file = input.files?.[0];
 
-        const file = input.files[0];
-        
+        if(!file) {
+            return;
+        }
+
         const validation = validateImage(file);
 
         if (!validation.valid) {
-            setImage(null)
-            setError(validation.message); 
+            setImage(null);
+            setError(validation.message);
             return;
         }
 
@@ -38,23 +48,24 @@ export function useCompressor() {
             const loadedImage = await loadImage(file);
 
             setImage(loadedImage);
-
+            setStep("preview");
             input.value = "";
         } catch {
-            setError("Failed to load image.");
+            setImage(null);
+            setError("Failed to load map");
         }
     }
 
     return {
+        step,
+        setStep,
         image,
         error,
-
         settings,
         setSettings,
-
         fileInputRef,
-
         selectImage,
         handleFileChange,
     };
 }
+

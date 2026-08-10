@@ -11,7 +11,8 @@ export default function ImagePreview ({
         <div
             className="
                 flex
-                h-[220px]
+                aspect-[16/9]
+                w-full
                 items-center
                 justify-center
                 overflow-hidden
@@ -30,7 +31,6 @@ export default function ImagePreview ({
                         No Preview
                     </span>
                 )}
-            </div>
+        </div>
     );          
-
 }
