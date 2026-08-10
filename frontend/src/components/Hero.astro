@@ -1,204 +1,200 @@
 ---
-import CompressorWorkspace from "./compressor/CompressorWorkspace.astro";
+import CompressorHero from "../components/compressor/CompressorHero";
 import HeroDecorations from "./homepage/HeroDecorations/HeroDecorations.astro";
 ---
-
-<section
-  class="
-    relative
-    overflow-hidden
-    bg-gradient-to-b
-    from-white
-    via-blue-50
-    to-white
-
-    pt-6
-    pb-16
-
-    md:pt-8
-    md:pb-16
-
-    lg:pt-10
-    lg:pb-18
-
-    xl:pt-10
-    xl:pb-18
-
-    dark:from-slate-950
-    dark:via-slate-900
-    dark:to-slate-950
-  "
->
+<section class="relative 
+              overflow-hidden 
+              bg-gradient-to-b 
+              from white via-blue-50 to-white pt-6
+              pb-16 
+              md:pb-16 lg:pt-10 lg:pb-18 xl:pt-10 xl:pb-18 
+              dark:from-slate-950 dark:via-slate-900 dark:to-slate-950
+  ">
   <HeroDecorations />
-
-  <div
-    class="
-      relative
-      z-10
-      mx-auto
-      max-w-7xl
-      pt-4     
-      px-6
-      grid
-      items-center
-
-      gap-12
-      lg:grid-cols-[1.08fr_0.92fr]
-
-      xl:gap-16
-    "
-  >
-    <!-- LEFT -->
-    <div class="max-w-[640px] pt-6 sm:pt-8 md:pt-2">
-      <!-- Badge -->
-      <div class="inline-flex items-center gap-3">
-        <span
-          class="inline-flex items-center rounded-full border border-blue-200 bg-blue-100 px-4 py-1 text-sm font-semibold text-blue-700"
-        >
-          🚀 Coming Soon
-        </span>
-
-        <span class="hidden text-sm text-slate-500 md:block dark:text-slate-400">
-          First tool launches soon!
-        </span>
-      </div>
-
-      <!-- Heading -->
-      <h1
-        class="
-          mt-4
-
-          max-w-[12ch]
-
-          text-2xl
-          font-semibold
-          tracking-[-0.03em]
-          leading-[1.04]
-
-          sm:text-[3.7rem]
-          xl:text-[4rem]
-
-          text-slate-900
-          dark:text-white
-        "
-      >
-        Powerful Image Tools.
-
-        <span
-          class="
-            mt-2
-            block
-            bg-gradient-to-r
-            from-blue-500
-            via-indigo-600
-            to-pink-500
-            bg-clip-text
-            text-transparent
-          "
-        >
-          Fast. Private. Free.
-        </span>
-      </h1>
-
-      <!-- Description -->
-      <p
-        class="
-          mt-7
-          max-w-[580px]
-          text-lg
-          leading-8
-          text-slate-600
-          dark:text-slate-300
-        "
-      >
-        PixelShrinkAI is building a modern collection of online image tools to
-        help you compress, resize, crop, convert and optimize images directly in
-        your browser—with speed, privacy and simplicity.
-      </p>
-
-      <!-- CTA -->
-      <div class="mt-10 flex flex-col gap-4 sm:flex-row">
-        <a
-          href="#notify"
-          class="
-            inline-flex
-            items-center
-            justify-center
-            rounded-2xl
-            bg-gradient-to-r
-            from-blue-600
-            to-indigo-600
-            px-8
-            py-4
+    <div id="hero-layout" 
+        data-tool-state="upload" 
+        class = "
+          relative
+          z-10
+          mx-auto
+          max-w-7xl
+          pt-4
+          px-6
+          grid
+          items-start
+          gap-12
+          lg:grid-cols-[1.08fr_0.92fr]
+          xl:gap-16
+        ">
+      <!-- LEFT MARKETING CONTENT -->
+      <div id="hero-marketing" class="max-w-[640px] pt-1 sm:pt-8 md:pt-2">
+        <div class="inline-flex items-center gap-3">
+          <span
+            class="
+              inline-flex
+              items-center
+              rounded-full
+              border
+              border-blue-200
+              bg-blue-100
+              px-4 py-1
+              text-sm
+              font-semibold
+              text-blue-700
+            "
+          >
+            🚀 Coming Soon
+          </span>
+          <span class="hidden text-sm text-slate-500 md:block dark:text-slate-400">
+            First tool launches soon!
+          </span>
+          <h1 class="
+            mt-4
+            max-w-[12ch]
+            text-2xl
             font-semibold
-            text-white
-            shadow-lg
-            transition-all
-            duration-300
-            hover:-translate-y-1
-            hover:shadow-xl
-          "
-        >
-          Notify Me
-        </a>
-
-        <a
-          href="#tools"
-          class="
-            inline-flex
-            items-center
-            justify-center
-            rounded-2xl
-            border
-            border-slate-300
-            bg-white
-            px-8
-            py-4
-            font-semibold
-            text-slate-700
-            transition-all
-            duration-300
-            hover:border-blue-600
-            hover:text-blue-600
-
-            dark:border-slate-700
-            dark:bg-slate-900
+            tracking-[0.03em]
+            leading-[1.04]
+            sm:text-[3.7em]
+            xl:text-[4rem]
+            text-slate-900
             dark:text-white
-          "
-        >
-          View Upcoming Tools
-        </a>
-      </div>
+          ">
+            Powerful Image Tools.
+            <span
+              class="
+                mt-2
+                block
+                bg-gradient-to-r
+                from-blue-500
+                via-indigo-600
+                to-pink-500
+                bg-clip-text
+                text-transparent
+              "
+            >
+              Fast. Private. Free.
+            </span>
+          </h1>
 
-      <!-- Trust -->
-      <div
-        class="
-          mt-8
-          flex
-          items-center
-          gap-3
-          text-sm
-          text-slate-500
-          dark:text-slate-400
-        "
-      >
-        <span class="h-2.5 w-2.5 rounded-full bg-green-500"></span>
+          <p class="mt-7 max-w-[580px] text-lg leading-8 text-slate-600 dark:text-slate-300">
+              PixelShrinkAI is building a modern collection of online image tool to
+              help you compress, resize, crop, convert and optimize images directly in
+              your browser-with speed, privacy and simplicity
+          </p>
+          <div class="mt-10 flex flex-col gap-4 sm:flex-row">
+            <a
+                href="#notify"
+                class="
+                  inline-flex
+                  items-center
+                  justify-center
+                  rounded-2xl
+                  border
+                  border-slate-300
+                  bg-white
+                  px-8 py-4
+                  font-semibold text-slate-700
+                  transition-all
+                  duration-300
+                  hover:border-blue-600
+                  hover:text-blue-600
+                  dark:border-slate-700
+                  dark:bg-slate-900
+                  dark:text-white
+                "
+            >
+              Notify Me
+            </a>
+            <a
+              href="#tools"
+              class="
+                inline-flex
+                items-center
+                justify-center
+                rounded-2xl
+                border
+                border-slate-300
+                bg-white
+                px-8 py-4
+                font-semibold
+                text-slate-700
+                transition-all
+                duration-300
+                hover:border-blue-600
+                hover:text-blue-600
+                dark:border-slate-700
+                dark:bg-slate-900
+                dark:text-white
+              "
+            >
+              View Upcoming Tools
+            </a>
+          </div>
 
-        <span>No sign up required. 100% Free to use.</span>
+          <div class="
+            mt-8
+            flex
+            items-center
+            gap-3
+            text-sm
+            text-slate-500
+            dark:text-slate-400
+          ">
+            <span class="h-2.5 w-2.5 rounded-full bg-green-500"></span>
+            <span>No sign up required. 100% Free to use</span>
+          </div>
       </div>
     </div>
-
-    <!-- RIGHT -->
-    <div
+    <!-- TOOL WORKSPACE -->
+    <div id="hero-workspace"
       class="
-        flex
-        justify-center
-
-        lg:justify-end
-        lg:pt-2
+        flex justify-center lg:justify-end lg:pt-2
       "
     >
-      <CompressorWorkspace />
+      <CompressorHero client:load />
     </div>
+
+  
   </div>
 </section>
+<script>
+
+
+  const heroLayout = document.getElementById("hero-layout");
+  const heroMarketing = document.getElementById("hero-marketing");
+  const heroWorkspace = document.getElementById("hero-workspace");
+
+  function updateHeroLayout(event: Event) {
+    const customEvent = event as CustomEvent<{
+      step: "upload" | "preview" | "processing" | "download";
+    }>;
+
+    const step = customEvent.detail.step;
+    const toolIsActive = step !=="upload";
+
+    if(!heroLayout || !heroMarketing || !heroWorkspace) {
+      return;
+    }
+    
+    heroLayout.dataset.toolState = step;
+
+    heroMarketing.classList.toggle("hidden", toolIsActive);
+
+    heroLayout.classList.toggle("max-w-7xl", !toolIsActive);
+    heroLayout.classList.toggle("max-w-none", toolIsActive);
+    heroLayout.classList.toggle("lg:grid-cols-[1.08fr_0.92fr]", !toolIsActive);
+    heroLayout.classList.toggle("grid-cols-1", toolIsActive);
+    heroLayout.classList.toggle("gap-12", !toolIsActive);
+    heroLayout.classList.toggle("gap-0", toolIsActive);
+
+    heroWorkspace.classList.toggle("justify-center", !toolIsActive);
+    heroWorkspace.classList.toggle("lg:justify-end", !toolIsActive);
+    heroWorkspace.classList.toggle("justify-stretch", toolIsActive);
+    heroWorkspace.classList.toggle("w-full", toolIsActive);
+    heroWorkspace.classList.toggle("lg:pt-2", !toolIsActive);
+    heroWorkspace.classList.toggle("pt-0", toolIsActive);
+  }
+
+  window.addEventListener("pixelshrinkai:tool-state", updateHeroLayout);
+</script>
