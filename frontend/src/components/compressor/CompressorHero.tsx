@@ -1,4 +1,4 @@
-import { useEffect } from "preact/hooks";
+import { useLayoutEffect } from "preact/hooks";
 import { useImageTool } from "./hooks/useImageTool";
 import WorkspaceBody from "./WorkspaceBody";
 
@@ -14,7 +14,7 @@ export default function CompressorHero() {
     fileInputRef,
   } = useImageTool();
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     window.dispatchEvent(
       new CustomEvent("pixelshrinkai:tool-state", {
         detail: { step },

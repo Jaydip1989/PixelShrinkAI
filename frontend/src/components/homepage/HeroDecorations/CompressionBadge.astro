@@ -6,25 +6,7 @@ interface Props {
 const { percentage = 87 } = Astro.props;
 ---
 
-<div class="absolute 
-            right-[6px] 
-            top-[135px] 
-            z-40 hidden 
-            -rotate-6 
-            rounded-[26px] 
-            bg-gradient-to-br 
-            from-indigo-500 
-            via-purple-500 
-            to-blue-500 
-            px-5 
-            py-3 
-            text-center
-            text-white 
-            shadow-[0_28px_60px_rgba(99,102,241,0.35)] 
-            backdrop-blur-sm 
-            lg:block
-        "
->
+<div class="absolute right-[28px] top-[145px] z-40 hidden -rotate-6 rounded-[26px] bg-gradient-to-br from-indigo-500 via-purple-500 to-blue-500 px-5 py-3 text-center text-white shadow-[0_28px_60px_rgba(99,102,241,0.35)] backdrop-blur-sm lg:block">
   <div class="text-xl font-extrabold leading-none">
     -{percentage}%
   </div>
