@@ -5,13 +5,17 @@ import WorkspaceBody from "./WorkspaceBody";
 export default function CompressorHero() {
   const {
     step,
+    setStep,
     image,
+    compressedImage,
     error,
     settings,
     setSettings,
+    isCompressing,
+    fileInputRef,
     selectImage,
     handleFileChange,
-    fileInputRef,
+    compressImage
   } = useImageTool();
 
   useLayoutEffect(() => {
@@ -28,11 +32,13 @@ export default function CompressorHero() {
       <WorkspaceBody
         step={step}
         image={image}
+        compressedImage = {compressedImage}
         error={error}
         settings={settings}
         setSettings={setSettings}
         selectImage={selectImage}
         handleFileChange={handleFileChange}
+        compressImage = {compressImage}
       />
 
       <input

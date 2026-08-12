@@ -6,13 +6,20 @@ import type {
     WorkspaceStep,
 } from "../../../types/image";
 
-import {loadImage} from "../../../utils/imageHelpers";
+import {
+    compressImage as createCompressedImage,
+    loadImage
+} from "../../../utils/imageHelpers";
+
 import { validateImage } from "../../../utils/fileValidation";
 
 export function useImageTool() {
     const [step, setStep] = useState<WorkspaceStep>("upload");
     const [image, setImage] = useState<ImageAsset | null>(null);
+    const [compressedImage, setCompressedImage] = useState<ImageAsset | null>(null);
+
     const [error, setError] = useState("");
+    const [isCompressing, setIsCompressing] = useState(false);
 
     const [settings, setSettings] = useState<CompressionSettings>({
         quality: 80,
@@ -43,6 +50,7 @@ export function useImageTool() {
         }
 
         setError("");
+        setCompressedImage(null);
 
         try {
             const loadedImage = await loadImage(file);
@@ -52,20 +60,56 @@ export function useImageTool() {
             input.value = "";
         } catch {
             setImage(null);
+            setCompressedImage(null);
             setError("Failed to load map");
         }
     }
+    async function compressImage(){
+        if (!image || isCompressing) {
+            return;
+        }
+        setError("");
+        setIsCompressing(true);
+        setStep("processing");
 
+        try {
+            const compressedFile = await createCompressedImage(
+                image.file,
+                settings,
+            );
+
+            const compressedAsset = await loadImage(compressedFile);
+
+            setCompressedImage(compressedAsset);
+            setStep("download");
+        }catch{
+            setError("Failed to compress image.");
+            setStep("preview");
+        }finally {
+            setIsCompressing(false);
+        }
+    }
+    function selectAnotherImage() {
+    setImage(null);
+    setError("");
+    setStep("upload");
+
+    fileInputRef.current?.click();
+}
     return {
         step,
         setStep,
         image,
+        compressedImage,
         error,
         settings,
         setSettings,
+        isCompressing,
         fileInputRef,
         selectImage,
+        selectAnotherImage,
         handleFileChange,
+        compressImage
     };
 }
 

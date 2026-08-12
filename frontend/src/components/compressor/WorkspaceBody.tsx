@@ -7,23 +7,27 @@ import DownloadView from "./views/DownloadView";
 interface WorkspaceBodyProps {
   step: "upload" | "preview" | "processing" | "download";
   image: ImageAsset | null;
+  compressedImage: ImageAsset | null;
   error: string;
   settings: Parameters<typeof PreviewView>[0]["settings"];
   setSettings: Parameters<typeof PreviewView>[0]["setSettings"];
   
   selectImage: () => void;
   handleFileChange: (event: Event) => void;
+  compressImage: () => Promise<void>;
 }
 
 export default function WorkspaceBody({
   step,
   image,
+  compressedImage,
   error,
   settings,
   setSettings,
   
   selectImage,
   handleFileChange,
+  compressImage,
 }: WorkspaceBodyProps) {
   function renderView() {
     switch (step) {
@@ -37,8 +41,11 @@ export default function WorkspaceBody({
         return image ? (
           <PreviewView
             image={image}
+            compressedImage = {compressedImage}
             settings={settings}
             setSettings={setSettings}
+            onSelectAnother = {selectImage}
+            onCompress={compressImage}
           />
         ) : (
           <UploadView
@@ -52,7 +59,19 @@ export default function WorkspaceBody({
         return <ProcessingView />;
 
       case "download":
-        return <DownloadView />;
+        return image && compressedImage ? (
+          <DownloadView 
+            image = {image}
+            compressedImage={compressedImage}
+            onSelectAnother={selectImage}
+          />
+        ):(
+          <UploadView 
+            image = {image}
+            error = {error}
+            onSelectImage={selectImage}
+          />
+        );
 
       default:
         return (

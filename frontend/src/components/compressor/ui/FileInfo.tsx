@@ -10,7 +10,7 @@ export default function FileInfo({
 }: FileInfoProps) {
     if (!image) return null;
     return (
-        <div className = "mt-4 rounded-2xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-700 dark:bg-slate-900">
+        <div className = "mt-2 rounded-2xl border border-slate-200 bg-slate-50 p-3 dark:border-slate-700 dark:bg-slate-900">
             <h3 className="mb-4 text-base font-semibold text-slate-900 dark:text-white">
                 File Information
             </h3>

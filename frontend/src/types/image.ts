@@ -24,6 +24,7 @@ export type WorkspaceStep =
 export type OutputFormat = 
     | "original"
     | "jpeg"
+    | "png"
     | "webp";
 
 export interface CompressionSettings {
