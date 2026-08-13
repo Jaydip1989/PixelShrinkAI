@@ -1,4 +1,6 @@
 import type { CompressionSettings, ImageAsset } from "../types/image";
+import { optimise } from "@jsquash/oxipng";
+import { encode } from "@jsquash/webp";
 
 export async function loadImage(file: File): Promise<ImageAsset> {
     const {width, height} = await getImageDimensions(file);
@@ -62,47 +64,362 @@ export async function compressImage(
 ): Promise<File> {
     const image = await loadImageElement(file);
 
-    const canvas = document.createElement("canvas");
-    const context = canvas.getContext("2d");
+    try {
+        const canvas = document.createElement("canvas");
+        const context = canvas.getContext("2d");
 
-    if (!context) {
+        if (!context) {
+            throw new Error("Unable to create image processing canvas.");
+        }
+
+        canvas.width = image.width;
+        canvas.height = image.height;
+
+        context.drawImage(image, 0, 0);
+
+        const mimeType = getOutputMimeType(
+            file.type,
+            settings.outputFormat,
+        );
+        const imageData = 
+            mimeType === "image/webp"
+            ? context.getImageData(
+                0, 
+                0,
+                canvas.width,
+                canvas.height
+            ):null;
+        /*
+         * PNG gets a dedicated lossless optimizer
+         */
+        if (mimeType === "image/png"){
+            return await compressPng(
+                canvas, file, settings
+            )
+        }
+
+        /*
+         * JPEG and WebP use adaptive quality compression.
+         */
+        if (
+            mimeType === "image/jpeg" ||
+            mimeType === "image/webp"
+        ) {
+            return await compressWithQuality(
+                canvas,
+                file,
+                settings,
+                mimeType,
+                imageData
+            );
+        }
+
+        /*
+         * Fallback for any future format that reaches this path.
+         */
+        const blob = await canvasToBlob(
+            canvas,
+            mimeType,
+            settings.quality / 100,
+        );
+
+        return createOutputFile(
+            blob,
+            file.name,
+            settings.outputFormat,
+            mimeType,
+        );
+    } finally {
         image.close();
-        throw new Error("Unable to create image processing canvas.");
+    }
+}
+
+async function compressWithQuality(
+    canvas: HTMLCanvasElement,
+    file: File,
+    settings: CompressionSettings,
+    mimeType: string,
+    imageData: ImageData | null,
+): Promise<File> {
+    const requestedQuality = Math.min(
+        Math.max(settings.quality, 10),
+        100,
+    );
+
+    const isSameFormat = mimeType === file.type;
+
+    /*
+     * First attempt:
+     * use exactly the quality selected by the user.
+     */
+    let blob = await encodeOutput(
+        canvas,
+        imageData,
+        mimeType,
+        requestedQuality,
+    );
+
+    console.log(
+        `[PixelShrinkAI] ${mimeType} quality=${requestedQuality}% → ${blob.size} bytes`,
+    );
+
+    /*
+     * If the result is already smaller than the
+     * original, use it immediately.
+     */
+    if (blob.size < file.size) {
+        return createOutputFile(
+            blob,
+            file.name,
+            settings.outputFormat,
+            mimeType,
+        );
     }
 
-    canvas.width = image.width;
-    canvas.height = image.height;
+    /*
+     * The requested quality did not produce a smaller
+     * result.
+     *
+     * Search for the highest quality that DOES.
+     */
+    let low = 30;
+    let high = requestedQuality - 1;
 
-    context.drawImage(image, 0, 0);
+    let bestBlob: Blob | null = null;
+    let bestQuality = 0;
 
-    const mimeType = getOutputMimeType(
-        file.type,
-        settings.outputFormat,
-    );
+    while (low <= high) {
+        const quality = Math.floor(
+            (low + high) / 2,
+        );
 
-    const quality =
-        settings.outputFormat === "png"
-            ? undefined
-            : settings.quality / 100;
+        blob = await encodeOutput(
+            canvas,
+            imageData,
+            mimeType,
+            quality,
+        );
 
-    const blob = await canvasToBlob(
+        console.log(
+            `[PixelShrinkAI] ${mimeType} quality=${quality}% → ${blob.size} bytes`,
+        );
+
+        if (blob.size < file.size) {
+            /*
+             * This quality produces a smaller file.
+             * Try a higher quality.
+             */
+            bestBlob = blob;
+            bestQuality = quality;
+            low = quality + 1;
+        } else {
+            /*
+             * Still too large.
+             * Try a lower quality.
+             */
+            high = quality - 1;
+        }
+    }
+
+    /*
+     * We found the highest quality that produces
+     * a smaller file.
+     */
+    if (bestBlob) {
+        console.log(
+            `[PixelShrinkAI] Selected quality=${bestQuality}%`,
+        );
+
+        return createOutputFile(
+            bestBlob,
+            file.name,
+            settings.outputFormat,
+            mimeType,
+        );
+    }
+
+    /*
+     * Same-format compression:
+     * if nothing produced a smaller result, preserve
+     * the original file.
+     */
+    if (isSameFormat) {
+        console.log(
+            "[PixelShrinkAI] No smaller result found. Keeping original.",
+        );
+
+        return file;
+    }
+
+    /*
+     * Cross-format conversion:
+     *
+     * The user explicitly requested another format.
+     * If no quality produced a smaller file,
+     * perform the requested conversion at the
+     * selected quality.
+     */
+    blob = await encodeOutput(
         canvas,
+        imageData,
         mimeType,
-        quality,
+        requestedQuality,
     );
 
-    image.close();
+    console.log(
+        `[PixelShrinkAI] Conversion retained at requested quality=${requestedQuality}%`,
+    );
 
-    const outputName = getOutputFileName(
+    return createOutputFile(
+        blob,
         file.name,
         settings.outputFormat,
         mimeType,
     );
+}
 
-    return new File([blob], outputName, {
-        type: mimeType,
-        lastModified: Date.now(),
+async function encodeWebP(
+    imageData: ImageData,
+    quality: number,
+): Promise<Blob> {
+    const encoded = await encode(imageData, {
+        quality,
     });
+
+    return new Blob([encoded], {
+        type: "image/webp",
+    });
+}
+
+async function encodeOutput(
+    canvas: HTMLCanvasElement,
+    imageData: ImageData | null,
+    mimeType: string,
+    quality:number,
+):Promise<Blob> {
+    if (mimeType === "image/webp"){
+        if(!imageData) {
+            throw new Error (
+                "WebP compression requires image data."
+            )
+        }
+        return encodeWebP(
+            imageData, 
+            quality,
+        );
+    }
+    return canvasToBlob(
+        canvas,
+        mimeType,
+        quality / 100
+    );
+}
+
+
+
+async function compressPng(
+    canvas: HTMLCanvasElement,
+    file: File,
+    settings: CompressionSettings,
+): Promise<File> {
+    const pngBuffer = await canvasToPngBuffer(canvas);
+
+    /* 
+    * Map the quality slider to optimization effort.
+    *
+    * This is NOT lossy quality yet.
+    * It controls how aggressively Oxipng searches
+    * for a smaller lossless representation.
+    * 
+    */
+   const level = pngOptimizationLevel(
+        settings.quality,
+   );
+
+   const optimizedBuffer = await optimise(
+        pngBuffer,
+        {
+            level,
+            interlace: false,
+            optimiseAlpha: true,
+        }
+   );
+   const blob = new Blob(
+        [optimizedBuffer],
+        {type: "image/png"},
+   );
+   /*
+   * Same-Format PNG Compression must never
+   * make the file larger. 
+   */
+   if (
+        file.type === "image/png" && 
+        blob.size >= file.size
+   ) {
+        return file;
+   }
+   return createOutputFile(
+    blob,
+    file.name,
+    settings.outputFormat,
+    "image/png",
+   );
+}
+
+function canvasToPngBuffer(
+    canvas:HTMLCanvasElement,
+): Promise<ArrayBuffer> {
+    return new Promise((resolve, reject) => {
+        canvas.toBlob(
+            async(blob) => {
+                if(!blob) {
+                    reject(
+                        new Error(
+                            "PNG encoding failed.",
+                        ),
+                    );
+                    return;
+                }
+                resolve (
+                    await blob.arrayBuffer(),
+                );
+            },
+            "image/png",
+        );
+    });
+}
+
+function pngOptimizationLevel(
+    quality: number,
+): number {
+    if(quality >= 90) return 1;
+    if(quality >= 75) return 2;
+    if(quality >= 60) return 3;
+    if(quality >= 40) return 4;
+    return 4;
+}
+
+
+function createOutputFile(
+    blob: Blob,
+    originalName: string,
+    outputFormat: CompressionSettings["outputFormat"],
+    mimeType: string,
+): File {
+    const outputName = getOutputFileName(
+        originalName,
+        outputFormat,
+        mimeType,
+    );
+
+    return new File(
+        [blob],
+        outputName,
+        {
+            type: mimeType,
+            lastModified: Date.now(),
+        },
+    );
 }
 
 function loadImageElement(file: File): Promise<ImageBitmap> {
@@ -133,6 +450,8 @@ function canvasToBlob(
         );
     });
 }
+
+
 
 function getOutputMimeType(
     originalType: string,
