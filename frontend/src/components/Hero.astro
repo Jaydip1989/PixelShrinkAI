@@ -8,10 +8,10 @@ import HeroDecorations from "./homepage/HeroDecorations/HeroDecorations.astro";
     <HeroDecorations />
   </div>
 
-  <div id="hero-layout" data-tool-state="upload" class="relative z-10 mx-auto max-w-7xl pt-4 px-6 grid items-start gap-12 lg:grid-cols-[1.08fr_0.92fr] xl:gap-16">
+  <div id="hero-layout" data-tool-state="upload" class="relative z-10 mx-auto max-w-7xl pt-1 px-6 grid items-start gap-12 lg:grid-cols-[1.08fr_0.92fr] xl:gap-16">
 
     <!-- LEFT MARKETING CONTENT -->
-    <div id="hero-marketing" class="max-w-[640px] pt-1 sm:pt-8 md:pt-2">
+    <div id="hero-marketing" class="max-w-[640px] pt-8 md:pt-6">
 
       <!-- Badge -->
       <div class="inline-flex items-center gap-3">
@@ -58,7 +58,10 @@ import HeroDecorations from "./homepage/HeroDecorations/HeroDecorations.astro";
     </div>
 
     <!-- TOOL WORKSPACE -->
-    <div id="hero-workspace" class="w-full max-w-[440px] rounded-[28px] lg:translate-x-12 lg:translate-y-6 lg:pt-2 border border-slate-200/70 bg-white/35 shadow-[0_20px_60px_rgba(37,99,235,0.08)] backdrop-blur-sm dark:border-white/10 dark:bg-slate-900/25 dark:shadow-[0_20px_60px_rgba(0,0,0,0.20)]">
+    <div id="hero-workspace" class="mx-auto w-full max-w-[440px] rounded-[28px] lg:mx-0 
+    lg:translate-x-12 lg:translate-y-6 lg:pt-4 border border-slate-200/70 bg-white/35 
+    shadow-[0_20px_60px_rgba(37,99,235,0.08)] backdrop-blur-sm dark:border-white/10 
+    dark:bg-slate-900/25 dark:shadow-[0_20px_60px_rgba(0,0,0,0.20)]">
       <CompressorHero client:load />
     </div>
 
@@ -123,7 +126,8 @@ import HeroDecorations from "./homepage/HeroDecorations/HeroDecorations.astro";
 
     /* Active workspace position */
     heroWorkspace.classList.toggle("lg:translate-x-18", toolIsActive);
-    heroWorkspace.classList.toggle("lg:translate-y-0", toolIsActive);
+    heroWorkspace.classList.toggle("mt-7", toolIsActive);
+    heroWorkspace.classList.toggle("mt-0", !toolIsActive);
   }
 
   window.addEventListener("pixelshrinkai:tool-state", updateHeroLayout);

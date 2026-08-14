@@ -58,78 +58,153 @@ export async function getImageDimensions(
     });
 }
 
+async function optimizePngFile(
+    file: File,
+    level: number,
+): Promise<File>{
+    const start = performance.now();
+
+    const inputBuffer = await file.arrayBuffer();
+
+    const optimizedBuffer = await optimise(
+        inputBuffer,
+        {
+            level,
+            interlace: false,
+        },
+    );
+    const elapsed = performance.now() - start;
+    console.log(
+        `[PixelShrinkAI] PNG level=${level}→`+
+        `${optimizedBuffer.byteLength}bytes`+
+        `(${Math.round(elapsed)}ms)`
+    );
+    if (optimizedBuffer.byteLength >= file.size) {
+        console.log(
+            "[PixelShrinkAI] PNG optimization did not reduce the file. Keeping original.",
+        );
+        return file;
+    }
+    const blob = new Blob (
+        [optimizedBuffer],
+        {type: "image/png"},
+    );
+    return new File(
+        [blob],
+        file.name,
+        {
+            type:"image/png",
+            lastModified: Date.now(),
+        }
+    );
+}
+
 export async function compressImage(
     file: File,
-    settings: CompressionSettings,
-): Promise<File> {
+    settings: CompressionSettings
+): Promise<File>{
+    const mimeType = getOutputMimeType(
+        file.type,
+        settings.outputFormat,
+    );
+    /*
+    *
+    * PNG + PNG
+    * 
+    * Use the original PNG bytes directly
+    * Do NOT decode the image or create a canvas
+    * 
+    * This is both faster and more appropriate for
+    * Lossless PNG optimization
+    */
+    if (
+        file.type === "image/png" &&
+        mimeType === "image/png"
+    ) {
+        return await optimizePngFile(file, 1);
+    }
+    /*
+    *
+    * All other operations require the image to be decoded into a canvas
+    */
     const image = await loadImageElement(file);
-
     try {
         const canvas = document.createElement("canvas");
         const context = canvas.getContext("2d");
 
-        if (!context) {
-            throw new Error("Unable to create image processing canvas.");
+        if (!context){
+            throw new Error(
+                "Unable to create image processing canvas.",
+            );
         }
-
         canvas.width = image.width;
         canvas.height = image.height;
 
         context.drawImage(image, 0, 0);
 
-        const mimeType = getOutputMimeType(
-            file.type,
-            settings.outputFormat,
-        );
         const imageData = 
-            mimeType === "image/webp"
-            ? context.getImageData(
-                0, 
-                0,
-                canvas.width,
-                canvas.height
-            ):null;
+            mimeType === "image/webp"||
+            mimeType === "image/png"
+                ? context.getImageData(
+                    0,
+                    0,
+                    canvas.width,
+                    canvas.height,
+                )
+                :null;
         /*
-         * PNG gets a dedicated lossless optimizer
-         */
+        * PNG output from another format
+        *
+        * Example:
+        * JPEG -> PNG
+        * WBEP -> PNG
+        * 
+        * These still need ImageData because the source
+        * is not an original PNG byte stream
+        */
         if (mimeType === "image/png"){
+            if(!imageData) {
+                throw new Error(
+                    "PNG compression requires image data."
+                );
+            }
             return await compressPng(
-                canvas, file, settings
-            )
+                imageData,
+                file,
+                settings,
+            );
         }
-
         /*
-         * JPEG and WebP use adaptive quality compression.
-         */
-        if (
-            mimeType === "image/jpeg" ||
+        * JPEG and WebP use adaptive quality compression
+        */
+       if (
+            mimeType === "image/jpeg"||
             mimeType === "image/webp"
-        ) {
+       ){
             return await compressWithQuality(
                 canvas,
                 file,
                 settings,
                 mimeType,
-                imageData
+                imageData,
             );
-        }
-
-        /*
-         * Fallback for any future format that reaches this path.
-         */
-        const blob = await canvasToBlob(
+       }
+       /*
+       * Fallback for any future format that reaches
+       * this path.
+       */
+       const blob = await canvasToBlob(
             canvas,
             mimeType,
-            settings.quality / 100,
-        );
-
-        return createOutputFile(
+            settings.quality / 100
+       );
+       return createOutputFile(
             blob,
             file.name,
             settings.outputFormat,
-            mimeType,
-        );
-    } finally {
+            mimeType
+       );
+    }finally {
         image.close();
     }
 }
@@ -315,78 +390,59 @@ async function encodeOutput(
     );
 }
 
-
-
 async function compressPng(
-    canvas: HTMLCanvasElement,
+    imageData: ImageData,
     file: File,
     settings: CompressionSettings,
-): Promise<File> {
-    const pngBuffer = await canvasToPngBuffer(canvas);
-
-    /* 
-    * Map the quality slider to optimization effort.
+): Promise<File>{
+    /*
+    * Map the quality slider to OxiPNG's optimization level
     *
-    * This is NOT lossy quality yet.
-    * It controls how aggressively Oxipng searches
-    * for a smaller lossless representation.
-    * 
+    * This is NOT lossy image quality
+    * OxiPNG is a lossless PNG optimizer
     */
-   const level = pngOptimizationLevel(
+    const level = pngOptimizationLevel(
         settings.quality,
-   );
-
-   const optimizedBuffer = await optimise(
-        pngBuffer,
+    );
+    
+    const startTime = performance.now();
+    const optimizedBuffer = await optimise(
+        imageData,
         {
             level,
             interlace: false,
             optimiseAlpha: true,
-        }
-   );
-   const blob = new Blob(
-        [optimizedBuffer],
-        {type: "image/png"},
-   );
-   /*
-   * Same-Format PNG Compression must never
-   * make the file larger. 
-   */
-   if (
-        file.type === "image/png" && 
-        blob.size >= file.size
-   ) {
-        return file;
-   }
-   return createOutputFile(
-    blob,
-    file.name,
-    settings.outputFormat,
-    "image/png",
-   );
-}
+        },
+    );
+    const processingTime = performance.now() - startTime;
 
-function canvasToPngBuffer(
-    canvas:HTMLCanvasElement,
-): Promise<ArrayBuffer> {
-    return new Promise((resolve, reject) => {
-        canvas.toBlob(
-            async(blob) => {
-                if(!blob) {
-                    reject(
-                        new Error(
-                            "PNG encoding failed.",
-                        ),
-                    );
-                    return;
-                }
-                resolve (
-                    await blob.arrayBuffer(),
-                );
-            },
-            "image/png",
+    const blob = new Blob(
+        [optimizedBuffer],
+        {
+            type: "image/png",
+        },
+    );
+    console.log(
+        `[PixelShrinkAI] PNG level =${level} → ${blob.size} bytes (${processingTime.toFixed(0)}ms)`,
+    );
+    /*
+    * Same-format PNG Compression must never
+    * make the file larger.
+    */
+    if(
+        file.type === "image/png" && blob.size >= file.size
+    ){
+        console.log(
+            "[PixelShrinkAI] PNG optimization did not reduce the file. Keep Original.",
         );
-    });
+        return file;
+    }
+    return createOutputFile(
+        blob,
+        file.name,
+        settings.outputFormat,
+        "image/png"
+    );
 }
 
 function pngOptimizationLevel(
@@ -398,6 +454,7 @@ function pngOptimizationLevel(
     if(quality >= 40) return 4;
     return 4;
 }
+
 
 
 function createOutputFile(
@@ -450,8 +507,6 @@ function canvasToBlob(
         );
     });
 }
-
-
 
 function getOutputMimeType(
     originalType: string,

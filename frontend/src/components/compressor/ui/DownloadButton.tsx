@@ -21,6 +21,7 @@ export default function DownloadButton({
     return (
         <button
             type="button"
+            onClick = {handleDownload}
             className="
                 flex-1
                 rounded-xl
