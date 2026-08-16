@@ -10,12 +10,12 @@
     compressedSize
  }: CompressionStatsProps){
     const savedBytes = Math.max(originalSize - compressedSize, 0);
-    const savedPercentage = 
+    const savedPercentage =  
             originalSize > 0
                 ? Math.max((savedBytes / originalSize) * 100, 0)
                 :0;
     return (
-        <div className="grid grid-cols-3 gap-3 sm:p-6">
+        <div className="grid grid-cols-3 gap-3">
             <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-700 dark:bg-slate-900">
                 <p className="text-[9px] uppercase tracking-wide text-slate-500 sm:text-[11px]">
                     Original

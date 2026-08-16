@@ -2,6 +2,7 @@ import type { CompressionSettings, ImageAsset } from "../types/image";
 import { optimise } from "@jsquash/oxipng";
 import { encode } from "@jsquash/webp";
 
+
 export async function loadImage(file: File): Promise<ImageAsset> {
     const {width, height} = await getImageDimensions(file);
 
@@ -390,59 +391,335 @@ async function encodeOutput(
     );
 }
 
-async function compressPng(
+async function convertWebpToPng(
     imageData: ImageData,
     file: File,
     settings: CompressionSettings,
-): Promise<File>{
-    /*
-    * Map the quality slider to OxiPNG's optimization level
-    *
-    * This is NOT lossy image quality
-    * OxiPNG is a lossless PNG optimizer
-    */
-    const level = pngOptimizationLevel(
-        settings.quality,
-    );
+): Promise<File> {
+    const upngModule = await import("@upng/upng-js");
+    const UPNG =
+        upngModule.default ??
+        upngModule;
     
-    const startTime = performance.now();
-    const optimizedBuffer = await optimise(
-        imageData,
-        {
-            level,
-            interlace: false,
-            optimiseAlpha: true,
-        },
+    console.log(
+        `[PixelShrinkAI] WebP -> PNG input: `+
+        `${imageData.width} x ${imageData.height}`,
     );
-    const processingTime = performance.now() - startTime;
+    /*
+     * Start from the user's selected quality.
+    */
+    
+    const startingColorCount = pngColorCount(
+        settings.quality,
+        imageData.width,
+        imageData.height,
+    );
 
+    const colorCounts = [
+        startingColorCount,
+        64,
+        56,
+        48,
+        40,
+        32,
+        28,
+        24,
+        16
+    ]
+        .filter((count) => count <= startingColorCount && count >= 16)
+        .filter((count, index, array) => array.indexOf(count) === index);
+
+
+    let bestBuffer: ArrayBuffer | null= null;
+    let bestColorCount = startingColorCount;
+    let bestSize = Infinity;
+
+    const startTime = performance.now();
+    for (const colorCount of colorCounts) {
+        
+        const pngBuffer = UPNG.encode(
+            [imageData.data.buffer],
+            imageData.width,
+            imageData.height,
+            colorCount,
+        );
+
+        console.log(
+            `[PixelShrinkAI] WebP -> PNG` +
+            `${colorCount} colors ->` +
+            `${pngBuffer.byteLength} bytes`,
+        );
+        /*
+        * Always record the smallest PNG produced.
+        */
+        if (pngBuffer.byteLength < bestSize) {
+            bestBuffer = pngBuffer;
+            bestColorCount = colorCount;
+            bestSize = pngBuffer.byteLength;
+        }
+
+        /*
+        * Stop immediately once the PNG is smaller
+        * than the original WebP.
+        */
+        if (pngBuffer.byteLength < file.size) {
+            break;
+        }
+    }
+    const elapsed = performance.now() - startTime;
+    /*
+    *
+    * We couldn't produce a PNG smaller than the original WebP.
+    */
+    
+    if (
+        !bestBuffer ||
+        bestSize >= file.size
+    ){
+        console.warn(
+            `[PixelShrinkAI] WebP -> PNG could not produce ` +
+            `a smaller PNG. Smallest result: ` +
+            `${bestSize} bytes, original: ${file.size} bytes`,
+        );
+        /*
+        * We deliberately do NOT return a larger PNG.
+        */
+        throw new Error(
+            "Unable to compress this WebP into a smaller PNG.",
+        );
+
+    }
     const blob = new Blob(
-        [optimizedBuffer],
+        [bestBuffer],
         {
             type: "image/png",
         },
     );
+
     console.log(
-        `[PixelShrinkAI] PNG level =${level} → ${blob.size} bytes (${processingTime.toFixed(0)}ms)`,
+        `[PixelShrinkAI] WebP -> PNG selected ` +
+        `${bestColorCount} colors -> ` +
+        `${blob.size} bytes ` +
+        `(${elapsed.toFixed(0)}ms)`,
     );
-    /*
-    * Same-format PNG Compression must never
-    * make the file larger.
-    */
-    if(
-        file.type === "image/png" && blob.size >= file.size
-    ){
-        console.log(
-            "[PixelShrinkAI] PNG optimization did not reduce the file. Keep Original.",
-        );
-        return file;
-    }
+
     return createOutputFile(
         blob,
         file.name,
         settings.outputFormat,
-        "image/png"
+        "image/png",
     );
+}
+
+async function compressPng(
+    imageData: ImageData,
+    file: File,
+    settings: CompressionSettings,
+): Promise<File> {
+    if (file.type === "image/webp") {
+        return await convertWebpToPng(
+            imageData,
+            file,
+            settings,
+        );
+    }
+
+    const upngModule = await import("@upng/upng-js");
+
+    const UPNG =
+        upngModule.default ??
+        upngModule;
+
+    const startingColorCount = pngColorCount(
+        settings.quality,
+        imageData.width,
+        imageData.height,
+    );
+
+    console.log(
+        `[PixelShrinkAI] UPNG input: ${imageData.width} × ${imageData.height}`,
+    );
+
+    /*
+     * Try progressively stronger color reduction.
+     *
+     * The first value comes from the user's quality
+     * setting. If that is not enough to make the PNG
+     * smaller, we progressively reduce the palette.
+     */
+    const colorCounts =
+        file.type === "image/webp"
+            ? [
+                startingColorCount,
+                64,
+                32,
+                16,
+            ]
+            : [
+                startingColorCount,
+                128,
+                64,
+                32,
+                16,
+                8,
+                4,
+                2,
+            ];
+
+    let bestBuffer: ArrayBuffer | null = null;
+    let bestColorCount = startingColorCount;
+    let bestSize = Infinity;
+
+    const startTime = performance.now();
+
+    for (const colorCount of colorCounts) {
+
+        /*
+         * Don't test a weaker compression level after
+         * starting with a stronger one.
+         */
+        if (colorCount > startingColorCount) {
+            continue;
+        }
+
+        const pngBuffer = UPNG.encode(
+            [imageData.data.buffer],
+            imageData.width,
+            imageData.height,
+            colorCount,
+        );
+
+        console.log(
+            `[PixelShrinkAI] UPNG colors=${colorCount} → ` +
+            `${pngBuffer.byteLength} bytes`,
+        );
+
+        /*
+         * Keep the smallest PNG we have produced.
+         */
+        if (pngBuffer.byteLength < bestSize) {
+            bestBuffer = pngBuffer;
+            bestColorCount = colorCount;
+            bestSize = pngBuffer.byteLength;
+        }
+
+        /*
+         * We have achieved the actual requirement:
+         * the PNG is smaller than the original.
+         */
+        if (pngBuffer.byteLength < file.size) {
+            break;
+        }
+    }
+
+    const upngTime = performance.now() - startTime;
+
+    if (!bestBuffer) {
+        throw new Error(
+            "PNG compression failed.",
+        );
+    }
+
+    console.log(
+        `[PixelShrinkAI] UPNG selected colors=${bestColorCount} → ` +
+        `${bestSize} bytes ` +
+        `(${upngTime.toFixed(0)}ms)`,
+    );
+
+    let finalBuffer: ArrayBuffer;
+
+    if (file.type === "image/png") {
+        /*
+        * Original PNG:
+        * UPNG performs the lossy compression.
+        * OxiPNG performs additional lossless optimization.
+        */
+        const level = pngOptimizationLevel(
+            settings.quality,
+        );
+
+        const optimizedBuffer = await optimise(
+            bestBuffer,
+            {
+                level,
+                interlace: false,
+                optimiseAlpha: true,
+            },
+        );
+
+        finalBuffer =
+            optimizedBuffer.byteLength < bestBuffer.byteLength
+                ? optimizedBuffer
+                : bestBuffer;
+
+        console.log(
+            `[PixelShrinkAI] PNG final selection: ` +
+            `${finalBuffer.byteLength} bytes ` +
+            `(UPNG=${bestBuffer.byteLength}, OxiPNG=${optimizedBuffer.byteLength})`,
+        );
+    } else {
+        /*
+        * JPEG/WebP → PNG:
+        *
+        * UPNG has already performed lossy compression.
+        * Do NOT run OxiPNG here because it can expand the
+        * palette PNG dramatically.
+        */
+        finalBuffer = bestBuffer;
+
+        console.log(
+            `[PixelShrinkAI] ${file.type} → PNG using UPNG result: ` +
+            `${finalBuffer.byteLength} bytes`,
+        );
+    }
+
+    const blob = new Blob(
+        [finalBuffer],
+        {
+            type: "image/png",
+        },
+    );
+
+    console.log(
+        `[PixelShrinkAI] Final PNG → ${blob.size} bytes`,
+    );
+    return createOutputFile(
+        blob,
+        file.name,
+        settings.outputFormat,
+        "image/png",
+    );
+}
+
+function pngColorCount(
+    quality: number,
+    width: number,
+    height: number,
+): number {
+    const pixels = width * height;
+
+    if (pixels >= 20_000_000) {
+        if (quality >= 90) return 64;
+        if (quality >= 75) return 32;
+        if (quality >= 60) return 16;
+        if (quality >= 40) return 8;
+        return 4;
+    }
+
+    if (pixels >= 5_000_000) {
+        if (quality >= 90) return 128;
+        if (quality >= 75) return 64;
+        if (quality >= 60) return 32;
+        if (quality >= 40) return 16;
+        return 8;
+    }
+
+    if (quality >= 90) return 256;
+    if (quality >= 75) return 64;
+    if (quality >= 60) return 32;
+    if (quality >= 40) return 16;
+
+    return 8;
 }
 
 function pngOptimizationLevel(
@@ -454,8 +731,6 @@ function pngOptimizationLevel(
     if(quality >= 40) return 4;
     return 4;
 }
-
-
 
 function createOutputFile(
     blob: Blob,

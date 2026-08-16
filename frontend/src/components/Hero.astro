@@ -126,7 +126,11 @@ import HeroDecorations from "./homepage/HeroDecorations/HeroDecorations.astro";
 
     /* Active workspace position */
     heroWorkspace.classList.toggle("lg:translate-x-18", toolIsActive);
-    heroWorkspace.classList.toggle("mt-7", toolIsActive);
+
+    heroWorkspace.classList.toggle("mt-8", toolIsActive);
+    heroWorkspace.classList.toggle("sm:mt-5", toolIsActive);
+    heroWorkspace.classList.toggle("lg:mt-4", toolIsActive);
+
     heroWorkspace.classList.toggle("mt-0", !toolIsActive);
   }
 
