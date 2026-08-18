@@ -1,0 +1,15 @@
+# macOS
+.DS_Store
+
+# Python
+__pycache__/
+*.py[cod]
+
+# Python virtual environment
+frontend/python/.venv/
+
+# SVG conversion test outputs
+frontend/python/test_outputs/
+frontend/python/logo.svg
+frontend/python/logo-service.svg
+frontend/python/logo-api.svg
