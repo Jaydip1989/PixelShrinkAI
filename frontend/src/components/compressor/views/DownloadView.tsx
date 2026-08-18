@@ -15,7 +15,7 @@ export default function DownloadView({
     image,
     compressedImage,
     onSelectAnother,
-}: DownloadViewProps) {
+}: DownloadViewProps) { 
     return (
         <div className="mx-auto w-full max-w-[1000px] px-4 py-2">
             {/* Image comparison */}

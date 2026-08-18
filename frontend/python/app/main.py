@@ -1,5 +1,8 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import Response
+
+from app.services.vector_service import raster_to_svg
 
 app = FastAPI(
     title="PixelShrinkAI Python Engine",
@@ -24,3 +27,15 @@ def health_check():
         "status": "ok",
         "service": "PixelShrinkAI Python Engine",
     }
+
+@app.post("/api/convert/svg")
+async def convert_to_svg(file: UploadFile = File(...)):
+    image_bytes = await file.read()
+    svg = raster_to_svg(
+        image_bytes,
+        img_format = "png"
+    )
+    return Response(
+        content=svg,
+        media_type="image/svg+xml"
+    )
