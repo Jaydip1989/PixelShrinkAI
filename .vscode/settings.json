@@ -1,3 +1,17 @@
 {
-    "python.defaultInterpreterPath": "${workspaceFolder}/frontend/python/.venv/bin/python3"
+    "python.defaultInterpreterPath": "${workspaceFolder}/frontend/python/.venv/bin/python3",
+    "workbench.colorCustomizations": {
+        "editor.lineHighlightBorder": "#C792EA20",
+        "editorCursor.foreground": "#C792EA",
+        "tab.activeBorder": "#C792EA",
+        "tab.activeBorderTop": "#C792EA",
+        "tab.activeBackground": "#1D1629",
+        "tab.activeForeground": "#D8A7FF",
+        "statusBar.background": "#1D1629",
+        "statusBar.foreground": "#C792EA",
+        "editorIndentGuide.activeBackground1": "#C792EA28",
+        "editor.selectionBackground": "#C792EA22",
+        "editorBracketHighlight.foreground1": "#C792EA",
+        "editorBracketHighlight.foreground2": "#D8A7FF"
+    }
 }
