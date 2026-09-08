@@ -1,7 +1,7 @@
 from pathlib import Path
 from tempfile import NamedTemporaryFile
 
-from fastapi import FastAPI, File, UploadFile
+from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import Response
 
@@ -12,6 +12,11 @@ from app.services.pdf_service import (
     webp_to_pdf,
 )
 from app.services.svg_service import convert_svg_to_pdf
+from app.services.avif_service import (
+    ConversionRejected,
+    convert_avif_to_image,
+    convert_image_to_avif,
+)
 
 
 app = FastAPI(
@@ -207,3 +212,125 @@ async def convert_svg_file_to_pdf(
 
         finally:
             temp_path.unlink(missing_ok=True)
+
+# -----------------------------------------------------------------
+# AVIF -> IMAGE
+# -----------------------------------------------------------------
+# Supports:
+#   - AVIF -> JPG
+#   - AVIF -> PNG
+#   - AVIF -> WEBP
+# -----------------------------------------------------------------
+
+@app.post("/api/convert/avif")
+async def convert_avif_file(
+    file: UploadFile = File(...),
+    target: str = Form(...),
+):
+    input_bytes = await file.read()
+
+    extension = Path(
+        file.filename or ""
+    ).suffix.lower().lstrip(".")
+
+    if extension != "avif":
+        raise HTTPException(
+            status_code=400,
+            detail="AVIF conversion requires an AVIF file.",
+        )
+
+    target = target.lower().lstrip(".")
+
+    if target not in {"jpg", "jpeg", "png", "webp"}:
+        raise HTTPException(
+            status_code=400,
+            detail="Unsupported target format. "
+                   "Supported formats: JPG, PNG, WEBP.",
+        )
+
+    try:
+        output_bytes = convert_avif_to_image(
+            input_bytes,
+            output_format=target,
+        )
+    except ConversionRejected as exc:
+        raise HTTPException(
+            status_code=422,
+            detail=str(exc),
+        ) from exc
+    except (ValueError, OSError) as exc:
+        raise HTTPException(
+            status_code=400,
+            detail=str(exc),
+        ) from exc
+
+    if target == "jpeg":
+        target = "jpg"
+
+    media_types = {
+        "jpg": "image/jpeg",
+        "png": "image/png",
+        "webp": "image/webp",
+    }
+
+    return Response(
+        content=output_bytes,
+        media_type=media_types[target],
+        headers={
+            "Content-Disposition": (
+                f"attachment; filename=converted.{target}"
+            )
+        },
+    )
+
+
+# -----------------------------------------------------------------
+# IMAGE -> AVIF
+# -----------------------------------------------------------------
+# Supports:
+#   - JPG -> AVIF
+#   - PNG -> AVIF
+#   - WEBP -> AVIF
+# -----------------------------------------------------------------
+
+@app.post("/api/convert/to-avif")
+async def convert_image_file_to_avif(
+    file: UploadFile = File(...),
+):
+    input_bytes = await file.read()
+
+    extension = Path(
+        file.filename or ""
+    ).suffix.lower().lstrip(".")
+
+    if extension not in {"jpg", "jpeg", "png", "webp"}:
+        raise HTTPException(
+            status_code=400,
+            detail="Unsupported input format. "
+                   "Supported formats: JPG, JPEG, PNG, WEBP.",
+        )
+
+    try:
+        output_bytes = convert_image_to_avif(
+            input_bytes,
+        )
+    except ConversionRejected as exc:
+        raise HTTPException(
+            status_code=422,
+            detail=str(exc),
+        ) from exc
+    except (ValueError, OSError) as exc:
+        raise HTTPException(
+            status_code=400,
+            detail=str(exc),
+        ) from exc
+
+    return Response(
+        content=output_bytes,
+        media_type="image/avif",
+        headers={
+            "Content-Disposition": (
+                "attachment; filename=converted.avif"
+            )
+        },
+    )
