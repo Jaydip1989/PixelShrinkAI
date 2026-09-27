@@ -1,9 +1,11 @@
-import type { ImageAsset } from "../../../types/image";
+import type { ImageAsset } from "../../types/image";
+
+
 
 interface UploadViewProps {
-    image: ImageAsset | null;
-    error: string
-    onSelectImage: () => void;
+  image: ImageAsset | null;
+  error: string;
+  onSelectImage: () => void;
 }
 
 export default function UploadView({
@@ -36,7 +38,7 @@ export default function UploadView({
                         items-center
                         justify-center
                         rounded-full
-                        bg-gradient-to-br
+                        bg-linear-to-br
                         from-blue-500
                         via-indigo-500
                         to-pink-500
@@ -90,23 +92,6 @@ export default function UploadView({
                 ))}
                 </div>
             </div>
-        
-            {/* File Information */}
-            <div
-                className ="
-                    border-b
-                    border-slate-200
-                    px-6
-                    py-3
-                    text-sm
-                    text-center
-                    text-slate-500
-                    dark:border-slate-700
-                    dark:text-slate-400
-                "
-            >
-                {image ? image.name: "No Image Selected"}
-            </div>
             
             {/* Button */}
             <div className="p-3">
@@ -116,7 +101,7 @@ export default function UploadView({
                     className="
                         w-full
                         rounded-2xl
-                        bg-gradient-to-r
+                        bg-linear-to-r
                         from-blue-600
                         via-indigo-500
                         to-pink-500

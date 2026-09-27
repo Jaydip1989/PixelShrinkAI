@@ -1,8 +1,20 @@
-import { useState } from "preact/hooks";
+import { useEffect, useState } from "preact/hooks";
 import ConversionSelector from "./ConversionSelector";
 
 export default function ConverterHero(){
     const [conversion, setConversion] = useState("Image -> SVG");
+
+    useEffect(() => {
+        window.dispatchEvent(
+            new CustomEvent("pixelshrinkai:workspace-state", {
+                detail: {
+                    active:true,
+                    tool: "converter",
+                    step: "upload",
+                },
+            }),
+        );
+    }, []);
 
     return (
         <div className="w-full">

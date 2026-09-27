@@ -1,6 +1,6 @@
 export default function ProcessingView() {
     return (
-        <div className="flex min-h-[420px] items-center justify-center">
+        <div className="flex min-h-105 items-center justify-center">
             <div className="text-center">
                 <p className="text-lg font-semibold text-slate-900 dark:text-white">
                     Processing...

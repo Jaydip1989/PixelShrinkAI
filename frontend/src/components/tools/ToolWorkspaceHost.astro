@@ -1,0 +1,52 @@
+---
+import CompressorWorkspace  from "../compressor/CompressorWorkspace.astro";
+import  ConverterWorkspace  from "../converter/ConverterWorkspace.astro";
+
+---
+
+<div id="tool-workspace-host">
+    <div data-tool-workspace="compressor" class="hidden">
+        <CompressorWorkspace />
+    </div>
+
+    <div data-tool-workspace="converter" class="hidden">
+        <ConverterWorkspace />
+    </div>
+</div>
+
+<script>
+    const host = document.getElementById("tool-workspace-host");
+
+    const workspaces = host
+        ? Array.from(
+            host?.querySelectorAll<HTMLElement>("[data-tool-workspace]"),
+        )
+    : [];
+
+    function showWorkspace(toolId: string) {
+        workspaces.forEach((workspace) => {
+            const isActive = workspace.dataset.toolWorkspace === toolId;
+
+            workspace.classList.toggle("hidden", !isActive);
+        });
+    }
+    window.addEventListener("pixelshrinkai:tool-activated", (event) => {
+        const customEvent = event as CustomEvent<{
+            tool: string;
+        }>;
+
+        const toolId = customEvent.detail.tool;
+
+        showWorkspace(toolId);
+
+        window.dispatchEvent(
+            new CustomEvent("pixelshrinkai:workspace-state",{
+                detail : {
+                    active:false,
+                    tool: toolId,
+                    step: "upload",
+                },
+            }),
+        );
+    });
+</script>

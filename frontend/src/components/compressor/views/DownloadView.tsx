@@ -1,9 +1,9 @@
 import type { ImageAsset } from "../../../types/image";
 
-import ImagePreview from "../ui/ImagePreview";
-import FileInfo from "../ui/FileInfo";
-import CompressionStats from "../ui/CompressionStats";
-import DownloadButton from "../ui/DownloadButton";
+import ImagePreview from "../../compressor/ui/ImagePreview";
+import FileInfo from "../../compressor/ui/FileInfo";
+import CompressionStats from "../../compressor/ui/CompressionStats";
+import DownloadButton from "../../compressor/ui/DownloadButton";
 
 interface DownloadViewProps {
     image: ImageAsset;
@@ -17,7 +17,7 @@ export default function DownloadView({
     onSelectAnother,
 }: DownloadViewProps) { 
     return (
-        <div className="mx-auto w-full max-w-[1000px] px-4 py-2">
+        <div className="mx-auto w-full max-w-250 px-4 py-2">
             {/* Image comparison */}
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
 

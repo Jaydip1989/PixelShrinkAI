@@ -1,17 +1,19 @@
 ---
 import {
-  Crop,
   Image,
   Scaling,
   ScanSearch,
   Stamp,
   WandSparkles,
+  PencilRuler,
+  Sparkles,
+  ShieldCheck,
 } from "lucide-preact";
 
 import UpcomingTool from "./UpcomingTool.astro";
 ---
 
-<section id="tools" class="relative -translate-y-6 pb-24">
+<section id="tools" class="relative -translate-y-6 pb-24"> 
 
   <div class="mx-auto max-w-7xl px-6">
 
@@ -50,6 +52,26 @@ import UpcomingTool from "./UpcomingTool.astro";
       </UpcomingTool>
 
       <UpcomingTool
+        title="Converter"
+        description="Convert formats"
+        status="planned"
+        variant="violet"
+        featured
+      >
+        <ScanSearch size={28} strokeWidth={2.2} />
+      </UpcomingTool>
+
+      <UpcomingTool
+        title="AI Enhancer"
+        description="Enhance image quality"
+        status="planned"
+        variant="amber"
+        featured
+      >
+        <Sparkles size={28} strokeWidth={2.2} />
+      </UpcomingTool>
+
+      <UpcomingTool
         title="Resizer"
         description="Resize instantly"
         status="planned"
@@ -59,26 +81,17 @@ import UpcomingTool from "./UpcomingTool.astro";
       </UpcomingTool>
 
       <UpcomingTool
-        title="Crop"
-        description="Crop precisely"
+        title="Editor"
+        description="Crop, rotate & flip"
         status="planned"
         variant="orange"
       >
-        <Crop size={28} strokeWidth={2.2} />
+        <PencilRuler size={28} strokeWidth={2.2} />
       </UpcomingTool>
 
       <UpcomingTool
-        title="Converter"
-        description="Convert formats"
-        status="planned"
-        variant="violet"
-      >
-        <ScanSearch size={28} strokeWidth={2.2} />
-      </UpcomingTool>
-
-      <UpcomingTool
-        title="Watermark"
-        description="Protect images"
+        title="Watermark Remover"
+        description="Remove unwanted marks"
         status="planned"
         variant="rose"
       >
@@ -86,12 +99,21 @@ import UpcomingTool from "./UpcomingTool.astro";
       </UpcomingTool>
 
       <UpcomingTool
-        title="AI Remove"
+        title="Background Remover"
         description="Remove backgrounds"
         status="planned"
         variant="amber"
       >
         <WandSparkles size={28} strokeWidth={2.2} />
+      </UpcomingTool>
+
+      <UpcomingTool
+        title="Metadata Cleaner"
+        description="Remove image metadata"
+        status="planned"
+        variant="blue"
+      >
+        <ShieldCheck size={28} strokeWidth={2.2} />
       </UpcomingTool>
 
     </div>

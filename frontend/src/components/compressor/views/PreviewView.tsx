@@ -5,9 +5,9 @@ import type {
     ImageAsset,
 } from "../../../types/image";
 
-import ImagePreview from "../ui/ImagePreview";
-import FileInfo from "../ui/FileInfo";
-import ToolSettings from "../ui/ToolSettings";
+import ImagePreview from "../../compressor/ui/ImagePreview";
+import FileInfo from "../../compressor/ui/FileInfo";
+import ToolSettings from "../../compressor/ui/ToolSettings";
 
 interface PreviewViewProps {
     image: ImageAsset;

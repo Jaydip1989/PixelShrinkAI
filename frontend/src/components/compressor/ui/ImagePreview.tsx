@@ -11,7 +11,7 @@ export default function ImagePreview({
         <div
             className="
                 flex
-                h-[260px]
+                h-65
                 w-full
                 items-center
                 justify-center
@@ -19,8 +19,8 @@ export default function ImagePreview({
                 rounded-2xl
                 bg-slate-200
                 dark:bg-slate-800
-                sm:h-[280px]
-                lg:h-[300px]
+                sm:h-70
+                lg:h-75
             "
         >
             {image ? (

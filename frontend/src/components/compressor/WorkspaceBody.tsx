@@ -1,5 +1,5 @@
 import type { ImageAsset } from "../../types/image";
-import UploadView from "./views/UploadView";
+import UploadView from "../views/UploadView";
 import PreviewView from "./views/PreviewView";
 import ProcessingView from "./views/ProcessingView";
 import DownloadView from "./views/DownloadView";
@@ -11,7 +11,6 @@ interface WorkspaceBodyProps {
   error: string;
   settings: Parameters<typeof PreviewView>[0]["settings"];
   setSettings: Parameters<typeof PreviewView>[0]["setSettings"];
-  
   selectImage: () => void;
   handleFileChange: (event: Event) => void;
   compressImage: () => Promise<void>;
@@ -24,7 +23,6 @@ export default function WorkspaceBody({
   error,
   settings,
   setSettings,
-  
   selectImage,
   handleFileChange,
   compressImage,
@@ -33,7 +31,10 @@ export default function WorkspaceBody({
     switch (step) {
       case "upload":
         return (
-          <UploadView image={image} error={error} onSelectImage={selectImage} 
+          <UploadView
+            image={image}
+            error={error}
+            onSelectImage={selectImage}
           />
         );
 
@@ -66,9 +67,9 @@ export default function WorkspaceBody({
             onSelectAnother={selectImage}
           />
         ):(
-          <UploadView 
-            image = {image}
-            error = {error}
+          <UploadView
+            image={image}
+            error={error}
             onSelectImage={selectImage}
           />
         );
