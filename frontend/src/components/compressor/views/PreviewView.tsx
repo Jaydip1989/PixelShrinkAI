@@ -27,12 +27,11 @@ export default function PreviewView({
     onCompress,
 }: PreviewViewProps) {
     return (
-        <div className="space-y-4">
+        <div className="space-y-4 pb-4">
             <ImagePreview image={image} />
 
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 items-stretch *:h-full *:mt-0">
                 <FileInfo image={image} />
-
                 <ToolSettings
                     quality={settings.quality}
                     outputFormat={settings.outputFormat}
@@ -49,13 +48,15 @@ export default function PreviewView({
                         }))
                     }
                     onCompress={onCompress}
-                />
+                /> 
             </div>
 
             <button
                 type="button"
                 onClick={onSelectAnother}
-                className="w-full rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 transition hover:border-blue-500 hover:text-blue-600 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:border-blue-400 dark:hover:text-blue-400"
+                className="w-full rounded-xl bg-linear-to-r from-blue-600 via-indigo-600 
+                to-pink-500 px-5 py-3 text-sm font-semibold text-white shadow-md 
+                transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg"
             >
                 Select Another Image
             </button>

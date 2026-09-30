@@ -4,76 +4,91 @@ import HeroDecorations from "./homepage/HeroDecorations/HeroDecorations.astro";
 import ToolWorkspaceHost from "./tools/ToolWorkspaceHost.astro";
 ---
 
-<section
-  id="hero-section"
-  class="relative overflow-hidden bg-linear-to-b from-white via-blue-50 to-white pt-6 pb-16 md:pt-8 
-        md:pb-16 lg:pt-10 lg:pb-18 xl:pt-10 xl:pb-18 dark:from-slate-950 
-        dark:via-slate-900 dark:to-slate-950"
->
+<section id="hero-section" class="relative overflow-visible bg-linear-to-b from-white via-blue-50 to-white pt-6 pb-16 md:pt-8 md:pb-16 lg:pt-10 lg:pb-18 xl:pt-10 xl:pb-18 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
   <div id="hero-decorations" class="contents">
     <HeroDecorations />
-  </div>
+  </div> 
 
-  <div
-    id="hero-layout"
-    data-workspace-state="inactive"
-    class="relative z-10 mx-auto grid max-w-7xl items-start gap-12 px-6 pt-1 lg:grid-cols-[1.08fr_0.92fr] xl:gap-16"
-  >
-    <!-- LEFT: MARKETING CONTENT -->
-    <div id="hero-marketing" class="max-w-160 pt-8 md:pt-5">
+  <div id="hero-layout" data-tool-state="upload" class="relative z-10 mx-auto max-w-7xl pt-1 px-6 grid items-start gap-12 lg:grid-cols-[1.08fr_0.92fr] xl:gap-16">
+
+    <!-- LEFT MARKETING CONTENT -->
+    <div id="hero-marketing" class="max-w-160 pt-8 md:pt-5"> 
+
+      <!-- Badge -->
       <div class="inline-flex items-center gap-3">
         <span class="inline-flex items-center rounded-full border border-blue-200 bg-blue-100 px-4 py-1 text-sm font-semibold text-blue-700">
-          🚀 PixelShrinkAI
+          🚀 Coming Soon
         </span>
 
         <span class="hidden text-sm text-slate-500 md:block dark:text-slate-400">
-          Powerful image tools, built for everyone.
+          First tool launches soon! 
         </span>
       </div>
 
-      <h1 class="mt-4 max-w-[12ch] text-2xl font-semibold leading-[1.04] tracking-[-0.03em] text-slate-900 sm:text-[3.7rem] xl:text-[4rem] dark:text-white">
+      <!-- Heading -->
+      <h1 class="mt-4 max-w-[12ch] text-2xl font-semibold tracking-[-0.03em] leading-[1.04] sm:text-[3.7rem] xl:text-[4rem] text-slate-900 dark:text-white">
         Powerful Image Tools.
+
         <span class="mt-2 block bg-linear-to-r from-blue-500 via-indigo-600 to-pink-500 bg-clip-text text-transparent">
           Fast. Private. Free.
         </span>
       </h1>
 
+      <!-- Description -->
       <p class="mt-7 max-w-145 text-lg leading-8 text-slate-600 dark:text-slate-300">
-        PixelShrinkAI is building a modern collection of image tools to help you compress, convert, enhance, resize, edit and optimize images with speed, privacy and simplicity.
+        PixelShrinkAI is building a modern collection of online image tools to help you compress, resize, crop, convert and optimize images directly in your browser—with speed, privacy and simplicity.
       </p>
 
+      <!-- CTA -->
       <div class="mt-10 flex flex-col gap-4 sm:flex-row">
-        <a
-          href="#notify"
-          class="inline-flex items-center justify-center rounded-2xl bg-linear-to-r from-blue-600 to-indigo-600 px-8 py-4 font-semibold text-white shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
-        >
+        <a href="#notify" class="inline-flex items-center justify-center rounded-2xl bg-linear-to-r from-blue-600 to-indigo-600 px-8 py-4 font-semibold text-white shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
           Notify Me
         </a>
 
-        <a
-          href="#tools"
-          class="inline-flex items-center justify-center rounded-2xl border border-slate-300 bg-white px-8 py-4 font-semibold text-slate-700 transition-all duration-300 hover:border-blue-600 hover:text-blue-600 dark:border-slate-700 dark:bg-slate-900 dark:text-white"
-        >
-          Explore Our Tools
+        <a href="#tools" class="inline-flex items-center justify-center rounded-2xl border border-slate-300 bg-white px-8 py-4 font-semibold text-slate-700 transition-all duration-300 hover:border-blue-600 hover:text-blue-600 dark:border-slate-700 dark:bg-slate-900 dark:text-white">
+          View Upcoming Tools
         </a>
       </div>
 
+      <!-- Trust -->
       <div class="mt-8 flex items-center gap-3 text-sm text-slate-500 dark:text-slate-400">
         <span class="h-2.5 w-2.5 rounded-full bg-green-500"></span>
         <span>No sign up required. 100% Free to use.</span>
       </div>
+
     </div>
 
-    <!-- RIGHT: OUR TOOLS / WORKSPACE -->
-    <div
-      id="hero-workspace"
-      class="mx-auto w-full max-w-110 rounded-[28px] border border-slate-200/70 bg-white/35 shadow-[0_20px_60px_rgba(37,99,235,0.08)] backdrop-blur-sm lg:mx-0 lg:translate-x-12 lg:translate-y-6 lg:pt-4 dark:border-white/10 dark:bg-slate-900/25 dark:shadow-[0_20px_60px_rgba(0,0,0,0.20)]"
+    <!-- TOOL WORKSPACE -->
+    <div id="hero-workspace" 
+        class="w-full max-w-110 mx-auto flex-col lg:mx-0 lg:translate-x-12 lg:translate-y-6" 
     >
       <ToolController client:load />
+      <div id="hero-workspace-gap" class="h-3"></div>
       <ToolWorkspaceHost />
     </div>
+
   </div>
 </section>
+
+<style>
+  #hero-workspace {
+  padding: 0;
+}
+
+#tool-workspace-host {
+  width: 100%;
+  padding: 0;
+  margin: 0;
+}
+
+/* When a tool is active, let the workspace use the full Hero width */
+#hero-layout[data-workspace-state="active"] 
+
+#hero-workspace {
+  max-width: none;
+  width: 100%;
+}
+</style>
 
 <script>
   const heroLayout = document.getElementById("hero-layout");
@@ -84,20 +99,17 @@ import ToolWorkspaceHost from "./tools/ToolWorkspaceHost.astro";
 
   function updateHeroLayout(event: Event) {
     const customEvent = event as CustomEvent<{
-      active: boolean;
-      tool: string;
       step: "upload" | "preview" | "processing" | "download";
     }>;
 
-    const toolIsActive = customEvent.detail.active;
+    const step = customEvent.detail.step;
+    const toolIsActive = step !== "upload";
 
     if (!heroLayout || !heroMarketing || !heroWorkspace || !heroDecorations) {
       return;
     }
 
-    heroLayout.dataset.workspaceState = toolIsActive
-      ? "active"
-      : "inactive";
+    heroLayout.dataset.toolState = step;
 
     /* Decorations */
     heroDecorations.style.display = toolIsActive ? "none" : "contents";
@@ -105,19 +117,11 @@ import ToolWorkspaceHost from "./tools/ToolWorkspaceHost.astro";
     /* Marketing */
     heroMarketing.classList.toggle("hidden", toolIsActive);
 
-    /*
-     * IMPORTANT:
-     * The normal Hero remains two-column.
-     * When a tool is active, the workspace expands.
-     */
+    /* Hero container */
     heroLayout.classList.toggle("max-w-7xl", !toolIsActive);
     heroLayout.classList.toggle("max-w-[1200px]", toolIsActive);
 
-    heroLayout.classList.toggle(
-      "lg:grid-cols-[1.08fr_0.92fr]",
-      !toolIsActive,
-    );
-
+    heroLayout.classList.toggle("lg:grid-cols-[1.08fr_0.92fr]", !toolIsActive);
     heroLayout.classList.toggle("grid-cols-1", toolIsActive);
 
     heroLayout.classList.toggle("gap-12", !toolIsActive);
@@ -131,41 +135,26 @@ import ToolWorkspaceHost from "./tools/ToolWorkspaceHost.astro";
     heroWorkspace.classList.toggle("lg:justify-end", !toolIsActive);
     heroWorkspace.classList.toggle("justify-stretch", toolIsActive);
 
-    heroWorkspace.classList.add("w-full");
+    heroWorkspace.classList.toggle("w-full", true);
 
     heroWorkspace.classList.toggle("lg:pt-2", !toolIsActive);
     heroWorkspace.classList.toggle("pt-0", toolIsActive);
 
-    heroSection?.classList.toggle(
-      "min-h-[calc(100vh+36px)]",
-      toolIsActive,
-    );
+    heroSection?.classList.toggle("min-h-[calc(100vh+36px)]", toolIsActive);
 
     /* Normal Hero position */
-    heroWorkspace.classList.toggle(
-      "lg:translate-x-12",
-      !toolIsActive,
-    );
-
-    heroWorkspace.classList.toggle(
-      "lg:translate-y-6",
-      !toolIsActive,
-    );
+    heroWorkspace.classList.toggle("lg:translate-x-12", !toolIsActive);
+    heroWorkspace.classList.toggle("lg:translate-y-6", !toolIsActive);
 
     /* Active workspace position */
-    heroWorkspace.classList.toggle(
-      "lg:translate-x-18",
-      toolIsActive,
-    );
+    heroWorkspace.classList.toggle("lg:translate-x-18", toolIsActive);
 
-    heroWorkspace.classList.toggle(
-      "lg:translate-y-0",
-      toolIsActive,
-    );
+    heroWorkspace.classList.toggle("mt-8", toolIsActive);
+    heroWorkspace.classList.toggle("sm:mt-5", toolIsActive);
+    heroWorkspace.classList.toggle("lg:mt-4", toolIsActive);
+
+    heroWorkspace.classList.toggle("mt-0", !toolIsActive);
   }
 
-  window.addEventListener(
-    "pixelshrinkai:workspace-state",
-    updateHeroLayout,
-  );
+  window.addEventListener("pixelshrinkai:tool-state", updateHeroLayout);
 </script>

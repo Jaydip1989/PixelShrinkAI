@@ -75,7 +75,7 @@ export default function UploadView({
 
                 {/* Formats */}
                 <div className="mt-6 flex flex-wrap justify-center gap-2">
-                {["JPG", "PNG", "WEBP", "AVIF"].map((type) =>(
+                {["JPG", "PNG", "WEBP"].map((type) =>(
                     <span
                         key = {type}
                         className ="

@@ -47,11 +47,10 @@ export default function ToolLauncher({
                 />
             </button>
             {open && (
-                <div className="absolute left-0 right-0 z-50 mt-2 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xl dark:border-slate-700 dark:bg-slate-900">
-                <div className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-400">
-                    Our Tools
-                </div>
-
+                <div className="absolute left-0 right-0 z-50 mt-0 max-h-[min(18rem,60vh)] overflow-y-auto 
+                overflow-x-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl 
+                dark:border-slate-700 dark:bg-slate-900"
+                >
                 {TOOL_REGISTRY.map((tool) => {
                     const isLive = tool.status === "live";
                     const isActive = tool.id === activeTool;
@@ -62,10 +61,11 @@ export default function ToolLauncher({
                         type="button"
                         disabled={!isLive}
                         onClick={() => handleToolSelect(tool.id)}
-                        className={`flex w-full items-center gap-3 px-4 py-3 text-left text-sm transition ${
-                        isLive
-                            ? "text-slate-700 hover:bg-slate-50 dark:text-slate-200 dark:hover:bg-slate-800"
-                            : "cursor-not-allowed text-slate-400 dark:text-slate-600"
+                        className={`flex w-full items-center gap-3 px-4 py-3 text-left text-sm transition 
+                            ${
+                                isLive
+                                    ? "text-slate-700 hover:bg-slate-50 dark:text-slate-200 dark:hover:bg-slate-800"
+                                    : "cursor-not-allowed text-slate-400 dark:text-slate-600"
                         }`}
                     >
                         <span className="flex w-5 items-center justify-center">
