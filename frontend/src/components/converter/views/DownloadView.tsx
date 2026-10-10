@@ -48,7 +48,7 @@ function formatFileSize(bytes: number | null) : string {
 
 export default function DownloadView({
     selectedFile,
-    convertedFile,
+    convertedFile, 
     conversion,
     onSelectAnother,
 }: DownloadViewProps) {
@@ -64,13 +64,23 @@ export default function DownloadView({
 
         link.href = url;
         link.download = convertedFile.name;
+        link.style.display="none";
 
         document.body.appendChild(link);
         link.click();
         link.remove();
 
-        URL.revokeObjectURL(url);
+        window.setTimeout(()=>{
+            URL.revokeObjectURL(url);
+        }, 1000);
+        
     };
+
+    const isImagePreview = 
+        Boolean(convertedFile.previewUrl) && convertedFile.type.startsWith("image/");
+    
+    const fileExtension = 
+        selectedFile.name.split(".").pop()?.toUpperCase() || "FILE";
 
     return (
         <div className="p-4 sm:p-6">
@@ -84,11 +94,12 @@ export default function DownloadView({
                         w-14
                         items-center
                         justify-center
-                        rounded-full
-                        bg-green-100
-                        text-green-600
-                        dark:bg-green-950/30
-                        dark:text-green-400
+                        rounded-2xl
+                        border border-emerald-100
+                        bg-emerald-50
+                        text-emerald-600
+                        dark:bg-emerald-950/30
+                        dark:text-emerald-400
                     "
                 >
                     <svg
@@ -106,11 +117,23 @@ export default function DownloadView({
                         />
                     </svg>
                 </div>
-                <h2 className="mt-4 text-2xl font-bold text-slate-900 dark:text-white">
+
+                <p
+                    className="
+                        mt-4 text-[10px] font-bold uppercase
+                        tracking-[0.16em] text-emerald-600
+                        dark:text-emerald-400
+                    "
+                >
+                    Ready to download
+                </p>
+
+
+                <h2 className="mt-1 text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
                     Conversion Complete
                 </h2>
 
-                <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
+                <p className="mx-auto mt-2 max-w-sm text-sm text-slate-500 dark:text-slate-400">
                     Your file has been converted to {" "}
                     <span className="font-semibold text-slate-700 dark:text-slate-200">
                         {conversion.outputLabel}
@@ -118,29 +141,35 @@ export default function DownloadView({
                     . 
                 </p>
             </div>
+
             {/* File Comparison */}
-            <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2">
                 {/* Original */}
-                <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-700 dark:bg-slate-800/50">
+                <div className="rounded-2xl border border-slate-200 bg-slate-50/80 p-4 dark:border-slate-700 
+                        dark:bg-slate-800/50">
                     <div className="flex items-center justify-between gap-3">
                         <p className="text-sm font-semibold text-slate-900 dark:text-white">
-                            Original
+                            Original file
                         </p>
 
-                        <span className="rounded-full bg-blue-100 px-3 py-1 text-xs font-semibold text-blue-700 dark:bg-blue-950/40 dark:text-blue-300">
-                            Input
+                        <span className="rounded-full bg-blue-100 px-2.5 py-1 text-xs font-semibold text-blue-700 dark:bg-blue-950/40 dark:text-blue-300">
+                            {fileExtension}
                         </span>
                     </div>
 
                     <p className="mt-3 truncate text-sm font-medium text-slate-700 dark:text-slate-200">
+                        {selectedFile.name}
+                    </p>
+                    <p className="mt-1 text-xs text-slate-500 dark:text-slate-200">
                         {formatFileSize(selectedFile.size)}
                     </p>
                 </div>
-                {/* Converted */}
+
+                {/* Converted File*/}
                 <div className="rounded-2xl border border-purple-200 bg-purple-50/60 p-4 dark:border-purple-900/40 dark:bg-purple-950/20">
                     <div className="flex items-center justify-between gap-3">
                         <p className="text-sm font-semibold text-slate-900 dark:text-white">
-                            Converted
+                            Converted File
                         </p>
 
                         <span className="rounded-full bg-purple-100 px-3 py-1 text-xs font-semibold text-purple-700 dark:bg-purple-950/40 dark:text-purple-300">
@@ -148,7 +177,7 @@ export default function DownloadView({
                         </span>
                     </div>
 
-                    <p className="mt-3 truncate text-sm font-medium text-slate-700 dark:text-slate-700">
+                    <p className="mt-3 truncate text-sm font-medium text-slate-700 dark:text-slate-200">
                         {convertedFile.name}
                     </p>
 
@@ -157,10 +186,11 @@ export default function DownloadView({
                     </p>
                 </div>
             </div>
+
             {/* Converted Preview */}
             <div
                 className="
-                    mt-5
+                    mt-4
                     flex
                     min-h-55
                     items-center
@@ -174,7 +204,7 @@ export default function DownloadView({
                     dark:bg-slate-800/50
                 "
             >
-                {convertedFile.previewUrl ? (
+                {isImagePreview && convertedFile.previewUrl ? (
                     <img 
                         src={convertedFile.previewUrl}
                         alt={convertedFile.name}
@@ -212,7 +242,7 @@ export default function DownloadView({
                                 <path 
                                     strokeLinecap="round"
                                     strokeLinejoin="round"
-                                    d="M7 3h7l5 5v13H7a2 2 0 01-2-2V5a2 2 0 012-2z"
+                                    d="M7 3h7l5 5v13H7a2 2 0 01-2-2V5a2 2 0 0 1 2-2z"
                                 />
                                 <path 
                                     strokeLinecap="round"
@@ -222,12 +252,15 @@ export default function DownloadView({
                             </svg>
                         </div>
 
-                        <p className="mt-3 text-sm font-semibold text-slate-900 dark:text-white">
-                            {conversion.outputLabel} ready
+                        <p className="mt-3 break-all text-sm font-semibold text-slate-900 dark:text-white">
+                            {convertedFile}
                         </p>
-
-                        <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
-                            Preview is not available for this format.
+                        <p className="mt-1 text-xs leading-5 text-slate-500 dark:text-slate-400">
+                            {
+                            convertedFile.type === "application/pdf"
+                                ? "PDF document ready for download."
+                                : "Preview is unavailable for this file format."
+                            }
                         </p>
                     </div>
                 )}
@@ -240,25 +273,45 @@ export default function DownloadView({
                     onClick={handleDownload}
                     disabled={!convertedFile.file}
                     className="
-                        flex-1
-                        rounded-2xl
+                        flex flex-1
+                        items-center
+                        justify-center
+                        gap-2 rounded-2xl
                         bg-linear-to-r
                         from-blue-600
                         via-indigo-500
                         to-pink-500
-                        px-6
-                        py-3
-                        font-semibold
-                        text-white
-                        shadow-sm
-                        transition
-                        duration-300
-                        hover:scale-[1.01]
-                        hover:shadow-md
+                        px-6 py-3 font-semibold text-white
+                        shadow-sm transition-duration
+                        hover:scale-[1.01] hover:shadow-md
+                        focus:outline-none focus:ring-2
+                        focus:ring-blue-500/40
+                        focus:ring-offset-2
                         disabled:cursor-not-allowed
                         disabled:opacity-50
+                        disabled:hover:scale-100
+                        dark:focus:ring-offset-900
                     "
                 >
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-5 w-5"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth={1.8}
+                    >
+                        <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M12 3v12m0 0 4-4m-4 4-4-4" 
+                        />
+                        <path 
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M5 16v3a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-3"
+                        />
+                    </svg>
                     Download Converted File
                 </button>
 
@@ -277,8 +330,12 @@ export default function DownloadView({
                         transition
                         hover:border-blue-500
                         hover:text-blue-600
-                        dark:border-slate-700
-                        dark:bg-slate-200
+                        focus:outline-none
+                        focus:ring-2
+                        focus:ring-blue-500/20
+                        dark:border-slate-700 
+                        dark:bg-slate-900
+                        dark:text-slate-200
                         dark:hover:border-blue-400
                         dark:hover:text-blue-400
                     "
