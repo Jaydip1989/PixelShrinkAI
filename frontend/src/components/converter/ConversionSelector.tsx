@@ -1,4 +1,4 @@
-import {useEffect, useRef, useState } from "preact/hooks";
+import { useEffect, useRef, useState } from "preact/hooks";
 
 export interface ConversionDefinition {
     id: string;
@@ -8,73 +8,92 @@ export interface ConversionDefinition {
     acceptedExtensions: string[];
     acceptedMimeTypes: string[];
     inputLabel: string;
+    endpoint: string;
+    outputExtension: string;
+    outputMimeType: string;
+    target?: string;
 }
+
+/**
+ * All five conversion options are managed in one registry
+ * and displayed in the main conversion selector.
+ */
 
 export const conversions: ConversionDefinition[] = [
     {
         id: "image-to-svg",
-        label: "Image -> SVG",
-        description: "Convert PNG, JPG or WEBP to SVG.",
+        label: "Image to SVG",
+        description: "Transform raster images into scalable SVG files.",
         outputLabel: "SVG",
         acceptedExtensions: [".png", ".jpg", ".jpeg", ".webp"],
-        acceptedMimeTypes: [
-            "image/png", 
-            "image/jpeg",
-            "image/webp",
-        ],
+        acceptedMimeTypes: ["image/png", "image/jpeg", "image/webp"],
         inputLabel: "PNG, JPG, JPEG or WEBP",
+        endpoint: "/api/convert/svg",
+        outputExtension: "svg",
+        outputMimeType: "image/svg+xml",
     },
-
     {
         id: "image-to-pdf",
-        label: "Image -> PDF",
-        description: "Convert PNG, JPG or WEBP to PDF.",
+        label: "Image to PDF",
+        description: "Turn images into portable PDF documents.",
         outputLabel: "PDF",
         acceptedExtensions: [".png", ".jpg", ".jpeg", ".webp"],
-        acceptedMimeTypes: [
-            "image/png", 
-            "image/jpeg",
-            "image/webp",
-        ],
+        acceptedMimeTypes: ["image/png", "image/jpeg", "image/webp"],
         inputLabel: "PNG, JPG, JPEG or WEBP",
+        endpoint: "/api/convert/pdf",
+        outputExtension: "pdf",
+        outputMimeType: "application/pdf",
     },
-
     {
         id: "svg-to-pdf",
-        label: "SVG -> PDF",
-        description: "Convert SVG to PDF.",
+        label: "SVG to PDF",
+        description: "Convert SVG artwork into PDF documents.",
         outputLabel: "PDF",
         acceptedExtensions: [".svg"],
-        acceptedMimeTypes: [
-            "image/svg+xml"
-        ],
+        acceptedMimeTypes: ["image/svg+xml"],
         inputLabel: "SVG",
+        endpoint: "/api/convert/svg-to-pdf",
+        outputExtension: "pdf",
+        outputMimeType: "application/pdf",
     },
-
     {
         id: "image-to-avif",
-        label: "Image -> AVIF ",
-        description: "Convert PNG, JPG or WEBP to AVIF.",
+        label: "Image to AVIF",
+        description: "Convert images to the modern AVIF format.",
         outputLabel: "AVIF",
         acceptedExtensions: [".png", ".jpg", ".jpeg", ".webp"],
-        acceptedMimeTypes: [
-            "image/png", 
-            "image/jpeg",
-            "image/webp",
-        ],
+        acceptedMimeTypes: ["image/png", "image/jpeg", "image/webp"],
         inputLabel: "PNG, JPG, JPEG or WEBP",
+        endpoint: "/api/convert/to-avif",
+        outputExtension: "avif",
+        outputMimeType: "image/avif",
+    },
+    {
+        id: "avif-to-image",
+        label: "Convert from AVIF",
+        description: "Export AVIF images as JPG, PNG or WEBP.",
+        outputLabel: "JPG",
+        acceptedExtensions: [".avif"],
+        acceptedMimeTypes: ["image/avif"],
+        inputLabel: "AVIF",
+        endpoint: "/api/convert/avif",
+        outputExtension: "jpg",
+        outputMimeType: "image/jpeg",
+        target: "jpg",
     },
 ];
 
+export const primaryConversions = conversions;
+
 interface ConversionSelectorProps {
-    value: string,
-    onChange: (value: string) => void,
+    value: string;
+    onChange: (value: string) => void;
 }
 
 export default function ConversionSelector({
     value,
     onChange,
-}:ConversionSelectorProps){
+}: ConversionSelectorProps) {
     const [isOpen, setIsOpen] = useState(false);
     const [activeIndex, setActiveIndex] = useState(0);
 
@@ -84,17 +103,17 @@ export default function ConversionSelector({
 
     const selectedIndex = Math.max(
         0,
-        conversions.findIndex((item) => item.label === value),
+        primaryConversions.findIndex((item) => item.label === value),
     );
-
-    const selectedConversion = conversions[selectedIndex];
+    const selectedConversion =
+        primaryConversions[selectedIndex] ?? primaryConversions[0];
 
     useEffect(() => {
         const handleOutsideClick = (event: MouseEvent) => {
             if (
                 containerRef.current &&
                 !containerRef.current.contains(event.target as Node)
-            ){
+            ) {
                 setIsOpen(false);
             }
         };
@@ -126,67 +145,54 @@ export default function ConversionSelector({
         setIsOpen(true);
     };
 
-    const chooseConversion = (conversion: ConversionDefinition) => {
-        onChange(conversion.label);
+    const chooseConversion = (item: ConversionDefinition) => {
+        onChange(item.label);
         setIsOpen(false);
         triggerRef.current?.focus();
     };
 
-    const handleTriggerKeyDown = (
-        event: KeyboardEvent,
-    ) => {
-        if (event.key === "ArrowDown") {
-            event.preventDefault();
-            openMenu(selectedIndex);
-        }
-        if (event.key === "ArrowUp") {
+    const handleTriggerKeyDown = (event: KeyboardEvent) => {
+        if (event.key === "ArrowDown" || event.key === "ArrowUp") {
             event.preventDefault();
             openMenu(selectedIndex);
         }
     };
 
-    const handleOptionKeyDown = (
-        event: KeyboardEvent,
-        index: number,
-    ) => {
+    const handleOptionKeyDown = (event: KeyboardEvent, index: number) => {
         if (event.key === "ArrowDown") {
             event.preventDefault();
-            setActiveIndex((index + 1) % conversions.length);
-        }
-        if (event.key === "ArrowUp") {
+            setActiveIndex((index + 1) % primaryConversions.length);
+        } else if (event.key === "ArrowUp") {
             event.preventDefault();
             setActiveIndex(
-                (index - 1 + conversions.length) % conversions.length,
+                (index - 1 + primaryConversions.length) % primaryConversions.length,
             );
-        }
-
-        if (event.key === "Home") {
+        } else if (event.key === "Home") {
             event.preventDefault();
-            setActiveIndex(conversions.length - 1);
-        }
-
-        if (event.key === "Tab") {
+            setActiveIndex(0);
+        } else if (event.key === "End") {
+            event.preventDefault();
+            setActiveIndex(primaryConversions.length - 1);
+        } else if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            chooseConversion(primaryConversions[index]);
+        } else if (event.key === "Escape") {
+            event.preventDefault();
+            setIsOpen(false);
+            triggerRef.current?.focus();
+        } else if (event.key === "Tab") {
             setIsOpen(false);
         }
     };
+
     return (
-        <div
-            ref={containerRef}
-            className="relative z-20 w-full"
-        >
-            <div className="px-4 pt-2.5 pb-2.5 sm:px-4">
+        <div ref={containerRef} className="relative z-20 w-full">
+            <div className="px-4 pt-3 pb-2.5 sm:px-4">
                 <label
                     htmlFor="conversion-trigger"
-                    className="
-                        mb-2 block
-                        text-[11px] font-semibold
-                        uppercase
-                        tracking-[0.12em]
-                        text-slate-500
-                        dark:text-slate-400
-                    "
+                    className="mb-2 block text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500 dark:text-slate-400"
                 >
-                    Convert 
+                    Convert
                 </label>
 
                 <button
@@ -196,190 +202,76 @@ export default function ConversionSelector({
                     aria-haspopup="listbox"
                     aria-expanded={isOpen}
                     aria-controls="conversion-options"
+                    onKeyDown={handleTriggerKeyDown}
                     onClick={() => {
                         if (isOpen) {
                             setIsOpen(false);
                         } else {
-                            openMenu();
+                            openMenu(selectedIndex);
                         }
                     }}
-                    onKeyDown={handleTriggerKeyDown}
-                    className="
-                        flex w-full items-center justify-between gap-3
-                        rounded-xl border border-slate-200
-                        bg-white
-                        px-4 py-3
-                        text-left
-                        shadow-sm
-                        transition-all
-                        duration-200
-                        hover:border-blue-200
-                        hover:shadow
-                        focus:outline-none
-                        focus:ring-2
-                        focus:ring-blue-500/20
-                        dark:border-slate-700
-                        dark:bg-slate-900
-                        dark:hover:border-blue-500
-                    "
+                    className="flex w-full items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-left shadow-sm transition hover:border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500/30 dark:border-slate-700 dark:bg-slate-900 dark:hover:border-slate-600"
                 >
                     <span className="min-w-0">
-                        <span className="
-                            block
-                            truncate
-                            text-sm
-                            font-semibold
-                            text-slate-800
-                            dark:text-slate-100
-                        ">
+                        <span className="block text-sm font-semibold text-slate-900 dark:text-white">
                             {selectedConversion.label}
                         </span>
+                        <span className="mt-0.5 block text-xs leading-5 text-slate-500 dark:text-slate-400">
+                            {selectedConversion.description}
+                        </span>
                     </span>
-
                     <svg
                         aria-hidden="true"
+                        className={`h-4 w-4 shrink-0 text-slate-500 transition-transform ${isOpen ? "rotate-180" : ""}`}
                         viewBox="0 0 20 20"
                         fill="none"
-                        className={`
-                            h-5 w-5 shrink-0
-                            text-slate-400
-                            transition-transform
-                            duration-200
-                            ${isOpen ? "rotate-180" : ""}
-                        `}
                     >
-                        <path 
-                            d="M5 7.5 5 5 5-5"
-                            stroke="curentColor"
+                        <path
+                            d="m5 7.5 5 5 5-5"
+                            stroke="currentColor"
                             strokeWidth="1.7"
                             strokeLinecap="round"
                             strokeLinejoin="round"
                         />
                     </svg>
                 </button>
-            </div>
-            {isOpen && (
-                <div
-                    id="conversion-options"
-                    role="listbox"
-                    aria-label="Choose conversion foot"
-                    aria-activedescendant={`conversion-option-${activeIndex}`}
-                    className="
-                        absolute left-3 right-3 top-full z-50
-                        mt-1.5 overflow-hidden
-                        rounded-2xl border border-slate-200
-                        bg-white p-1.5
-                        shadow-[0_12px_32px_rgba(15, 23, 42, 0.14)]
-                        dark:border-slate-700
-                        dark:bg-slate-900
-                        dark:shadow-[0_12px_32px_rgba(0,0,0, 0.35)]
-                    "
-                >
-                    {conversions.map((conversion, index) =>{
-                        const isSelected = conversion.id === selectedConversion.id;
 
-                        const isActive = index === activeIndex;
-
-                        return (
+                {isOpen && (
+                    <div
+                        id="conversion-options"
+                        role="listbox"
+                        aria-label="Available conversions"
+                        className="absolute left-4 right-4 top-full z-50 mt-2 max-h-[min(60vh,420px)] overflow-y-auto rounded-2xl border border-slate-200 bg-white shadow-xl dark:border-slate-700 dark:bg-slate-900"
+                    >
+                        {primaryConversions.map((item, index) => (
                             <button
-                                key={conversion.id}
+                                key={item.id}
                                 ref={(element) => {
                                     optionRefs.current[index] = element;
                                 }}
-                                id={`conversion-option-${index}`}
                                 type="button"
                                 role="option"
-                                aria-selected={isSelected}
-                                tabIndex={isActive ? 0: -1}
-                                onClick={() =>
-                                    chooseConversion(conversion)
-                                }
-                                onKeyDown={(event) => 
-                                    handleOptionKeyDown(event, index)
-                                }
-                                onMouseEnter={() => setActiveIndex(index)}
-                                className={`
-                                    flex w-full items-start gap-3
-                                    rounded-xl px-3 py-3
-                                    text-left transition-colors durations-150
-                                    focus:outline-none
-                                    ${
-                                        isSelected
-                                        ? "bg-blue-50 dark:bg-blue-950/40"
-                                        : isActive
-                                            ? "bg-slate-50 dark:bg-slate-800"
-                                            : "bg-transparent"
-                                    }
-                                    ${
-                                        isSelected
-                                            ? "text-blue-700 dark:text-blue-300"
-                                            : "text-slate-700 dark:text-slate-200"
-                                    }
-                                `}
+                                aria-selected={item.id === selectedConversion.id}
+                                onClick={() => chooseConversion(item)}
+                                onKeyDown={(event) => handleOptionKeyDown(event, index)}
+                                className={`flex w-full items-start justify-between gap-3 px-4 py-3 text-left transition hover:bg-slate-50 focus:bg-blue-50 focus:outline-none dark:hover:bg-slate-800 dark:focus:bg-blue-950/30 ${index > 0 ? "border-t border-slate-100 dark:border-slate-800" : ""}`}
                             >
-                                <span className="
-                                    flex h-5 w-5 shrink-0
-                                    items-center justify-center
-                                ">
-                                    {isSelected ? (
-                                        <svg
-                                            aria-hidden="true"
-                                            viewBox="0 0 20 20"
-                                            fill="none"
-                                            className="h-4 w-4"
-                                        >
-                                            <path
-                                                d="m4.5 10.2 3.4 3.4 7.6-7.6"
-                                                stroke="currentColor"
-                                                strokeWidth="2"
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round" 
-                                            />
-                                        </svg>
-                                    ):(
-                                        <span className="
-                                            h-1.5 w-1.5 rounded-full
-                                            bg-slate-300
-                                            dark:bg-slate-600
-                                        "
-                                        />
-                                    )}
-                                </span>
-
-                                <span className="min-w-0 flex-1">
-                                    <span className="
-                                        block text-sm font-medium
-                                    ">
-                                        {conversion.label}
+                                <span className="min-w-0">
+                                    <span className="block text-sm font-semibold text-slate-900 dark:text-white">
+                                        {item.label}
                                     </span>
-                                    <span className="
-                                        mt-1 block text-xs leading-5
-                                        text-slate-500
-                                        dark:text-slate-400
-                                    ">
-                                        {conversion.description}
+                                    <span className="mt-0.5 block text-xs leading-5 text-slate-500 dark:text-slate-400">
+                                        {item.description}
                                     </span>
                                 </span>
-                                
-                                <span className="
-                                    mt-0.5 shrink-0 rounded-md
-                                    border border-slate-200
-                                    bg-white px-1.5 py-0.5
-                                    text-[10px] font-semibold
-                                    uppercase tracking-wide
-                                    text-slate-500
-                                    dark:border-slate-700
-                                    dark:bg-slate-800
-                                    dark:text-slate-300
-                                "
-                                >
-                                    {conversion.outputLabel}
+                                <span className="mt-0.5 shrink-0 rounded-lg bg-slate-100 px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-slate-600 dark:bg-slate-800 dark:text-slate-300">
+                                    {item.outputLabel}
                                 </span>
                             </button>
-                        );
-                    })}
-                </div>
-            )}
+                        ))}
+                    </div>
+                )}
+            </div>
         </div>
-    )
+    );
 }

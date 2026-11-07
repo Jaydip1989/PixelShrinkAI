@@ -1,60 +1,325 @@
+
 @import "tailwindcss";
 
-/* Use class-based dark mode*/
+/* =========================================================
+   PIXELSHRINKAI — GOLDEN EDITION
+   Global design foundation
+========================================================= */
+
+/* Class-based dark mode */
 @custom-variant dark (&:where(.dark, .dark *));
 
+/* =========================================================
+   BRAND TOKENS
+========================================================= */
 
 @theme {
-
-  /* Brand */
+  /* Technology palette */
   --color-primary: #2563EB;
-  --color-secondary: #4F46E5;
-  --color-accent: #EC4899;
+  --color-secondary: #6366F1;
+  --color-accent: #D946EF;
 
-  /* Surface */
+  /* Premium gold palette */
+  --color-gold: #F5B942;
+  --color-gold-light: #FFD978;
+  --color-gold-dark: #B7791F;
+
+  /* Brand surfaces */
   --color-background: #F8FAFC;
   --color-surface: #FFFFFF;
 
-} 
+  /* Typography */
+  --font-sans: "Plus Jakarta Sans", sans-serif;
+}
+
+/* =========================================================
+   DESIGN VARIABLES — LIGHT MODE
+========================================================= */
+
+:root {
+  color-scheme: light;
+
+  --page-bg: #F8FAFC;
+  --surface-primary: #FFFFFF;
+  --surface-secondary: #F1F5F9;
+
+  --text-primary: #0F172A;
+  --text-secondary: #64748B;
+  --text-muted: #94A3B8;
+
+  --border-default: #E2E8F0;
+  --border-gold: rgba(212, 160, 55, 0.45);
+
+  --gold-primary: #D49B2E;
+  --gold-light: #F6C85F;
+  --gold-glow: rgba(245, 185, 66, 0.12);
+
+  --brand-blue: #2563EB;
+  --brand-violet: #6366F1;
+  --brand-pink: #D946EF;
+
+  --page-container: 1440px;
+  --page-gutter: clamp(16px, 4vw, 56px);
+
+  --section-space: clamp(64px, 8vw, 112px);
+  --card-radius: 24px;
+  --panel-radius: 28px;
+
+  --shadow-premium:
+    0 12px 40px rgba(15, 23, 42, 0.08);
+}
+
+/* =========================================================
+   DESIGN VARIABLES — DARK / GOLDEN EDITION
+========================================================= */
+
+.dark {
+  color-scheme: dark;
+
+  --page-bg: #050A16;
+  --surface-primary: #0D1729;
+  --surface-secondary: #142137;
+
+  --text-primary: #F8FAFC;
+  --text-secondary: #B6C4D9;
+  --text-muted: #8192AC;
+
+  --border-default: #26364D;
+  --border-gold: rgba(245, 185, 66, 0.38);
+
+  --gold-primary: #F5B942;
+  --gold-light: #FFD978;
+  --gold-glow: rgba(245, 185, 66, 0.16);
+
+  --brand-blue: #2675FF;
+  --brand-violet: #7654F6;
+  --brand-pink: #E83FAF;
+
+  --shadow-premium:
+    0 18px 55px rgba(0, 0, 0, 0.35);
+}
+
+/* =========================================================
+   GLOBAL RESET AND BASE
+========================================================= */
+
+* {
+  box-sizing: border-box;
+}
 
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: 100px;
 }
 
 body {
-  
-    font-family:"Plus Jakarta Sans",sans-serif;
-    background:#F8FAFC;
-    color: #0F172A;
-    transition: background-color 0.3s ease,color, 0.3s ease;
-}
-.dark body{
-  background: #020617;
-  color: #F8FAFC;
-}
+  min-width: 320px;
+  margin: 0;
 
-::selection {
-  background: #2563eb;
-  color: white;
+  font-family: var(--font-sans);
+  background: var(--page-bg);
+  color: var(--text-primary);
+
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
 }
 
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
 
-/* ============================
-   Floating Hero Icons
-============================ */
+button {
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: not-allowed;
+}
+
+img,
+svg {
+  max-width: 100%;
+}
+
+img {
+  display: block;
+}
+
+/* =========================================================
+   SHARED PAGE CONTAINERS
+========================================================= */
+
+.site-container {
+  width: min(
+    calc(100% - (var(--page-gutter) * 2)),
+    var(--page-container)
+  );
+
+  margin-inline: auto;
+}
+
+.section-spacing {
+  padding-block: var(--section-space);
+}
+
+/* =========================================================
+   GOLDEN EDITION SURFACES
+========================================================= */
+
+.premium-panel {
+  background: var(--surface-primary);
+  border: 1px solid var(--border-default);
+  border-radius: var(--panel-radius);
+  box-shadow: var(--shadow-premium);
+}
+
+.gold-border {
+  border: 1px solid var(--border-gold);
+}
+
+.gold-glow {
+  box-shadow:
+    0 0 24px var(--gold-glow),
+    0 0 55px rgba(245, 185, 66, 0.06);
+}
+
+.gold-text {
+  color: var(--gold-primary);
+}
+
+/* =========================================================
+   GOLDEN GRADIENT
+========================================================= */
+
+.gold-gradient {
+  background: linear-gradient(
+    135deg,
+    #FFE28A 0%,
+    #F5B942 45%,
+    #D99523 100%
+  );
+}
+
+.gold-gradient-text {
+  background: linear-gradient(
+    110deg,
+    #FFE28A 0%,
+    #F5B942 48%,
+    #E9A52F 100%
+  );
+
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+/* =========================================================
+   HERO AMBIENT LIGHTING
+========================================================= */
+
+.hero-gold-glow {
+  background: radial-gradient(
+    ellipse at center,
+    rgba(245, 185, 66, 0.15) 0%,
+    rgba(245, 185, 66, 0.045) 42%,
+    transparent 72%
+  );
+}
+
+.hero-blue-glow {
+  background: radial-gradient(
+    ellipse at center,
+    rgba(37, 99, 235, 0.19) 0%,
+    transparent 70%
+  );
+}
+
+/* =========================================================
+   FLOATING ANIMATIONS
+========================================================= */
 
 @keyframes float {
   0% {
-    transform: translateY(0px);
+    transform: translateY(0);
   }
+
   50% {
     transform: translateY(-12px);
   }
+
   100% {
-    transform: translateY(0px);
+    transform: translateY(0);
   }
 }
 
-.animate-float{
+.animate-float {
   animation: float 7s ease-in-out infinite;
+}
+
+@keyframes gold-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 12px rgba(245, 185, 66, 0.12);
+  }
+
+  50% {
+    box-shadow: 0 0 26px rgba(245, 185, 66, 0.25);
+  }
+}
+
+.animate-gold-pulse {
+  animation: gold-pulse 4s ease-in-out infinite;
+}
+
+/* =========================================================
+   TEXT SELECTION
+========================================================= */
+
+::selection {
+  background: #D49B2E;
+  color: #101827;
+}
+
+/* =========================================================
+   SCROLLBAR
+========================================================= */
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #64748B transparent;
+}
+
+/* =========================================================
+   ACCESSIBILITY
+========================================================= */
+
+:focus-visible {
+  outline: 2px solid var(--gold-primary);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* =========================================================
+   RESPONSIVE FOUNDATION
+========================================================= */
+
+@media (max-width: 640px) {
+  :root {
+    --panel-radius: 20px;
+    --card-radius: 18px;
+  }
 }

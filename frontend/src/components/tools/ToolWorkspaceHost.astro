@@ -1,52 +1,248 @@
----
-import CompressorWorkspace  from "../compressor/CompressorWorkspace.astro";
-import  ConverterWorkspace  from "../converter/ConverterWorkspace.astro";
 
 ---
+import CompressorWorkspace from "../compressor/CompressorWorkspace.astro";
+import ConverterWorkspace from "../converter/ConverterWorkspace.astro";
+import AdSlot from "../homepage/AdSlot.astro";
+---
 
-<div id="tool-workspace-host">
-    <div data-tool-workspace="compressor" class="hidden">
-        <CompressorWorkspace />
+<div
+  id="tool-workspace-host"
+  class="workspace-studio relative isolate mx-auto w-full"
+>
+  <!-- Purple atmosphere and decorative gold curves -->
+  <div
+    aria-hidden="true"
+    class="workspace-studio-atmosphere pointer-events-none absolute inset-0"
+  >
+    <div class="workspace-gold-curve workspace-gold-curve-one"></div>
+    <div class="workspace-gold-curve workspace-gold-curve-two"></div>
+    <div class="workspace-gold-curve workspace-gold-curve-three"></div>
+  </div>
+
+  <div class="relative z-10">
+    <div class="mb-8">
+      <button
+        id="workspace-back-home"
+        type="button"
+        class="inline-flex items-center gap-2 rounded-lg border border-white/10 bg-white/[0.04] px-4 py-2.5 text-sm font-medium text-slate-300 transition hover:border-amber-300/40 hover:bg-white/[0.08] hover:text-amber-200"
+        aria-label="Return to PixelShrinkAI homepage"
+      >
+        <span aria-hidden="true">←</span>
+        Back to PixelShrinkAI
+      </button>
     </div>
 
-    <div data-tool-workspace="converter" class="hidden">
-        <ConverterWorkspace />
+    <div class="workspace-studio-grid">
+      <!-- Left desktop advertisement -->
+      <aside class="workspace-side-ad workspace-side-ad-left">
+        <AdSlot placement="workspace-left" />
+      </aside>
+
+      <!-- Main tool workspace -->
+      <div class="workspace-main min-w-0">
+        <div data-tool-workspace="compressor" class="hidden">
+          <CompressorWorkspace />
+        </div>
+
+        <div data-tool-workspace="converter" class="hidden">
+          <ConverterWorkspace />
+        </div>
+      </div>
+
+      <!-- Right desktop advertisement -->
+      <aside class="workspace-side-ad workspace-side-ad-right">
+        <AdSlot placement="workspace-right" />
+      </aside>
     </div>
+
+    <!-- Tablet and mobile advertisement -->
+    <div class="workspace-mobile-ad">
+      <AdSlot placement="workspace-mobile" />
+    </div>
+  </div>
 </div>
 
-<script>
-    const host = document.getElementById("tool-workspace-host");
+<style>
+  .workspace-studio {
+    min-height: 65vh;
+    padding-bottom: 2rem;
+    background:
+      radial-gradient(
+        ellipse 58% 54% at 50% 32%,
+        rgba(105, 65, 155, 0.24),
+        transparent 76%
+      ),
+      radial-gradient(
+        ellipse 35% 48% at 0% 45%,
+        rgba(81, 51, 130, 0.24),
+        transparent 78%
+      ),
+      radial-gradient(
+        ellipse 35% 48% at 100% 45%,
+        rgba(81, 51, 130, 0.2),
+        transparent 78%
+      ),
+      linear-gradient(145deg, #100b20 0%, #17102a 48%, #0b1022 100%);
+  }
 
-    const workspaces = host
-        ? Array.from(
-            host?.querySelectorAll<HTMLElement>("[data-tool-workspace]"),
-        )
+  .workspace-studio-atmosphere {
+    z-index: 0;
+    overflow: hidden;
+  }
+
+  .workspace-gold-curve {
+    position: absolute;
+    pointer-events: none;
+    border-radius: 50%;
+    border-top: 2px solid rgba(255, 207, 112, 0.48);
+    filter:
+      drop-shadow(0 0 8px rgba(255, 190, 72, 0.48))
+      drop-shadow(0 0 22px rgba(255, 190, 72, 0.2));
+  }
+
+  .workspace-gold-curve-one {
+    width: 115%;
+    height: 220px;
+    left: -8%;
+    top: 16%;
+    transform: rotate(-7deg);
+  }
+
+  .workspace-gold-curve-two {
+    width: 95%;
+    height: 190px;
+    right: -14%;
+    top: 54%;
+    border-top-color: rgba(255, 218, 145, 0.36);
+    transform: rotate(9deg);
+  }
+
+  .workspace-gold-curve-three {
+    width: 70%;
+    height: 150px;
+    left: 12%;
+    bottom: -35px;
+    border-top-width: 1px;
+    border-top-color: rgba(255, 193, 78, 0.3);
+    transform: rotate(-4deg);
+  }
+
+  .workspace-studio-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    align-items: start;
+    gap: 1.5rem;
+  }
+
+  .workspace-main {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .workspace-side-ad {
+    display: none;
+  }
+
+  .workspace-mobile-ad {
+    display: block;
+    max-width: 728px;
+    margin: 2rem auto 0;
+  }
+
+  /* Side advertisements on standard desktop screens */
+  @media (min-width: 1440px) {
+    .workspace-studio-grid {
+      grid-template-columns: 120px minmax(0, 1fr) 120px;
+      gap: 1.5rem;
+    }
+
+    .workspace-side-ad {
+      display: block;
+      width: 120px;
+      padding-top: 3rem;
+    }
+
+    .workspace-mobile-ad {
+      display: none;
+    }
+  }
+
+/* Wider side advertisements on large desktop screens */
+  @media (min-width: 1600px) {
+    .workspace-studio-grid {
+      grid-template-columns: 160px minmax(0, 1fr) 160px;
+    }
+
+    .workspace-side-ad {
+      width: 160px;
+    }
+  }
+
+  @media (max-width: 639px) {
+    .workspace-gold-curve-one {
+      top: 10%;
+    }
+
+    .workspace-gold-curve-two {
+      top: 60%;
+    }
+
+    .workspace-studio-grid {
+      gap: 1rem;
+    }
+
+    .workspace-mobile-ad {
+      margin-top: 1.5rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .workspace-gold-curve {
+      filter: none;
+    }
+  }
+</style>
+
+<script>
+  const host = document.getElementById("tool-workspace-host");
+
+  const workspaces = host
+    ? Array.from(
+        host.querySelectorAll<HTMLElement>("[data-tool-workspace]"),
+      )
     : [];
 
-    function showWorkspace(toolId: string) {
-        workspaces.forEach((workspace) => {
-            const isActive = workspace.dataset.toolWorkspace === toolId;
+  const backButton = document.getElementById("workspace-back-home");
 
-            workspace.classList.toggle("hidden", !isActive);
-        });
-    }
-    window.addEventListener("pixelshrinkai:tool-activated", (event) => {
-        const customEvent = event as CustomEvent<{
-            tool: string;
-        }>;
+  backButton?.addEventListener("click", () => {
+    window.dispatchEvent(
+      new CustomEvent("pixelshrinkai:return-home"),
+    );
+  });
 
-        const toolId = customEvent.detail.tool;
-
-        showWorkspace(toolId);
-
-        window.dispatchEvent(
-            new CustomEvent("pixelshrinkai:workspace-state",{
-                detail : {
-                    active:false,
-                    tool: toolId,
-                    step: "upload",
-                },
-            }),
-        );
+  function showWorkspace(toolId: string) {
+    workspaces.forEach((workspace) => {
+      const isActive = workspace.dataset.toolWorkspace === toolId;
+      workspace.classList.toggle("hidden", !isActive);
     });
+  }
+
+  window.addEventListener("pixelshrinkai:tool-activated", (event) => {
+    const customEvent = event as CustomEvent<{
+      tool: string;
+    }>;
+
+    const toolId = customEvent.detail.tool;
+    showWorkspace(toolId);
+
+    window.dispatchEvent(
+      new CustomEvent("pixelshrinkai:workspace-state", {
+        detail: {
+          active: false,
+          tool: toolId,
+          step: "upload",
+        },
+      }),
+    );
+  });
 </script>

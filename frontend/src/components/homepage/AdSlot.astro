@@ -1,0 +1,136 @@
+
+---
+interface Props {
+  placement?:
+    | "homepage-between-tools-and-features"
+    | "workspace-left"
+    | "workspace-right"
+    | "workspace-mobile";
+}
+
+const {
+  placement = "homepage-between-tools-and-features",
+} = Astro.props;
+
+const isWorkspaceAd = placement.startsWith("workspace-");
+---
+
+<section
+  class:list={[
+    "homepage-ad-reserve relative isolate overflow-hidden",
+    "px-4 py-5 sm:px-6 lg:px-8",
+    {
+      "workspace-ad-reserve": isWorkspaceAd,
+      "workspace-ad-mobile": placement === "workspace-mobile",
+    },
+  ]}
+  data-ad-placement={placement}
+  aria-label="Advertisement space"
+>
+  <div
+    aria-hidden="true"
+    class="ad-gold-atmosphere pointer-events-none absolute inset-0"
+  ></div>
+
+  <div
+    class:list={[
+      "relative z-10 mx-auto flex items-center justify-center rounded-xl",
+      "border border-[#D4A64A]/15 bg-[#07101F]/55",
+      "shadow-[inset_0_1px_0_rgba(255,255,255,.025)]",
+      {
+        "min-h-[112px] max-w-[1200px]":
+          placement === "homepage-between-tools-and-features",
+        "workspace-ad-content min-h-[250px] w-full":
+          placement === "workspace-left" ||
+          placement === "workspace-right",
+        "min-h-[100px] w-full":
+          placement === "workspace-mobile",
+      },
+    ]}
+  >
+    <!-- Reserved for approved Google AdSense code. -->
+    <span
+      class="text-[10px] font-medium uppercase tracking-[.22em] text-slate-500/65"
+    >
+      Advertisement
+    </span>
+  </div>
+</section>
+
+<style>
+  .homepage-ad-reserve {
+    background:
+      radial-gradient(
+        ellipse 52% 100% at 50% 0%,
+        rgba(245, 185, 66, 0.09),
+        transparent 76%
+      ),
+      radial-gradient(
+        ellipse 34% 110% at 0% 50%,
+        rgba(37, 99, 235, 0.14),
+        transparent 78%
+      ),
+      radial-gradient(
+        ellipse 34% 110% at 100% 50%,
+        rgba(37, 99, 235, 0.12),
+        transparent 78%
+      ),
+      linear-gradient(180deg, #030916, #040b17);
+  }
+
+  .ad-gold-atmosphere::before,
+  .ad-gold-atmosphere::after {
+    content: "";
+    position: absolute;
+    pointer-events: none;
+    border-radius: 50%;
+  }
+
+  .ad-gold-atmosphere::before {
+    left: -8%;
+    right: -8%;
+    top: -74px;
+    height: 190px;
+    border-top: 2px solid rgba(255, 206, 111, 0.38);
+    transform: rotate(-2deg);
+    filter: drop-shadow(0 0 9px rgba(255, 184, 54, 0.42));
+  }
+
+  .ad-gold-atmosphere::after {
+    left: 18%;
+    right: 18%;
+    bottom: -88px;
+    height: 180px;
+    border-top: 1px solid rgba(91, 157, 255, 0.34);
+    transform: rotate(3deg);
+    filter: drop-shadow(0 0 10px rgba(37, 99, 235, 0.3));
+  }
+
+  .workspace-ad-reserve {
+    padding: 0;
+    background: transparent;
+  }
+
+  .workspace-ad-reserve .ad-gold-atmosphere {
+    display: none;
+  }
+
+  .workspace-ad-content {
+    min-height: 250px;
+    border-color: rgba(212, 166, 74, 0.2);
+    background: rgba(34, 25, 51, 0.55);
+  }
+
+
+  @media (max-width: 639px) {
+    .homepage-ad-reserve:not(.workspace-ad-reserve) {
+      padding-top: 16px;
+      padding-bottom: 16px;
+    }
+
+    .homepage-ad-reserve:not(.workspace-ad-reserve)
+      > div:not(.ad-gold-atmosphere) {
+      min-height: 100px;
+    }
+  }
+</style>

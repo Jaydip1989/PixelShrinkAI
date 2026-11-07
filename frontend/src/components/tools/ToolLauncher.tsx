@@ -13,8 +13,8 @@ export default function ToolLauncher({
 }: ToolLauncherProps) {
     const [open, setOpen] = useState(false);
 
-    const activeToolLabel = 
-        TOOL_REGISTRY.find((tool) => tool.id === activeTool)?.name ?? "Our Tools";
+    const activeToolLabel =
+        TOOL_REGISTRY.find((tool) => tool.id === activeTool)?.name ?? "Select a tool";
     
     const handleToolSelect = (toolId: ToolId) => {
         const tool = TOOL_REGISTRY.find((item) => item.id === toolId);

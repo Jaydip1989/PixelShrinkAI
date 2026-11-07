@@ -1,160 +1,186 @@
 ---
 import ToolController from "./tools/ToolController";
-import HeroDecorations from "./homepage/HeroDecorations/HeroDecorations.astro";
 import ToolWorkspaceHost from "./tools/ToolWorkspaceHost.astro";
+import conversionArtwork from "../assets/golden-conversion-artwork-transparent.png";
 ---
 
-<section id="hero-section" class="relative overflow-visible bg-linear-to-b from-white via-blue-50 to-white pt-6 pb-16 md:pt-8 md:pb-16 lg:pt-10 lg:pb-18 xl:pt-10 xl:pb-18 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
-  <div id="hero-decorations" class="contents">
-    <HeroDecorations />
-  </div> 
+<section
+  id="hero-section"
+  class="golden-home relative isolate overflow-hidden bg-[#030916] text-white"
+>
+  <div aria-hidden="true" class="golden-atmosphere pointer-events-none absolute inset-0">
+    <div class="absolute -left-56 top-20 h-[620px] w-[620px] rounded-full bg-blue-700/20 blur-[150px]"></div>
+    <div class="absolute -right-40 top-0 h-[620px] w-[620px] rounded-full bg-amber-500/10 blur-[160px]"></div>
+    <div class="absolute inset-0 opacity-20 [background-image:radial-gradient(rgba(255,255,255,.45)_0.7px,transparent_0.7px)] [background-size:26px_26px]"></div>
+    <div class="golden-edge-light absolute inset-x-0 bottom-0 h-px"></div>
+  </div>
 
-  <div id="hero-layout" data-tool-state="upload" class="relative z-10 mx-auto max-w-7xl pt-1 px-6 grid items-start gap-12 lg:grid-cols-[1.08fr_0.92fr] xl:gap-16">
+  <div id="homepage-hero-content" class="relative z-10 mx-auto w-full max-w-[1536px] px-5 pb-8 pt-[104px] sm:px-8 lg:px-10 xl:px-[54px]">
+    <div class="golden-hero-grid relative grid items-center gap-5 lg:grid-cols-[minmax(0,1.02fr)_minmax(250px,.72fr)_minmax(390px,.92fr)] lg:gap-2 xl:gap-4">
+      <div class="golden-scene-bridge" aria-hidden="true"></div>
 
-    <!-- LEFT MARKETING CONTENT -->
-    <div id="hero-marketing" class="max-w-160 pt-8 md:pt-5"> 
+      <!-- Marketing message -->
+      <div id="hero-marketing" class="relative z-20 min-w-0 py-3 lg:py-0">
+        <div class="mb-4 flex flex-wrap items-center gap-4">
+          <span class="inline-flex items-center gap-2 rounded-full border border-[#D49B2E]/65 bg-[#161725]/90 px-4 py-2 text-xs font-semibold text-[#FFE18A] shadow-[0_0_20px_rgba(245,185,66,.15)] sm:text-sm">
+            <span>🚀</span> Smart Image Tools
+          </span>
+          <span class="text-sm font-medium tracking-wide text-[#B9C8E1] sm:text-base">Fast. Private. Free.</span>
+        </div>
 
-      <!-- Badge -->
-      <div class="inline-flex items-center gap-3">
-        <span class="inline-flex items-center rounded-full border border-blue-200 bg-blue-100 px-4 py-1 text-sm font-semibold text-blue-700">
-          🚀 Coming Soon
-        </span>
+        <h1 class="max-w-[650px] text-[clamp(2.55rem,4.4vw,4.65rem)] font-extrabold leading-[1.02] tracking-[-0.065em] text-white">
+          Powerful image
+          tools <span class="golden-heading-accent">for everyone.</span>
+        </h1>
 
-        <span class="hidden text-sm text-slate-500 md:block dark:text-slate-400">
-          First tool launches soon! 
-        </span>
+        <p class="mt-5 max-w-[570px] text-[15px] leading-[1.65] text-[#B8C8E1] sm:text-base lg:text-[17px]">
+          Compress, convert, edit and optimize your images with a suite of fast,
+          private and easy-to-use tools. No sign-up. No limits. Just powerful
+          tools that work in your browser.
+        </p>
+
+        <div class="mt-7 flex flex-wrap items-center gap-3">
+          <a href="#tools" class="golden-primary-cta inline-flex min-h-[58px] items-center gap-3 rounded-2xl px-7 text-base font-extrabold text-[#111827] transition hover:-translate-y-0.5">
+            Explore Our Tools
+            <svg aria-hidden="true" viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14m-6-6 6 6-6 6"/></svg>
+          </a>
+          <a href="#roadmap" class="inline-flex min-h-[58px] items-center gap-3 rounded-2xl border border-[#D4A64A]/70 bg-[#07101F]/85 px-6 text-sm font-bold text-white shadow-[inset_0_1px_0_rgba(255,255,255,.08)] transition hover:border-[#FFD978] hover:bg-[#111C2D]">
+            <svg aria-hidden="true" viewBox="0 0 24 24" class="h-6 w-6 text-[#FFD34D]" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 6 6-3 6 3 6-3v15l-6 3-6-3-6 3z"/><path d="M9 3v15m6-12v15"/></svg>
+            View Roadmap
+          </a>
+        </div>
+
+        <div class="mt-7 flex flex-wrap items-center gap-x-7 gap-y-3 text-xs font-medium text-[#D7E0EF] sm:text-sm">
+          <span class="inline-flex items-center gap-2"><svg aria-hidden="true" viewBox="0 0 24 24" class="h-6 w-6 text-[#FFD34D]" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 3 4.5 6v5.5c0 4.2 3 7.5 7.5 9.5 4.5-2 7.5-5.3 7.5-9.5V6z"/><path d="m8.5 12 2.2 2.2 4.8-5"/></svg>No sign-up required</span>
+          <span class="inline-flex items-center gap-2"><svg aria-hidden="true" viewBox="0 0 24 24" class="h-6 w-6 text-[#FFD34D]" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>Privacy-minded tools</span>
+          <span class="inline-flex items-center gap-2"><svg aria-hidden="true" viewBox="0 0 24 24" class="h-6 w-6 text-[#FFD34D]" fill="currentColor"><path d="m13 2-9 12h7l-1 8 10-13h-7z"/></svg>Works on all devices</span>
+        </div>
       </div>
 
-      <!-- Heading -->
-      <h1 class="mt-4 max-w-[12ch] text-2xl font-semibold tracking-[-0.03em] leading-[1.04] sm:text-[3.7rem] xl:text-[4rem] text-slate-900 dark:text-white">
-        Powerful Image Tools.
-
-        <span class="mt-2 block bg-linear-to-r from-blue-500 via-indigo-600 to-pink-500 bg-clip-text text-transparent">
-          Fast. Private. Free.
-        </span>
-      </h1>
-
-      <!-- Description -->
-      <p class="mt-7 max-w-145 text-lg leading-8 text-slate-600 dark:text-slate-300">
-        PixelShrinkAI is building a modern collection of online image tools to help you compress, resize, crop, convert and optimize images directly in your browser—with speed, privacy and simplicity.
-      </p>
-
-      <!-- CTA -->
-      <div class="mt-10 flex flex-col gap-4 sm:flex-row">
-        <a href="#notify" class="inline-flex items-center justify-center rounded-2xl bg-linear-to-r from-blue-600 to-indigo-600 px-8 py-4 font-semibold text-white shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
-          Notify Me
-        </a>
-
-        <a href="#tools" class="inline-flex items-center justify-center rounded-2xl border border-slate-300 bg-white px-8 py-4 font-semibold text-slate-700 transition-all duration-300 hover:border-blue-600 hover:text-blue-600 dark:border-slate-700 dark:bg-slate-900 dark:text-white">
-          View Upcoming Tools
-        </a>
+      <!-- Floating conversion artwork: extracted from the approved design, kept separate from UI controls. -->
+      <div class="golden-artwork relative z-10 mx-auto hidden w-full max-w-[450px] lg:block">
+        <img
+          src={conversionArtwork.src}
+          alt="JPG to WEBP image conversion illustration with glowing gold trails"
+          class="golden-artwork-image h-auto w-full object-contain"
+          loading="eager"
+          decoding="async"
+        />
       </div>
 
-      <!-- Trust -->
-      <div class="mt-8 flex items-center gap-3 text-sm text-slate-500 dark:text-slate-400">
-        <span class="h-2.5 w-2.5 rounded-full bg-green-500"></span>
-        <span>No sign up required. 100% Free to use.</span>
-      </div>
+      <!-- Real interactive tool launcher -->
+      <div id="hero-workspace" class="relative z-20 mx-auto w-full max-w-[490px] lg:mx-0 lg:justify-self-end">
+        <div aria-hidden="true" class="golden-workspace-aura absolute -inset-5 rounded-[34px] bg-[radial-gradient(ellipse_at_center,rgba(245,185,66,.24),rgba(139,69,255,.18)_38%,rgba(37,99,235,.10)_58%,transparent_76%)] blur-2xl"></div>
+        <div aria-hidden="true" class="golden-workspace-bridge"></div>
+        <div class="golden-workspace-panel relative z-10 overflow-hidden rounded-[22px] border border-[#FFD36A] bg-[linear-gradient(145deg,rgba(15,25,43,.98),rgba(5,13,27,.98))] p-5 shadow-[0_0_0_1px_rgba(255,217,120,.16),0_0_28px_rgba(245,185,66,.22),0_22px_70px_rgba(0,0,0,.62),inset_0_1px_0_rgba(255,255,255,.13)] sm:rounded-[25px] sm:p-6">
+          <div class="mb-3 flex items-center justify-between gap-3">
+            <label class="text-sm font-bold text-white" for="tool-selector">Select a Tool</label>
+            <span class="inline-flex items-center gap-2 rounded-full border border-emerald-400/25 bg-emerald-400/10 px-3 py-1 text-[10px] font-bold uppercase tracking-wide text-emerald-300"><span class="h-1.5 w-1.5 rounded-full bg-emerald-400"></span>2 tools live</span>
+          </div>
+          <ToolController client:load />
 
+          <div class="mt-4 rounded-2xl border border-dashed border-[#66758D]/70 bg-[#071324]/75 px-4 py-5 text-center sm:px-5 sm:py-6">
+            <div class="mx-auto flex h-14 w-20 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 via-violet-500 to-fuchsia-500 text-white shadow-[0_0_28px_rgba(121,75,255,.45)]">
+              <svg aria-hidden="true" viewBox="0 0 24 24" class="h-9 w-9" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4m-5 5 5-5 5 5"/><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg>
+            </div>
+            <p class="mt-3 text-base font-bold text-white">Your image workspace</p>
+            <p class="mt-1 text-sm text-[#AFC0D8]">Drag &amp; drop or click to browse</p>
+            <div class="mt-4 flex flex-wrap justify-center gap-2 text-[10px] font-bold text-white">
+              {["JPG","PNG","WEBP","AVIF"].map((format) => <span class="rounded-full border border-white/5 bg-[#142744] px-3 py-1.5">{format}</span>)}
+            </div>
+          </div>
+
+          <div class="mt-4 flex items-start gap-3 px-1 text-[11px] leading-[1.55] text-[#B7C7DE]">
+            <svg aria-hidden="true" viewBox="0 0 24 24" class="mt-0.5 h-5 w-5 shrink-0 text-emerald-400" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 3 4.5 6v5.5c0 4.2 3 7.5 7.5 9.5 4.5-2 7.5-5.3 7.5-9.5V6z"/><path d="m8.5 12 2.2 2.2 4.8-5"/></svg>
+            <p>Your images stay private. Processed in your browser or secure servers — never shared with anyone.</p>
+          </div>
+        </div>
+      </div>
     </div>
+  </div>
 
-    <!-- TOOL WORKSPACE -->
-    <div id="hero-workspace" 
-        class="w-full max-w-110 mx-auto flex-col lg:mx-0 lg:translate-x-12 lg:translate-y-6" 
-    >
-      <ToolController client:load />
-      <div id="hero-workspace-gap" class="h-3"></div>
-      <ToolWorkspaceHost />
-    </div>
-
+  <!-- The workspace host remains available for the existing tool flow. -->
+  <div id="tool-workspace-stage" class="relative z-20 hidden bg-[#030916] px-4 pb-12 pt-28 sm:px-8">
+    <ToolWorkspaceHost />
   </div>
 </section>
 
+
 <style>
-  #hero-workspace {
-  padding: 0;
+.golden-home {
+  position:relative;
+  background:
+    radial-gradient(ellipse 58% 48% at 54% 48%,rgba(255,178,38,.22),transparent 72%),
+    radial-gradient(ellipse 38% 60% at 0% 48%,rgba(37,99,235,.28),transparent 74%),
+    radial-gradient(ellipse 38% 60% at 100% 44%,rgba(37,99,235,.24),transparent 74%),
+    radial-gradient(ellipse 44% 32% at 76% 5%,rgba(255,196,72,.17),transparent 76%),
+    linear-gradient(110deg,#020817 0%,#080D1D 48%,#030916 100%);
 }
-
-#tool-workspace-host {
-  width: 100%;
-  padding: 0;
-  margin: 0;
+/* Layered elliptical ribbons create curved light trails rather than diagonal rules. */
+.golden-home::before,.golden-home::after {
+  content:"";position:absolute;z-index:1;pointer-events:none;border-radius:50%;
+  border:2px solid transparent;mix-blend-mode:screen;
 }
-
-/* When a tool is active, let the workspace use the full Hero width */
-#hero-layout[data-workspace-state="active"] 
-
-#hero-workspace {
-  max-width: none;
-  width: 100%;
+.golden-home::before {
+  width:112%;height:72%;left:-6%;top:12%;
+  border-top-color:rgba(255,202,91,.78);border-bottom-color:rgba(255,177,50,.28);
+  transform:rotate(-7deg);filter:drop-shadow(0 0 7px rgba(255,183,48,.8)) drop-shadow(0 0 22px rgba(255,183,48,.42));
+  box-shadow:inset 0 18px 30px -28px rgba(255,224,153,.9);
 }
+.golden-home::after {
+  width:92%;height:54%;right:-18%;bottom:-22%;
+  border-top-color:rgba(255,218,133,.72);border-bottom-color:rgba(63,139,255,.48);
+  transform:rotate(8deg);filter:drop-shadow(0 0 8px rgba(255,186,52,.65)) drop-shadow(0 0 20px rgba(37,99,235,.28));
+}
+.golden-atmosphere::before,.golden-atmosphere::after {
+  content:"";position:absolute;pointer-events:none;border-radius:50%;
+}
+.golden-atmosphere::before {
+  width:74%;height:48%;left:-20%;top:28%;border-top:3px solid rgba(74,144,255,.62);
+  transform:rotate(-17deg);filter:blur(1px) drop-shadow(0 0 12px rgba(37,99,235,.62));
+}
+.golden-atmosphere::after {
+  width:72%;height:46%;right:-22%;top:34%;border-top:3px solid rgba(255,207,94,.78);
+  transform:rotate(15deg);filter:blur(1px) drop-shadow(0 0 12px rgba(255,183,48,.58));
+}
+.golden-heading-accent {color:#FFC83D;background:linear-gradient(100deg,#FFF0B2 0%,#FFD15B 42%,#F5A900 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;}
+.golden-primary-cta {background:linear-gradient(110deg,#FFF0A8 0%,#FFD04B 55%,#F5B72F 100%);box-shadow:0 0 28px rgba(255,196,58,.5),0 8px 34px rgba(245,185,66,.3),inset 0 1px 0 rgba(255,255,255,.72);}
+.golden-edge-light {background:linear-gradient(90deg,transparent,rgba(255,204,79,.72),rgba(255,255,255,.34),rgba(255,204,79,.72),transparent);box-shadow:0 0 18px rgba(245,185,66,.55);}
+.golden-scene-bridge {position:absolute;z-index:1;left:42%;right:18%;top:54%;height:110px;pointer-events:none;border-top:2px solid rgba(255,204,83,.88);border-radius:50%;filter:drop-shadow(0 0 9px rgba(255,184,45,.9)) drop-shadow(0 0 22px rgba(255,184,45,.42));transform:rotate(-8deg);}
+.golden-artwork {z-index:5;transform:translateX(8px);filter:drop-shadow(0 12px 28px rgba(0,0,0,.38)) drop-shadow(0 0 26px rgba(255,187,48,.32));}
+.golden-artwork-image {display:block;width:100%;height:auto;object-fit:contain;}
+#hero-workspace {z-index:10;}
+.golden-workspace-bridge {position:absolute;z-index:0;left:-115px;top:34%;width:235px;height:105px;pointer-events:none;border-top:3px solid rgba(255,225,151,.95);border-radius:50%;filter:drop-shadow(0 0 10px rgba(255,188,52,.9)) drop-shadow(0 0 25px rgba(255,188,52,.52));transform:rotate(-13deg);}
+.golden-workspace-panel {position:relative;border-color:rgba(255,229,157,1);background:radial-gradient(ellipse at 0% 45%,rgba(255,190,65,.28),transparent 52%),radial-gradient(ellipse at 100% 100%,rgba(37,99,235,.2),transparent 48%),linear-gradient(145deg,rgba(19,28,44,.97),rgba(5,13,27,.985));box-shadow:0 0 0 1px rgba(255,217,120,.32),0 0 42px rgba(245,185,66,.46),0 0 88px rgba(37,99,235,.2),0 22px 70px rgba(0,0,0,.62),inset 0 1px 0 rgba(255,255,255,.2);}
+.golden-workspace-panel::before {content:"";position:absolute;inset:0;pointer-events:none;border-radius:inherit;background:linear-gradient(115deg,rgba(255,222,143,.18),transparent 25%,transparent 72%,rgba(255,194,67,.16));}
+@media (min-width:1024px) {.golden-hero-grid {grid-template-columns:minmax(0,1.02fr) minmax(245px,.72fr) minmax(385px,.92fr);}}
+@media (min-width:1280px) {.golden-hero-grid {grid-template-columns:minmax(0,1.04fr) minmax(280px,.76fr) minmax(420px,.92fr);}}
+@media (max-width:1023px) {.golden-artwork,.golden-scene-bridge,.golden-workspace-bridge {display:none;}.golden-hero-grid {grid-template-columns:minmax(0,1fr) minmax(0,1fr);}}
+@media (max-width:767px) {.golden-hero-grid {display:flex;flex-direction:column;align-items:stretch;}#hero-marketing,#hero-workspace {width:100%;max-width:none;}#hero-marketing {text-align:left;}.golden-home::before,.golden-home::after {width:125%;left:-12%;opacity:.48;}}
+@media (prefers-reduced-motion:no-preference) {
+ .golden-workspace-panel {animation:golden-panel-breathe 7s ease-in-out infinite;}
+ @keyframes golden-panel-breathe {
+  0%,100% {box-shadow:0 0 0 1px rgba(255,217,120,.28),0 0 34px rgba(245,185,66,.36),0 0 68px rgba(37,99,235,.14),0 22px 70px rgba(0,0,0,.62),inset 0 1px 0 rgba(255,255,255,.17);}
+  50% {box-shadow:0 0 0 1px rgba(255,217,120,.4),0 0 50px rgba(245,185,66,.52),0 0 84px rgba(37,99,235,.22),0 22px 70px rgba(0,0,0,.62),inset 0 1px 0 rgba(255,255,255,.17);}
+ }
+}
+@media (prefers-reduced-motion:reduce) {.golden-workspace-panel {animation:none;}}
 </style>
 
+
 <script>
-  const heroLayout = document.getElementById("hero-layout");
-  const heroMarketing = document.getElementById("hero-marketing");
-  const heroWorkspace = document.getElementById("hero-workspace");
-  const heroDecorations = document.getElementById("hero-decorations");
-  const heroSection = document.getElementById("hero-section");
+  const heroContent = document.getElementById("homepage-hero-content");
+  const workspaceStage = document.getElementById("tool-workspace-stage");
 
-  function updateHeroLayout(event: Event) {
-    const customEvent = event as CustomEvent<{
-      step: "upload" | "preview" | "processing" | "download";
-    }>;
+  window.addEventListener("pixelshrinkai:tool-activated", () => {
+    heroContent?.classList.add("hidden");
+    workspaceStage?.classList.remove("hidden");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  });
 
-    const step = customEvent.detail.step;
-    const toolIsActive = step !== "upload";
-
-    if (!heroLayout || !heroMarketing || !heroWorkspace || !heroDecorations) {
-      return;
-    }
-
-    heroLayout.dataset.toolState = step;
-
-    /* Decorations */
-    heroDecorations.style.display = toolIsActive ? "none" : "contents";
-
-    /* Marketing */
-    heroMarketing.classList.toggle("hidden", toolIsActive);
-
-    /* Hero container */
-    heroLayout.classList.toggle("max-w-7xl", !toolIsActive);
-    heroLayout.classList.toggle("max-w-[1200px]", toolIsActive);
-
-    heroLayout.classList.toggle("lg:grid-cols-[1.08fr_0.92fr]", !toolIsActive);
-    heroLayout.classList.toggle("grid-cols-1", toolIsActive);
-
-    heroLayout.classList.toggle("gap-12", !toolIsActive);
-    heroLayout.classList.toggle("gap-0", toolIsActive);
-
-    /* Workspace */
-    heroWorkspace.classList.toggle("max-w-[440px]", !toolIsActive);
-    heroWorkspace.classList.toggle("max-w-[1000px]", toolIsActive);
-
-    heroWorkspace.classList.toggle("justify-center", !toolIsActive);
-    heroWorkspace.classList.toggle("lg:justify-end", !toolIsActive);
-    heroWorkspace.classList.toggle("justify-stretch", toolIsActive);
-
-    heroWorkspace.classList.toggle("w-full", true);
-
-    heroWorkspace.classList.toggle("lg:pt-2", !toolIsActive);
-    heroWorkspace.classList.toggle("pt-0", toolIsActive);
-
-    heroSection?.classList.toggle("min-h-[calc(100vh+36px)]", toolIsActive);
-
-    /* Normal Hero position */
-    heroWorkspace.classList.toggle("lg:translate-x-12", !toolIsActive);
-    heroWorkspace.classList.toggle("lg:translate-y-6", !toolIsActive);
-
-    /* Active workspace position */
-    heroWorkspace.classList.toggle("lg:translate-x-18", toolIsActive);
-
-    heroWorkspace.classList.toggle("mt-8", toolIsActive);
-    heroWorkspace.classList.toggle("sm:mt-5", toolIsActive);
-    heroWorkspace.classList.toggle("lg:mt-4", toolIsActive);
-
-    heroWorkspace.classList.toggle("mt-0", !toolIsActive);
-  }
-
-  window.addEventListener("pixelshrinkai:tool-state", updateHeroLayout);
+  window.addEventListener("pixelshrinkai:return-home", () => {
+    workspaceStage?.classList.add("hidden");
+    heroContent?.classList.remove("hidden");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  });
 </script>

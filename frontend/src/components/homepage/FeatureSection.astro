@@ -1,48 +1,96 @@
 ---
 import { Globe, Lock, Sparkles, Zap } from "lucide-preact";
-import FeatureCard from "./FeatureCard.astro";
 ---
 
-<section class="relative -mt-2 -translate-y-10">
+<section id="features" class="golden-feature-section relative isolate overflow-hidden border-t border-[#D4A64A]/65 px-5 text-white sm:px-8 sm:pt-4 sm:pb-10 lg:px-10 lg:pt-5 lg:pb-3">
+  <div aria-hidden="true" class="feature-gold-atmosphere pointer-events-none absolute inset-0"></div>
+  <div aria-hidden="true" class="feature-gold-ridge pointer-events-none absolute inset-x-0 top-0 h-10"></div>
+  <div aria-hidden="true" class="feature-light-trail pointer-events-none absolute inset-x-0 bottom-0"></div>
 
-  <div class="mx-auto max-w-7xl px-4">
-
-    <div class="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
-
-      <FeatureCard
-        title="Lightning Fast"
-        description="Optimized for speed. Get results in seconds."
-        variant="amber"
-      >
-        <Zap slot="icon" size={30} strokeWidth={2.2} />
-      </FeatureCard>
-
-      <FeatureCard
-        title="Privacy First"
-        description="Your images never leave your device."
-        variant="emerald"
-      >
-        <Lock slot="icon" size={30} strokeWidth={2.2} />
-      </FeatureCard>
-
-      <FeatureCard
-        title="High Quality"
-        description="Best compression with perfect quality."
-        variant="violet"
-      >
-        <Sparkles slot="icon" size={30} strokeWidth={2.2} />
-      </FeatureCard>
-
-      <FeatureCard
-        title="Works Everywhere"
-        description="Works on all devices and browsers."
-        variant="blue"
-      >
-        <Globe slot="icon" size={30} strokeWidth={2.2} />
-      </FeatureCard>
-
+  <div class="relative z-10 mx-auto grid max-w-[1320px] pb-3 items-center gap-7 lg:grid-cols-[1.1fr_1.9fr] lg:gap-12">
+    <div>
+      <p class="text-xs font-bold uppercase tracking-[.16em] text-[#FFD34D]">Why PixelShrinkAI</p>
+      <h2 class="mt-2 text-3xl font-extrabold tracking-[-.045em] sm:text-4xl">Simple. Fast. <span class="golden-heading-accent">Private.</span></h2>
+      <p class="mt-3 max-w-[540px] text-sm leading-6 text-[#C0CDE0]">Built for creators, students, professionals and everyone who works with images. Get powerful tools without the complexity.</p>
     </div>
 
+    <div class="relative top-[2px] grid grid-cols-2 gap-x-6 gap-y-6 sm:grid-cols-4 sm:gap-7 lg:gap-8">
+      <div class="feature-item min-w-0">
+        <div class="feature-icon feature-amber"><Zap size={29} strokeWidth={2.4} /></div>
+        <h3 class="mt-2 text-sm font-extrabold text-white">Lightning Fast</h3>
+        <p class="mt-1 text-xs leading-[1.55] text-[#B8C8E1]">Optimized for speed. Get results in seconds.</p>
+      </div>
+      <div class="feature-item min-w-0">
+        <div class="feature-icon feature-green"><Lock size={29} strokeWidth={2.4} /></div>
+        <h3 class="mt-2 text-sm font-extrabold text-white">Privacy First</h3>
+        <p class="mt-1 text-xs leading-[1.55] text-[#B8C8E1]">Your images never leave your device unless required.</p>
+      </div>
+      <div class="feature-item min-w-0">
+        <div class="feature-icon feature-blue"><Sparkles size={29} strokeWidth={2.4} /></div>
+        <h3 class="mt-2 text-sm font-extrabold text-white">High Quality</h3>
+        <p class="mt-1 text-xs leading-[1.55] text-[#B8C8E1]">Best results with minimal quality loss.</p>
+      </div>
+      <div class="feature-item min-w-0">
+        <div class="feature-icon feature-violet"><Globe size={29} strokeWidth={2.4} /></div>
+        <h3 class="mt-2 text-sm font-extrabold text-white">Works Everywhere</h3>
+        <p class="mt-1 text-xs leading-[1.55] text-[#B8C8E1]">Works on desktop, tablet and mobile with a modern browser.</p>
+      </div>
+    </div>
   </div>
-
 </section>
+
+<style>
+.golden-heading-accent {color:#FFC83D;background:linear-gradient(100deg,#FFE58D 0%,#FFC43D 48%,#F5A900 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;}
+.golden-feature-section {
+ min-height:0;
+ background:
+  radial-gradient(ellipse 34% 100% at 0% 50%,rgba(37,99,235,.16),transparent 78%),
+  radial-gradient(ellipse 34% 100% at 100% 50%,rgba(37,99,235,.14),transparent 78%),
+  radial-gradient(ellipse 58% 100% at 50% 0%,rgba(255,183,52,.15),transparent 78%),
+  linear-gradient(180deg,#090F1D 0%,#040A16 100%);
+}
+.feature-gold-atmosphere::before,.feature-gold-atmosphere::after {content:"";position:absolute;pointer-events:none;border-radius:50%;}
+.feature-gold-atmosphere::before {left:-20%;top:-35%;width:78%;height:125%;border:2px solid transparent;border-top-color:rgba(255,196,75,.48);transform:rotate(-7deg);filter:drop-shadow(0 0 9px rgba(255,177,47,.36));}
+.feature-gold-atmosphere::after {right:-20%;top:-32%;width:74%;height:122%;border:2px solid transparent;border-top-color:rgba(82,151,255,.42);transform:rotate(7deg);filter:drop-shadow(0 0 10px rgba(37,99,235,.3));}
+.feature-gold-ridge,.feature-light-trail {display:none;}
+.feature-item {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-height: 132px;
+  padding: 8px 13px 19px;
+
+  border: 1px solid rgba(220,169,65,.76);
+  border-radius: 17px;
+
+  background:
+    radial-gradient(
+      ellipse 90% 65% at 50% 0%,
+      rgba(255,205,104,.20),
+      transparent 76%
+    ),
+    linear-gradient(
+      145deg,
+      rgba(255,255,255,.075),
+      rgba(255,190,55,.055) 48%,
+      rgba(5,13,28,.48)
+    );
+
+  box-shadow:
+    0 0 18px rgba(255,184,55,.16),
+    inset 0 1px 0 rgba(255,239,190,.24),
+    inset 0 -12px 24px rgba(255,178,43,.035);
+}
+
+.feature-item::before {content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:linear-gradient(125deg,rgba(255,226,154,.10),transparent 38%,transparent 70%,rgba(255,190,60,.07));}
+.feature-icon {position:relative;margin-inline: auto;z-index:1;display:flex;width:56px;height:56px;align-items:center;justify-content:center;border-radius:15px;box-shadow:0 0 20px rgba(245,185,66,.12),inset 0 1px 0 rgba(255,255,255,.12);}
+.feature-amber {color:#FFD43B;background:linear-gradient(145deg,rgba(245,185,66,.30),rgba(245,185,66,.07));box-shadow:0 0 25px rgba(245,185,66,.22),inset 0 1px 0 rgba(255,255,255,.14);}
+.feature-green {color:#16E6B0;background:linear-gradient(145deg,rgba(16,185,129,.25),rgba(16,185,129,.06));}
+.feature-blue {color:#43B9FF;background:linear-gradient(145deg,rgba(37,99,235,.30),rgba(37,99,235,.06));}
+.feature-violet {color:#A78BFA;background:linear-gradient(145deg,rgba(124,58,237,.30),rgba(124,58,237,.06));}
+@media (max-width:767px) {.feature-item {min-height:136px;padding:12px 10px;}}
+@media (prefers-reduced-motion:no-preference) {.feature-item:hover {border-color:rgba(255,215,125,.95);box-shadow:0 0 25px rgba(255,184,55,.24),inset 0 1px 0 rgba(255,239,190,.3);}.feature-item:hover .feature-icon {filter:drop-shadow(0 0 10px rgba(255,194,75,.3));}}
+</style>

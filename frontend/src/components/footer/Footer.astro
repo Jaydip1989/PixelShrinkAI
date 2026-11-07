@@ -2,6 +2,7 @@
 import FooterBrand from "./FooterBrand.astro";
 import FooterBottom from "./FooterBottom.astro";
 import FooterLinks from "./FooterLinks.astro";
+import featureMountain from "../../assets/feature-mountain-gold.png";
 
 const product = [
   { label: "Image Compressor", href: "#" },
@@ -9,20 +10,17 @@ const product = [
   { label: "Crop Images", href: "#" },
   { label: "Format Converter", href: "#" },
 ];
-
 const company = [
   { label: "About", href: "#" },
   { label: "Roadmap", href: "#tools" },
   { label: "Contact", href: "#" },
   { label: "Blog", href: "#" },
 ];
-
 const legal = [
   { label: "Privacy Policy", href: "#" },
   { label: "Terms & Conditions", href: "#" },
   { label: "Cookie Policy", href: "#" },
 ];
-
 const support = [
   { label: "FAQ", href: "#" },
   { label: "Changelog", href: "#" },
@@ -30,26 +28,51 @@ const support = [
 ];
 ---
 
-<footer class="border-t border-slate-200 bg-white pt-20 pb-10 -translate-y-8 dark:border-slate-800 dark:bg-slate-950">
-
-  <div class="mx-auto max-w-7xl px-6">
-
-    <div class="grid gap-14 lg:grid-cols-[1.6fr_1fr_1fr_1fr_1fr]">
-
-      <FooterBrand />
+<footer class="golden-footer relative isolate overflow-hidden border-t border-[#D4A64A]/65 pt-20 pb-2 text-white sm:pt-20">
+  <div aria-hidden="true" class="footer-mountain-art pointer-events-none absolute inset-x-0 bottom-0">
+    <img src={featureMountain.src} alt="" loading="lazy" decoding="async" />
+  </div>
+  <div aria-hidden="true" class="footer-gold-atmosphere pointer-events-none absolute inset-0"></div>
+  <div aria-hidden="true" class="footer-top-glint pointer-events-none absolute inset-x-0 top-0 h-px"></div>
+  <div class="relative z-10 mx-auto max-w-7xl px-6">
+    <div class="grid grid-cols-1 gap-12 md:grid-cols-2 lg:grid-cols-[1.6fr_1fr_1fr_1fr_1fr] lg:gap-10">
+      <div class="md:col-span-2 lg:col-span-1">
+        <FooterBrand />
+      </div>
 
       <FooterLinks title="Product" links={product} />
-
       <FooterLinks title="Company" links={company} />
-
       <FooterLinks title="Legal" links={legal} />
-
       <FooterLinks title="Support" links={support} />
-
     </div>
-
     <FooterBottom />
-
   </div>
-
 </footer>
+
+<style>
+.golden-footer {
+ background:
+  linear-gradient(180deg,rgba(5,12,25,.99) 0%,rgba(5,12,25,.90) 32%,rgba(3,9,22,.48) 68%,rgba(3,9,22,.30) 100%),
+  radial-gradient(ellipse 52% 64% at 10% 0%,rgba(255,178,47,.14),transparent 76%),
+  radial-gradient(ellipse 48% 72% at 100% 18%,rgba(37,99,235,.16),transparent 78%),
+  linear-gradient(180deg,#07101F 0%,#030916 100%);
+ box-shadow:inset 0 18px 52px rgba(255,179,50,.045);
+}
+.footer-mountain-art {z-index:0;height:clamp(340px,43vw,540px);overflow:hidden;opacity:.96;}
+.footer-mountain-art::after {content:"";position:absolute;inset:0;background:linear-gradient(180deg,#07101F 0%,rgba(7,16,31,.88) 8%,rgba(7,16,31,.35) 35%,rgba(3,9,22,.08) 72%,rgba(3,9,22,.25) 100%);}
+.footer-mountain-art img {display:block;width:100%;height:100%;object-fit:cover;object-position:center bottom;mix-blend-mode:screen;opacity:.95;}
+.footer-gold-atmosphere::before,.footer-gold-atmosphere::after {content:"";position:absolute;pointer-events:none;border-radius:50%;}
+.footer-gold-atmosphere::before {
+  left: -18%;
+  top: 10%;
+  width: 76%;
+  height: 64%;
+  border: 2px solid transparent;
+  border-top-color: rgba(255,190,65,.42);
+  transform: rotate(-7deg);
+  filter: drop-shadow(0 0 9px rgba(255,176,48,.32));
+}
+.footer-gold-atmosphere::after {right:-20%;bottom:0%;width:76%;height:64%;border:2px solid transparent;border-top-color:rgba(82,151,255,.38);transform:rotate(8deg);filter:drop-shadow(0 0 10px rgba(37,99,235,.28));}
+.footer-top-glint {background:linear-gradient(90deg,transparent,rgba(255,206,111,.40),rgba(255,240,189,.24),rgba(255,206,111,.40),transparent);box-shadow:0 0 10px rgba(255,184,54,.28);}
+@media (max-width:767px) {.footer-mountain-art {height:340px;opacity:.76;}.footer-mountain-art img {object-position:center bottom;}}
+</style>

@@ -48,7 +48,7 @@ function formatFileSize(bytes: number | null) : string {
 
 export default function DownloadView({
     selectedFile,
-    convertedFile, 
+    convertedFile,
     conversion,
     onSelectAnother,
 }: DownloadViewProps) {
@@ -73,13 +73,13 @@ export default function DownloadView({
         window.setTimeout(()=>{
             URL.revokeObjectURL(url);
         }, 1000);
-        
+
     };
 
-    const isImagePreview = 
+    const isImagePreview =
         Boolean(convertedFile.previewUrl) && convertedFile.type.startsWith("image/");
-    
-    const fileExtension = 
+
+    const fileExtension =
         selectedFile.name.split(".").pop()?.toUpperCase() || "FILE";
 
     return (
@@ -113,7 +113,7 @@ export default function DownloadView({
                         <path
                             strokeLinecap="round"
                             strokeLinejoin="round"
-                            d="M5 1314 4L19 7" 
+                            d="M12 3v12m0 0 5-5m-5 5-5-5M5 17v4h14v-4"
                         />
                     </svg>
                 </div>
@@ -138,14 +138,14 @@ export default function DownloadView({
                     <span className="font-semibold text-slate-700 dark:text-slate-200">
                         {conversion.outputLabel}
                     </span>
-                    . 
+                    .
                 </p>
             </div>
 
             {/* File Comparison */}
             <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2">
                 {/* Original */}
-                <div className="rounded-2xl border border-slate-200 bg-slate-50/80 p-4 dark:border-slate-700 
+                <div className="rounded-2xl border border-slate-200 bg-slate-50/80 p-4 dark:border-slate-700
                         dark:bg-slate-800/50">
                     <div className="flex items-center justify-between gap-3">
                         <p className="text-sm font-semibold text-slate-900 dark:text-white">
@@ -205,7 +205,7 @@ export default function DownloadView({
                 "
             >
                 {isImagePreview && convertedFile.previewUrl ? (
-                    <img 
+                    <img
                         src={convertedFile.previewUrl}
                         alt={convertedFile.name}
                         className="
@@ -239,12 +239,12 @@ export default function DownloadView({
                                 stroke="currentColor"
                                 strokeWidth={1.8}
                             >
-                                <path 
+                                <path
                                     strokeLinecap="round"
                                     strokeLinejoin="round"
                                     d="M7 3h7l5 5v13H7a2 2 0 01-2-2V5a2 2 0 0 1 2-2z"
                                 />
-                                <path 
+                                <path
                                     strokeLinecap="round"
                                     strokeLinejoin ="round"
                                     d="M14 3v6h5"
@@ -253,7 +253,7 @@ export default function DownloadView({
                         </div>
 
                         <p className="mt-3 break-all text-sm font-semibold text-slate-900 dark:text-white">
-                            {convertedFile}
+                            {convertedFile.name}
                         </p>
                         <p className="mt-1 text-xs leading-5 text-slate-500 dark:text-slate-400">
                             {
@@ -304,9 +304,9 @@ export default function DownloadView({
                         <path
                             strokeLinecap="round"
                             strokeLinejoin="round"
-                            d="M12 3v12m0 0 4-4m-4 4-4-4" 
+                            d="M12 3v12m0 0 4-4m-4 4-4-4"
                         />
-                        <path 
+                        <path
                             strokeLinecap="round"
                             strokeLinejoin="round"
                             d="M5 16v3a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-3"
@@ -319,25 +319,21 @@ export default function DownloadView({
                     type="button"
                     onClick={onSelectAnother}
                     className="
-                        rounded-2xl
-                        border
-                        border-slate-200
-                        bg-white
-                        px-6
+                        rounded-xl
+                        bg-linear-to-r
+                        from-blue-600
+                        via-purple-500
+                        to-pink-500
+                        px-4
                         py-3
                         font-semibold
-                        text-slate-700
+                        text-white
+                        shadow-md
                         transition
-                        hover:border-blue-500
-                        hover:text-blue-600
+                        hover:opacity-90
                         focus:outline-none
                         focus:ring-2
                         focus:ring-blue-500/20
-                        dark:border-slate-700 
-                        dark:bg-slate-900
-                        dark:text-slate-200
-                        dark:hover:border-blue-400
-                        dark:hover:text-blue-400
                     "
                 >
                     Select Another File

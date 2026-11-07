@@ -6,75 +6,46 @@ interface Props {
   variant: "emerald" | "blue" | "orange" | "violet" | "rose" | "amber";
   featured?: boolean;
 }
-
 const { title, description, status, variant, featured = false } = Astro.props;
-
-const variants = {
-  emerald: {
-    icon: "bg-emerald-100 text-emerald-600 dark:bg-emerald-500/15 dark:text-emerald-300",
-    border: "hover:border-emerald-300 dark:hover:border-emerald-500/40",
-    pill: "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300",
-    dot: "bg-emerald-500",
-  },
-  blue: {
-    icon: "bg-blue-100 text-blue-600 dark:bg-blue-500/15 dark:text-blue-300",
-    border: "hover:border-blue-300 dark:hover:border-blue-500/40",
-    pill: "bg-blue-100 text-blue-700 dark:bg-blue-500/15 dark:text-blue-300",
-    dot: "bg-blue-500",
-  },
-  orange: {
-    icon: "bg-orange-100 text-orange-600 dark:bg-orange-500/15 dark:text-orange-300",
-    border: "hover:border-orange-300 dark:hover:border-orange-500/40",
-    pill: "bg-orange-100 text-orange-700 dark:bg-orange-500/15 dark:text-orange-300",
-    dot: "bg-orange-500",
-  },
-  violet: {
-    icon: "bg-violet-100 text-violet-600 dark:bg-violet-500/15 dark:text-violet-300",
-    border: "hover:border-violet-300 dark:hover:border-violet-500/40",
-    pill: "bg-violet-100 text-violet-700 dark:bg-violet-500/15 dark:text-violet-300",
-    dot: "bg-violet-500",
-  },
-  rose: {
-    icon: "bg-rose-100 text-rose-600 dark:bg-rose-500/15 dark:text-rose-300",
-    border: "hover:border-rose-300 dark:hover:border-rose-500/40",
-    pill: "bg-rose-100 text-rose-700 dark:bg-rose-500/15 dark:text-rose-300",
-    dot: "bg-rose-500",
-  },
-  amber: {
-    icon: "bg-amber-100 text-amber-600 dark:bg-amber-500/15 dark:text-amber-300",
-    border: "hover:border-amber-300 dark:hover:border-amber-500/40",
-    pill: "bg-amber-100 text-amber-700 dark:bg-amber-500/15 dark:text-amber-300",
-    dot: "bg-amber-500",
-  },
-};
-
-const style = variants[variant];
-
-const statusLabel =
-  status === "live"
-    ? "Live"
-    : status === "coming-soon"
-      ? "Coming Soon"
-      : "Planned";
+const statusLabel = status === "live" ? "Live" : status === "coming-soon" ? "Coming Soon" : "Planned";
+const iconTone = {
+  emerald: "from-emerald-500/20 to-teal-500/5 text-emerald-300",
+  blue: "from-blue-500/25 to-cyan-500/5 text-blue-300",
+  orange: "from-amber-500/20 to-orange-500/5 text-amber-300",
+  violet: "from-violet-500/25 to-fuchsia-500/5 text-violet-300",
+  rose: "from-rose-500/20 to-pink-500/5 text-pink-300",
+  amber: "from-amber-500/25 to-yellow-500/5 text-amber-300",
+}[variant];
+const pillTone = status === "live"
+  ? "border-emerald-400/35 bg-emerald-500/20 text-emerald-300"
+  : status === "coming-soon"
+    ? "border-blue-400/35 bg-blue-500/20 text-cyan-300"
+    : "border-slate-500/25 bg-slate-700/65 text-slate-200";
 ---
 
-<article class={`group flex flex-col items-center rounded-3xl border bg-white p-5 text-center shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg dark:border-slate-800 dark:bg-slate-900 ${style.border} ${
-  featured ? "border-emerald-200 dark:border-emerald-500/30" : "border-slate-200"
-}`}>
-  <div class={`flex h-14 w-14 items-center justify-center rounded-2xl transition-transform duration-300 group-hover:scale-105 ${style.icon}`}>
+<article class:list={[
+  "golden-tool-card group relative flex min-h-[210px] flex-col items-center rounded-[16px] border px-3 pb-3 pt-4 text-center transition duration-300 hover:-translate-y-1",
+  featured ? "is-featured border-[#F5B942]/90" : "border-[#8A7046]/70",
+]}>
+  <div class:list={["tool-icon-surface relative z-10 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br shadow-inner transition duration-300 group-hover:scale-105", iconTone]}>
     <slot />
   </div>
-
-  <h3 class="mt-4 text-base font-bold text-slate-900 dark:text-white">
-    {title}
-  </h3>
-
-  <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">
-    {description}
-  </p>
-
-  <span class={`mt-4 inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-semibold ${style.pill}`}>
-    <span class={`h-2 w-2 rounded-full ${style.dot}`}></span>
-    {statusLabel}
-  </span>
+  <h3 class="relative z-10 mt-2.5 min-h-[22px] text-[13px] font-extrabold leading-5 tracking-tight text-white">{title}</h3>
+  <p class="relative z-10 mt-1.5 min-h-[44px] text-[11px] leading-[1.45] text-[#D0D9E8]">{description}</p>
+  <span class:list={["relative z-10 mt-auto inline-flex min-w-[92px] items-center justify-center rounded-full border px-4 py-1.5 text-[11px] font-bold", pillTone]}>{statusLabel}</span>
 </article>
+
+<style>
+.golden-tool-card {
+ isolation:isolate;position:relative;overflow:visible;
+ background:radial-gradient(ellipse at 50% -8%,rgba(255,194,77,.3),transparent 62%),radial-gradient(ellipse at 100% 100%,rgba(37,99,235,.17),transparent 58%),linear-gradient(145deg,rgba(38,33,35,.99),rgba(5,14,28,.99) 72%);
+ border-color:rgba(255,204,104,.94);
+ box-shadow:inset 0 1px 0 rgba(255,238,190,.38),0 0 0 1px rgba(255,190,65,.24),0 0 28px rgba(245,185,66,.32),0 0 18px rgba(37,99,235,.1),0 12px 28px rgba(0,0,0,.4);
+}
+.golden-tool-card::before {content:"";position:absolute;z-index:-1;inset:-2px;border-radius:inherit;pointer-events:none;background:linear-gradient(135deg,rgba(255,239,181,.48),transparent 24%,transparent 65%,rgba(255,177,45,.34));opacity:1;filter:blur(.3px);}
+.golden-tool-card::after {content:"";position:absolute;z-index:-2;left:5%;right:5%;bottom:-17px;height:36px;border-radius:50%;background:radial-gradient(ellipse,rgba(255,174,45,.55),rgba(255,174,45,.1) 55%,transparent 76%);filter:blur(13px);opacity:1;pointer-events:none;}
+.golden-tool-card:hover {border-color:#FFF0B5;box-shadow:inset 0 1px 0 rgba(255,245,210,.48),0 0 0 1px rgba(255,211,120,.42),0 0 42px rgba(245,185,66,.52),0 0 28px rgba(37,99,235,.18),0 18px 36px rgba(0,0,0,.46);}
+.golden-tool-card.is-featured {box-shadow:inset 0 1px 0 rgba(255,238,190,.42),0 0 0 1px rgba(255,190,65,.32),0 0 34px rgba(245,185,66,.4),0 0 18px rgba(37,99,235,.12),0 12px 28px rgba(0,0,0,.4);}
+@media (max-width:639px) {.golden-tool-card {min-height:205px;}}
+@media (prefers-reduced-motion:no-preference) {.golden-tool-card:hover .tool-icon-surface {filter:drop-shadow(0 0 9px rgba(255,198,78,.35));}}
+</style>

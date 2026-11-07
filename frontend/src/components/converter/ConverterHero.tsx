@@ -1,8 +1,4 @@
-import {
-    useEffect,
-    useRef,
-    useState,
-} from "preact/hooks";
+import { useEffect, useRef, useState, } from "preact/hooks";
 
 import ConversionSelector, {
     conversions,
@@ -12,12 +8,17 @@ import ConversionSelector, {
 import PreviewView from "./views/PreviewView";
 import ProcessingView from "./views/ProcessingView";
 import DownloadView from "./views/DownloadView";
+import { Download } from "lucide-preact";
+
+const API_BASE_URL = (
+    import.meta.env.PUBLIC_API_BASE_URL ?? ""
+).replace(/\/+$/,"");
 
 type ConverterStep =
     | "upload"
     | "preview"
     | "processing"
-    | "download";
+    | "download"
 
 interface SelectedFile {
     file: File;
@@ -36,88 +37,78 @@ interface ConvertedFile {
 }
 
 export default function ConverterHero() {
-    const [conversion, setConversion] =
-        useState("Image -> SVG");
+    const [conversion, setConversion] = useState("Image to SVG");
 
-    const [step, setStep] =
-        useState<ConverterStep>("upload");
 
-    const [selectedFile, setSelectedFile] =
-        useState<SelectedFile | null>(null);
+    const [avifOutputFormat, setAvifOutputFormat] = useState<"jpg" | "png" | "webp">("jpg");
 
-    const [convertedFile, setConvertedFile] =
-        useState<ConvertedFile | null>(null);
+    const [step, setStep] = useState<ConverterStep>("upload");
 
-    const [error, setError] =
-        useState("");
+    const [selectedFile, setSelectedFile] = useState<SelectedFile | null>(null);
 
-    const [isDragging, setIsDragging] =
-        useState(false);
+    const [convertedFile, setConvertedFile] = useState<ConvertedFile | null>(null);
 
-    const inputRef =
-        useRef<HTMLInputElement>(null);
+    const [error, setError] = useState("");
 
-    const currentConversion: ConversionDefinition =
+    const [isDragging, setIsDragging] = useState(false);
+
+    const inputRef = useRef<HTMLInputElement>(null);
+
+    const selectedConversion: ConversionDefinition =
         conversions.find(
             (item) => item.label === conversion,
         ) ?? conversions[0];
 
-    /*
-     * Tell the Hero which tool and workflow step
-     * are currently active.
-     */
+    const currentConversion: ConversionDefinition =
+        selectedConversion.id === "avif-to-image"
+            ? {
+                    ...selectedConversion,
+                    outputLabel: avifOutputFormat.toUpperCase(),
+                    outputExtension: avifOutputFormat,
+                    outputMimeType:
+                        avifOutputFormat === "jpg"
+                            ? "image/jpeg"
+                            : avifOutputFormat === "png"
+                                ? "image/png"
+                                : "image/webp",
+                    target: avifOutputFormat,
+                }
+            : selectedConversion;
+
     useEffect(() => {
         window.dispatchEvent(
-            new CustomEvent(
-                "pixelshrinkai:tool-state",
-                {
-                    detail: {
-                        active: true,
-                        tool: "converter",
-                        step,
-                    },
+            new CustomEvent("pixelshrinkai:tool-state", {
+                detail: {
+                    active: true,
+                    tool: "converter",
+                    step,
                 },
-            ),
+            }),
         );
     }, [step]);
 
-    /*
-     * Clean up object URLs when the component
-     * is unmounted or files change.
-     */
     useEffect(() => {
+        const previewUrl = selectedFile?.previewUrl;
         return () => {
-            if (selectedFile?.previewUrl) {
-                URL.revokeObjectURL(
-                    selectedFile.previewUrl,
-                );
-            }
-
-            if (convertedFile?.previewUrl) {
-                URL.revokeObjectURL(
-                    convertedFile.previewUrl,
-                );
-            }
+            if (previewUrl) URL.revokeObjectURL(previewUrl);
         };
-    }, [selectedFile, convertedFile]);
+    }, [selectedFile?.previewUrl]);
+    useEffect(() => {
+        const previewUrl = convertedFile?.previewUrl;
+        return () => {
+            if (previewUrl) URL.revokeObjectURL(previewUrl);
+        };
+    }, [convertedFile?.previewUrl]);
 
-    /*
-     * Open the native file picker.
-     */
     const handleBrowse = () => {
         inputRef.current?.click();
     };
 
-    /*
-     * Validate a file against the currently
-     * selected conversion.
-     */
     const isValidFile = (file: File) => {
         const extension = `.${file.name
             .split(".")
             .pop()
             ?.toLowerCase()}`;
-
         return (
             currentConversion.acceptedExtensions.includes(
                 extension,
@@ -127,49 +118,21 @@ export default function ConverterHero() {
             )
         );
     };
-
-    /*
-     * Select and validate a file.
-     */
     const selectFile = (file: File) => {
         setError("");
-
         if (!isValidFile(file)) {
             setSelectedFile(null);
             setConvertedFile(null);
             setStep("upload");
-
             setError(
                 `Please select a ${currentConversion.inputLabel} file.`,
             );
-
             return;
         }
-
-        /*
-         * Clean up previous preview URLs.
-         */
-        if (selectedFile?.previewUrl) {
-            URL.revokeObjectURL(
-                selectedFile.previewUrl,
-            );
-        }
-
-        if (convertedFile?.previewUrl) {
-            URL.revokeObjectURL(
-                convertedFile.previewUrl,
-            );
-        }
-
-        /*
-         * Create a preview for browser-supported
-         * image formats.
-         */
         const previewUrl =
             file.type.startsWith("image/")
-                ? URL.createObjectURL(file)
-                : null;
-
+            ? URL.createObjectURL(file)
+            : null;
         setSelectedFile({
             file,
             name: file.name,
@@ -177,38 +140,22 @@ export default function ConverterHero() {
             type: file.type,
             previewUrl,
         });
-
         setConvertedFile(null);
         setStep("preview");
     };
 
-    /*
-     * Native file input handler.
-     */
     const handleFileChange = (
-        event: Event,
+        event: Event
     ) => {
-        const input =
-            event.currentTarget as HTMLInputElement;
-
+        const input = event.currentTarget as HTMLInputElement;
         const file = input.files?.[0];
-
         if (!file) {
             return;
         }
-
         selectFile(file);
-
-        /*
-         * Reset the input so selecting the same
-         * file again still triggers change.
-         */
         input.value = "";
     };
 
-    /*
-     * Drag and drop handlers.
-     */
     const handleDragOver = (
         event: DragEvent,
     ) => {
@@ -228,104 +175,144 @@ export default function ConverterHero() {
     ) => {
         event.preventDefault();
         setIsDragging(false);
-
         const file =
             event.dataTransfer?.files?.[0];
-
         if (!file) {
             return;
         }
-
         selectFile(file);
     };
 
-    /*
-     * Changing the conversion resets the
-     * current Converter workflow.
-     */
-    const handleConversionChange = (
-        value: string,
-    ) => {
+    const resetWorkflow = () => {
+        setSelectedFile(null);
+        setConvertedFile(null);
+        setError("");
+        setStep("upload");
+        setIsDragging(false);
+        if (inputRef.current) inputRef.current.value = "";
+    };
+
+    const handleConversionChange = (value: string) => {
         setConversion(value);
-        setError("");
-
-        if (selectedFile?.previewUrl) {
-            URL.revokeObjectURL(
-                selectedFile.previewUrl,
-            );
-        }
-
-        if (convertedFile?.previewUrl) {
-            URL.revokeObjectURL(
-                convertedFile.previewUrl,
-            );
-        }
-
-        setSelectedFile(null);
-        setConvertedFile(null);
-        setStep("upload");
-        setIsDragging(false);
-
-        if (inputRef.current) {
-            inputRef.current.value = "";
-        }
+        setAvifOutputFormat("jpg");
+        resetWorkflow();
     };
 
-    /*
-     * Return to the upload state.
-     */
+
+    const handleAvifOutputFormatChange = (event: Event) => {
+        const select = event.currentTarget as HTMLSelectElement;
+        const nextFormat = select.value as "jpg" | "png" | "webp";
+        setAvifOutputFormat(nextFormat);
+        setConvertedFile(null);
+        setError("");
+        setStep(selectedFile ? "preview" : "upload");
+    };
+
     const handleSelectAnother = () => {
-        if (selectedFile?.previewUrl) {
-            URL.revokeObjectURL(
-                selectedFile.previewUrl,
-            );
-        }
-
-        if (convertedFile?.previewUrl) {
-            URL.revokeObjectURL(
-                convertedFile.previewUrl,
-            );
-        }
-
-        setSelectedFile(null);
-        setConvertedFile(null);
-        setError("");
-        setStep("upload");
-        setIsDragging(false);
-
-        if (inputRef.current) {
-            inputRef.current.value = "";
-        }
+        resetWorkflow();
     };
 
-    /*
-     * Step 5:
-     *
-     * The Converter workflow reaches the processing
-     * state here.
-     *
-     * The actual FastAPI conversion request will be
-     * connected in the backend integration step.
-     *
-     * Do NOT create a fake converted file.
-     */
-    const handleConvert = () => {
+    const handleConvert = async () => {
         if (!selectedFile) {
             return;
         }
-
         setError("");
         setStep("processing");
-    };
+        try {
+            const formData = new FormData();
+            formData.append("file", selectedFile.file);
+            // AVIF -> Image conversions require a target form field.
+            if (currentConversion.target) {
+                formData.append("target", currentConversion.target);
+            }
+            const endpoint = `${API_BASE_URL}${currentConversion.endpoint}`;
+            const response = await fetch(endpoint,{
+                method: "POST",
+                body: formData,
+            });
+            if (!response.ok) {
+                let message = `Conversion failed (HTTP ${response.status}).`;
+                try {
+                    const body = await response.json();
+                    if (typeof body.detail === "string"){
+                        message = body.detail;
+                    }
+                } catch {
+                    // Keep the HTTP status message if the response is not JSON.
+                }
+                throw new Error(message);
+            }
+            const contentType = response.headers
+                .get("content-type")
+                ?.split(";")[0]
+                .trim()
+                .toLowerCase();
 
-    return (
+            const expectedType = currentConversion.outputMimeType.toLowerCase();
+            if (contentType !== expectedType) {
+                throw new Error(
+                    `The server returned an unexpected file format. Expected
+                    ${expectedType}; received ${contentType ?? "unkown"}.`,
+                );
+            }
+            const blob = await response.blob();
+            if (blob.size > selectedFile.size) {
+                throw new Error(
+                    "The converted file is larger than the original. This does not meet PixelShrinkAI's \
+                    file-size requirement.",
+                );
+            }
+            // Validate the output signature or content for known formats.
+            if (expectedType === "image/svg+xml") {
+                const svgText = await blob.text();
+                if (!/<svg\b/i.test(svgText)) {
+                    throw new Error(
+                        "The server response does not contain valid SVG markup.",
+                    );
+                }
+            } else if (expectedType === "application/pdf") {
+                const signature = new Uint8Array(
+                    await blob.slice(0, 5).arrayBuffer(),
+                );
+                if (
+                    signature.length !== 5 ||
+                    String.fromCharCode(...signature) !== "%PDF-"
+                ){
+                    throw new Error("The server did not return a valid PDF.");
+                }
+            }
+            const baseName = selectedFile.name.replace(/\.[^.]+$/, "");
+            const outputFile = new File(
+                [blob],
+                `${baseName || "converted"}.${currentConversion.outputExtension}`,
+                { type: expectedType },
+            );
+            const previewUrl = URL.createObjectURL(outputFile);
+            setConvertedFile({
+                name: outputFile.name,
+                size: outputFile.size,
+                type: outputFile.type,
+                previewUrl,
+                file: outputFile,
+            });
+            setStep("download");
+        }  catch (error) {
+            setError (
+                error instanceof Error
+                    ? error.message
+                    : "Conversion failed. Please try again.",
+            );
+            setStep("preview");
+        }
+    };
+    return(
         <div className="w-full">
             <div
                 className="
                     mx-auto
                     w-full
                     max-w-130
-                    overflow-hidden
+                    overflow-visible
                     rounded-3xl
                     border
                     border-slate-200
@@ -335,19 +322,63 @@ export default function ConverterHero() {
                     dark:bg-slate-900
                 "
             >
-                {/* Conversion Selector */}
                 <ConversionSelector
                     value={conversion}
                     onChange={handleConversionChange}
                 />
 
-                {/* Converter-specific workspace spacing */}
+                {conversion === "Convert from AVIF" && (
+                    <div className="border-b border-slate-200 px-4 py-4 dark:border-slate-700">
+                        <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+                            <div>
+                                <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-blue-600 dark:text-blue-300">
+                                    AVIF CONVERSION
+                                </p>
+                                <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+                                    Choose your preferred output format.
+                                </p>
+                            </div>
+
+                            <div className="w-full sm:max-w-44">
+                                <label
+                                    htmlFor="avif-output-format"
+                                    className="mb-1.5 block text-xs font-semibold text-slate-600 dark:text-slate-300"
+                                >
+                                    Output format
+                                </label>
+
+                                <select
+                                    id="avif-output-format"
+                                    value={avifOutputFormat}
+                                    onChange={handleAvifOutputFormatChange}
+                                    className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm font-semibold text-slate-800 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
+                                >
+                                    <option value="jpg">JPG / JPEG</option>
+                                    <option value="png">PNG</option>
+                                    <option value="webp">WEBP</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {error && step !== "upload" && (
+                    <div
+                        role="alert"
+                        className="
+                            mx-4 mb-3 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm
+                            text-red-700 dark:border-red-900/50 dark:bg-red-950/20
+                            dark:text-red-300
+                        "
+                    >
+                        {error}
+                    </div>
+                )}
+                {/* Converter specific workspace spacing */}
                 <div>
-
-                    {/* ========================= */}
+                    {/* =============================== */}
                     {/* Upload */}
-                    {/* ========================= */}
-
+                    {/* =============================== */}
                     {step === "upload" && (
                         <div className="px-3 pt-2.5 pb-2.5 sm:px-3 sm:pt-2.5 sm:pb-2.5">
                             <div
@@ -366,10 +397,10 @@ export default function ConverterHero() {
                                     py-4
                                     text-center
                                     transition
-                                    ${
-                                        isDragging
-                                            ? "border-blue-500 bg-blue-50/70 dark:border-blue-400 dark:bg-blue-950/20"
-                                            : "border-slate-200 bg-slate-50/60 hover:border-slate-300 dark:border-slate-700 dark:bg-slate-800/40"
+                                    ${isDragging
+                                        ?"border-blue-500 bg-blue-50/70 dark:border-blue-400 dark:bg-blue-950/20"
+                                        :"border-slate-200 bg-slate-50/60 hover:border-slate-300 dark:border-slate-700 \
+                                            dark:bg-slate-800/40"
                                     }
                                 `}
                             >
@@ -405,7 +436,6 @@ export default function ConverterHero() {
                                         />
                                     </svg>
                                 </div>
-
                                 {/* Title */}
                                 <h2
                                     className="
@@ -417,7 +447,6 @@ export default function ConverterHero() {
                                 >
                                     Upload File
                                 </h2>
-
                                 {/* Description */}
                                 <p
                                     className="
@@ -429,11 +458,10 @@ export default function ConverterHero() {
                                         dark:text-slate-300
                                     "
                                 >
-                                    Select a file or drag and drop it
-                                    here to convert it to{" "}
+                                    Select a file or drag and drop it here
+                                    to convert it to{" "}
                                     {currentConversion.outputLabel}.
                                 </p>
-
                                 {/* Accepted Formats */}
                                 <div className="mt-5 flex flex-wrap justify-center gap-2">
                                     {currentConversion.acceptedExtensions.map(
@@ -452,17 +480,11 @@ export default function ConverterHero() {
                                                     dark:text-blue-300
                                                 "
                                             >
-                                                {extension
-                                                    .replace(
-                                                        ".",
-                                                        "",
-                                                    )
-                                                    .toUpperCase()}
+                                                {extension.replace(".", "",).toUpperCase()}
                                             </span>
                                         ),
                                     )}
                                 </div>
-
                                 {/* Select File Button */}
                                 <button
                                     type="button"
@@ -489,7 +511,6 @@ export default function ConverterHero() {
                                 >
                                     Select File
                                 </button>
-
                                 {/* Error */}
                                 {error && (
                                     <p
@@ -507,11 +528,9 @@ export default function ConverterHero() {
                             </div>
                         </div>
                     )}
-
-                    {/* ========================= */}
+                    {/* =============================== */}
                     {/* Preview */}
-                    {/* ========================= */}
-
+                    {/* =============================== */}
                     {step === "preview" &&
                         selectedFile && (
                             <PreviewView
@@ -527,11 +546,9 @@ export default function ConverterHero() {
                                 }
                             />
                         )}
-
-                    {/* ========================= */}
+                    {/* =============================== */}
                     {/* Processing */}
-                    {/* ========================= */}
-
+                    {/* =============================== */}
                     {step === "processing" && (
                         <ProcessingView
                             outputLabel={
@@ -539,11 +556,9 @@ export default function ConverterHero() {
                             }
                         />
                     )}
-
-                    {/* ========================= */}
+                    {/* =============================== */}
                     {/* Download / Result */}
-                    {/* ========================= */}
-
+                    {/* =============================== */}
                     {step === "download" &&
                         selectedFile &&
                         convertedFile && (
@@ -563,7 +578,6 @@ export default function ConverterHero() {
                             />
                         )}
                 </div>
-
                 {/* Hidden File Input */}
                 <input
                     ref={inputRef}

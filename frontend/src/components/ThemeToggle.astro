@@ -1,79 +1,74 @@
+
 <button
   id="theme-toggle"
   type="button"
   aria-label="Change theme"
-  class="
-    flex h-10 w-10 items-center justify-center
-    rounded-full
-    border border-slate-300
-    bg-white
-    text-slate-700
-    shadow-sm
-    transition-all
-    duration-300
-    hover:scale-105
-    hover:bg-slate-100
-
-    dark:border-slate-700
-    dark:bg-slate-800
-    dark:text-yellow-400
-    dark:hover:bg-slate-700
-  "
+  title="Change theme"
+  class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-slate-200 bg-white/70 text-slate-700 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-[#D49B2E]/60 hover:text-[#B7791F] dark:border-slate-700 dark:bg-slate-800/70 dark:text-[#FFD978] dark:hover:border-[#D49B2E]/60"
 >
-  💻
+  <span id="theme-icon" aria-hidden="true" class="text-lg">💻</span>
 </button>
 
 <script>
-    const button = document.getElementById("theme-toggle")!;
-    const root = document.documentElement;
+  const button = document.getElementById("theme-toggle");
+  const icon = document.getElementById("theme-icon");
+  const root = document.documentElement;
 
-    const themes = ["system", "light", "dark"] as const;
-    let index = 0;
+  const themes = ["system", "light", "dark"] as const;
+  type Theme = (typeof themes)[number];
 
-    type Theme = (typeof themes)[number];
-    
-    function applyTheme(theme: "system" | "light" | "dark") {
-      if (theme === "system") {
-        const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+  let currentTheme: Theme = "system";
 
-        root.classList.toggle("dark", prefersDark);
+  function getSystemTheme() {
+    return window.matchMedia("(prefers-color-scheme: dark)").matches;
+  }
 
-        button.textContent = "💻";
-      }
+  function applyTheme(theme: Theme) {
+    currentTheme = theme;
 
-      if (theme === "light") {
-        root.classList.remove("dark");
-        button.textContent = "🌙";
-      }
+    const isDark =
+      theme === "dark" || (theme === "system" && getSystemTheme());
 
-      if (theme === "dark") {
-        root.classList.add('dark');
-        button.textContent = "☀️";
-      }
+    root.classList.toggle("dark", isDark);
 
-      localStorage.setItem("theme", theme);
+    if (icon) {
+      icon.textContent =
+        theme === "system" ? "💻" : theme === "light" ? "🌙" : "☀️";
     }
 
-    
+    button?.setAttribute(
+      "aria-label",
+      `Theme: ${theme}. Click to change theme.`,
+    );
 
-    const savedTheme =
-      (localStorage.getItem("theme") as Theme | null) ?? "system";
+    button?.setAttribute("title", `Theme: ${theme}`);
 
-    index = themes.indexOf(savedTheme);
+    localStorage.setItem("theme", theme);
+  }
 
-    applyTheme(savedTheme as (typeof themes)[number]);
+  const savedTheme = localStorage.getItem("theme");
 
-    button?.addEventListener("click", () =>{
-      index = (index + 1) % themes.length;
+  if (
+    savedTheme === "system" ||
+    savedTheme === "light" ||
+    savedTheme === "dark"
+  ) {
+    currentTheme = savedTheme;
+  }
 
-      applyTheme(themes[index]);
+  applyTheme(currentTheme);
+
+  button?.addEventListener("click", () => {
+    const currentIndex = themes.indexOf(currentTheme);
+    const nextIndex = (currentIndex + 1) % themes.length;
+    applyTheme(themes[nextIndex]);
+  });
+
+  window
+    .matchMedia("(prefers-color-scheme: dark)")
+    .addEventListener("change", () => {
+      if (currentTheme === "system") {
+        applyTheme("system");
+      }
     });
-
-    window
-      .matchMedia("(prefers-color-scheme: dark)")
-      .addEventListener("change", () => {
-          if (localStorage.getItem("theme") === "system"){
-            applyTheme("system");
-          }
-      });
 </script>

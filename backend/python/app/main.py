@@ -115,50 +115,62 @@ async def convert_to_svg(
 
 @app.post("/api/convert/pdf")
 async def convert_image_to_pdf(
-    file:UploadFile = File(...),
+    file: UploadFile = File(...),
 ):
     image_bytes = await file.read()
+
+    if not image_bytes:
+        raise HTTPException(
+            status_code=400,
+            detail="The uploaded image file is empty.",
+        )
 
     extension = Path(
         file.filename or ""
     ).suffix.lower().lstrip(".")
 
-    supported_formats = {
-        "png",
-        "jpg",
-        "jpeg",
-        "webp",
-    }
+    supported_formats = {"png", "jpg", "jpeg", "webp"}
 
     if extension not in supported_formats:
-        raise ValueError(
-            "Unsupported image format."
-            "Supported formats: PNG, JPG, JPEG, WEBP."
+        raise HTTPException(
+            status_code=400,
+            detail="Unsupported image format. Supported formats: PNG, JPG, JPEG, WEBP.",
         )
 
-    if extension == "png":
-        pdf = png_to_pdf(image_bytes)
-    elif extension in {"jpg", "jpeg"}:
-        pdf = jpeg_to_pdf(image_bytes)
-    elif extension == "webp":
-        pdf = webp_to_pdf(image_bytes)
-    else:
-        raise ValueError(
-            "Unsupported image format. "
-            "Supported formats: PNG, JPG, JPEG, WEBP."
+    try:
+        if extension == "png":
+            pdf = png_to_pdf(image_bytes)
+        elif extension in {"jpg", "jpeg"}:
+            pdf = jpeg_to_pdf(image_bytes)
+        else:
+            pdf = webp_to_pdf(image_bytes)
+    except ValueError as exc:
+        raise HTTPException(
+            status_code=400,
+            detail=str(exc),
+        ) from exc
+
+    if not pdf.startswith(b"%PDF-"):
+        raise HTTPException(
+            status_code=500,
+            detail="The conversion engine did not produce a valid PDF.",
+        )
+
+    if len(pdf) > len(image_bytes):
+        raise HTTPException(
+            status_code=500,
+            detail="The conversion engine produced a PDF larger than the input image.",
         )
 
     return Response(
-        content = pdf,
+        content=pdf,
         media_type="application/pdf",
-        headers = {
-            "Content-Disposition": (
-                "attachment; filename=converted.pdf"
-            )
+        headers={
+            "Content-Disposition": "attachment; filename=converted.pdf"
         },
     )
 
-# -----------------------------------------------------------------
+
 # SVG -> PDF
 # -----------------------------------------------------------------
 # Supports:
@@ -169,51 +181,80 @@ async def convert_image_to_pdf(
 
 @app.post("/api/convert/svg-to-pdf")
 async def convert_svg_file_to_pdf(
-    file:UploadFile = File(...),
+    file: UploadFile = File(...),
 ):
     svg_bytes = await file.read()
 
-    extension = Path(
-        file.filename or ""
-    ).suffix.lower()
+    extension = Path(file.filename or "").suffix.lower()
 
     if extension != ".svg":
-        raise ValueError(
-            "SVG to PDF conversion requires an SVG file."
+        raise HTTPException(
+            status_code=400,
+            detail="SVG to PDF conversion requires an SVG file.",
         )
-    # -----------------------------------------------------------------
-    #   svg_service.convert_svg_to_pdf() operates on an SVG Path.
-    #   Create a temporary SVG file for the proven dispatcher.
-    # -----------------------------------------------------------------
 
-    with NamedTemporaryFile(
-        suffix=".svg",
-        delete = False,
-    ) as temp_file:
-        temp_path = Path(temp_file.name)
-        temp_file.write(svg_bytes)
+    if not svg_bytes:
+        raise HTTPException(
+            status_code=400,
+            detail="The uploaded SVG file is empty.",
+        )
+
+    temp_path = None
+    output_path = None
+
+    try:
+        with NamedTemporaryFile(suffix=".svg", delete=False) as temp_file:
+            temp_path = Path(temp_file.name)
+            temp_file.write(svg_bytes)
+
+        with NamedTemporaryFile(suffix=".pdf", delete=False) as temp_pdf:
+            output_path = Path(temp_pdf.name)
 
         try:
-            result = convert_svg_to_pdf(temp_path)
+            result = convert_svg_to_pdf(temp_path, output_path)
+        except ValueError as exc:
+            raise HTTPException(
+                status_code=400,
+                detail=str(exc),
+            ) from exc
+        except RuntimeError as exc:
+            raise HTTPException(
+                status_code=500,
+                detail=str(exc),
+            ) from exc
 
-            output_path = Path(result["output"])
+        pdf_bytes = output_path.read_bytes()
 
-            pdf_bytes = output_path.read_bytes()
-
-            return Response(
-                content=pdf_bytes,
-                media_type="application/pdf",
-                headers = {
-                    "Content-Disposition": (
-                        "attachment; filename=converted.pdf"
-                    )
-                },
+        if not pdf_bytes.startswith(b"%PDF-"):
+            raise HTTPException(
+                status_code=500,
+                detail="The conversion engine did not produce a valid PDF.",
             )
 
-        finally:
-            temp_path.unlink(missing_ok=True)
+        if len(pdf_bytes) > len(svg_bytes):
+            raise HTTPException(
+                status_code=400,
+                detail=(
+                    "The PDF output would be larger than the original SVG. "
+                    "This file cannot meet PixelShrinkAI's size requirement "
+                    "without further optimization."
+                ),
+            )
 
-# -----------------------------------------------------------------
+        return Response(
+            content=pdf_bytes,
+            media_type="application/pdf",
+            headers={
+                "Content-Disposition": 'attachment; filename="converted.pdf"',
+            },
+        )
+    finally:
+        if temp_path is not None:
+            temp_path.unlink(missing_ok=True)
+        if output_path is not None:
+            output_path.unlink(missing_ok=True)
+
+
 # AVIF -> IMAGE
 # -----------------------------------------------------------------
 # Supports:

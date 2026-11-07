@@ -16,3 +16,37 @@ frontend/python/test_outputs/
 frontend/python/logo.svg
 frontend/python/logo-service.svg
 frontend/python/logo-api.svg
+# Local environment and secrets
+.env
+.env.*
+!.env.example
+
+# Local backup files
+*.bak
+*.backup
+*.before_*
+*.pre-*-backup
+*.pre-*.bak
+*.before_*.bak
+
+# Local AVIF diagnostic experiments
+/avif_*_diagnostic.py
+/avif_*_experiment.py
+/avif_png_*.py
+
+# Local generated conversion outputs
+backend/python/app/services/svg-pdf-conversion/
+frontend/python/app/jpeg_svg_output/
+
+# Local Python test images
+frontend/python/test_images/
+
+# Local dependency snapshots
+frontend/python/requirements-freeze.txt
+
+# Additional local backup naming patterns
+*.before-*
+*.backup.*
+
+# Backend Python virtual environment
+backend/python/.venv/
