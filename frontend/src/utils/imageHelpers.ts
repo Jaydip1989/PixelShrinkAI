@@ -106,7 +106,7 @@ async function optimizePngFile(
         await optimise(
             inputBuffer,
             {
-                level,
+                level: Math.min(level, 1),
                 interlace: false,
                 optimiseAlpha: true,
             },
@@ -518,6 +518,8 @@ async function encodeOutput(
  *    possible visual quality.
  */
 
+
+
 async function convertWebpToPng(
     imageData: ImageData,
     file: File,
@@ -537,17 +539,28 @@ async function convertWebpToPng(
     const sourceCanvas = document.createElement("canvas");
     sourceCanvas.width = W;
     sourceCanvas.height = H;
+
     const sourceCtx = sourceCanvas.getContext("2d");
     if (!sourceCtx) throw new Error("Canvas context unavailable.");
+
     sourceCtx.putImageData(imageData, 0, 0);
 
     const workCanvas = document.createElement("canvas");
     const workCtx = workCanvas.getContext("2d");
+
     if (!workCtx) throw new Error("Canvas context unavailable.");
+
     workCtx.imageSmoothingEnabled = true;
     workCtx.imageSmoothingQuality = "high";
 
-    const dither = (src: ImageData, paletteSize: number): ImageData => {
+    // ================================================================
+    // DITHERING
+    // ================================================================
+
+    const dither = (
+        src: ImageData,
+        paletteSize: number,
+    ): ImageData => {
         if (paletteSize >= 192) return src;
 
         const w = src.width;
@@ -567,16 +580,31 @@ async function convertWebpToPng(
         ): void => {
             const nx = x + dx;
             const ny = y + dy;
+
             if (nx < 0 || nx >= w || ny < 0 || ny >= h) return;
+
             const ni = (ny * w + nx) * 4;
-            data[ni] = Math.max(0, Math.min(255, data[ni] + errR * f));
-            data[ni + 1] = Math.max(0, Math.min(255, data[ni + 1] + errG * f));
-            data[ni + 2] = Math.max(0, Math.min(255, data[ni + 2] + errB * f));
+
+            data[ni] = Math.max(
+                0,
+                Math.min(255, data[ni] + errR * f),
+            );
+
+            data[ni + 1] = Math.max(
+                0,
+                Math.min(255, data[ni + 1] + errG * f),
+            );
+
+            data[ni + 2] = Math.max(
+                0,
+                Math.min(255, data[ni + 2] + errB * f),
+            );
         };
 
         for (let y = 0; y < h; y++) {
             for (let x = 0; x < w; x++) {
                 const i = (y * w + x) * 4;
+
                 const oldR = data[i];
                 const oldG = data[i + 1];
                 const oldB = data[i + 2];
@@ -593,21 +621,26 @@ async function convertWebpToPng(
                 const errG = oldG - newG;
                 const errB = oldB - newB;
 
-                spread(x, y,  1,  0, errR, errG, errB, 7 / 16);
-                spread(x, y, -1,  1, errR, errG, errB, 3 / 16);
-                spread(x, y,  0,  1, errR, errG, errB, 5 / 16);
-                spread(x, y,  1,  1, errR, errG, errB, 1 / 16);
+                spread(x, y, 1, 0, errR, errG, errB, 7 / 16);
+                spread(x, y, -1, 1, errR, errG, errB, 3 / 16);
+                spread(x, y, 0, 1, errR, errG, errB, 5 / 16);
+                spread(x, y, 1, 1, errR, errG, errB, 1 / 16);
             }
         }
 
         return new ImageData(data, w, h);
     };
 
-    const encodePalette = async (
+    // ================================================================
+    // STAGE 1 — UPNG PALETTE ENCODING
+    // ================================================================
+
+    const encodePalette = (
         src: ImageData,
         colorCount: number,
-    ): Promise<Blob> => {
+    ): Blob => {
         const d = dither(src, colorCount);
+
         const upng = UPNG.encode(
             [d.data.buffer],
             d.width,
@@ -615,309 +648,196 @@ async function convertWebpToPng(
             colorCount,
         );
 
-        let finalBuffer: ArrayBuffer = upng;
+        return new Blob([upng], {
+            type: "image/png",
+        });
+    };
+
+    // ================================================================
+    // STAGE 2 — OXIPNG LOSSLESS OPTIMISATION
+    // ================================================================
+
+    const finalizeCandidate = async (rawBlob: Blob): Promise<Blob> => {
         try {
-            const oxi = await optimise(upng, {
+            const rawBuffer = await rawBlob.arrayBuffer();
+
+            const optimizedBuffer = await optimise(rawBuffer, {
                 level: 4,
                 interlace: false,
                 optimiseAlpha: true,
             });
-            if (oxi.byteLength < upng.byteLength) finalBuffer = oxi;
+
+            if (optimizedBuffer.byteLength < rawBlob.size) {
+                console.log(
+                    `[PixelShrinkAI] OxiPNG: ${rawBlob.size} → ` +
+                    `${optimizedBuffer.byteLength} bytes`,
+                );
+
+                return new Blob([optimizedBuffer], {
+                    type: "image/png",
+                });
+            }
         } catch (err) {
-            console.warn("[PixelShrinkAI] OxiPNG failed.", err);
+            console.warn(
+                "[PixelShrinkAI] OxiPNG optimisation failed. " +
+                "Using UPNG output.",
+                err,
+            );
         }
 
-        return new Blob([finalBuffer], { type: "image/png" });
+        return rawBlob;
     };
 
-    const encodeAt = async (
+    // ================================================================
+    // ENCODE AT REQUESTED SCALE
+    // ================================================================
+
+    const encodeAt = (
         scale: number,
         colorCount: number,
-    ): Promise<{ blob: Blob; width: number; height: number }> => {
+    ): {
+        blob: Blob;
+        width: number;
+        height: number;
+    } => {
         const w = Math.max(1, Math.round(W * scale));
         const h = Math.max(1, Math.round(H * scale));
 
         workCanvas.width = w;
         workCanvas.height = h;
+
         workCtx.imageSmoothingEnabled = true;
         workCtx.imageSmoothingQuality = "high";
 
-        if (scale === 1) {
-            workCtx.drawImage(sourceCanvas, 0, 0);
-        } else {
-            workCtx.drawImage(sourceCanvas, 0, 0, w, h);
-        }
+        workCtx.drawImage(sourceCanvas, 0, 0, w, h);
 
         const scaled = workCtx.getImageData(0, 0, w, h);
-        const blob = await encodePalette(scaled, colorCount);
+        const blob = encodePalette(scaled, colorCount);
 
-        return { blob, width: w, height: h };
+        return {
+            blob,
+            width: w,
+            height: h,
+        };
     };
 
-    // ------------------------------------------------------------------
-    // Best-candidate tracking via wrapper object.
-    // ------------------------------------------------------------------
-    const best = {
-        blob: null as Blob | null,
-        w: W,
-        h: H,
-        colors: 256,
-        scale: 1,
-    };
+    // ================================================================
+    // OPTIMISE, CHECK SIZE AND ACCEPT
+    // ================================================================
 
-    const consider = (
-        blob: Blob,
-        w: number,
-        h: number,
+    const tryCandidate = async (
+        rawBlob: Blob,
         colors: number,
         scale: number,
-    ): boolean => {
-        if (blob.size >= originalSize) return false;
+        width: number,
+        height: number,
+    ): Promise<File | null> => {
+        // Always complete both optimisation stages before size checking.
+        const finalBlob = await finalizeCandidate(rawBlob);
 
-        const better =
-            best.blob === null ||
-            w * h > best.w * best.h ||
-            (w * h === best.w * best.h && colors > best.colors);
+        const savings = (
+            (1 - finalBlob.size / originalSize) * 100
+        );
 
-        if (better) {
-            best.blob = blob;
-            best.w = w;
-            best.h = h;
-            best.colors = colors;
-            best.scale = scale;
+        console.log(
+            `[PixelShrinkAI] WEBP → PNG ${colors} colors ` +
+            `@${(scale * 100).toFixed(0)}% ` +
+            `${width}×${height}: ` +
+            `${finalBlob.size} bytes ` +
+            `(${savings.toFixed(2)}% savings)`,
+        );
+
+        // Strictly preserve the original size policy.
+        if (finalBlob.size >= originalSize) {
+            return null;
         }
-        return true;
+
+        console.log(
+            `[PixelShrinkAI] ACCEPTED: ${colors} colors ` +
+            `@${(scale * 100).toFixed(0)}% ` +
+            `${width}×${height}, ${finalBlob.size} bytes`,
+        );
+
+        return createOutputFile(
+            finalBlob,
+            file.name,
+            "png",
+            "image/png",
+        );
     };
 
-    // ==================================================================
-    // STEP 1 — Full resolution @ 256 colors.
-    // ==================================================================
-    const fullRes = await encodeAt(1, 256);
-    console.log(
-        `[PixelShrinkAI] WEBP → PNG 256 colors @100% → ${fullRes.blob.size}`,
-    );
+    // ================================================================
+    // STEP 1 — FULL RESOLUTION PALETTE SEARCH
+    // ================================================================
 
-    if (consider(fullRes.blob, fullRes.width, fullRes.height, 256, 1)) {
-        const reduction = (1 - fullRes.blob.size / originalSize) * 100;
-        console.log(
-            `[PixelShrinkAI] WEBP → PNG ACCEPTED 256 @100% ` +
-            `(${reduction.toFixed(2)}% smaller)`,
-        );
-        return createOutputFile(
-            fullRes.blob,
-            file.name,
-            settings.outputFormat,
-            "image/png",
-        );
-    }
-
-        // ==================================================================
-    // STEP 2 — Full resolution, binary search palette.
-    //
-    // IMPORTANT: we enforce a perceptual floor of 192 colors.
-    //
-    // Below 192 colors, even with dithering, photographic gradients
-    // (sky, water, skin) start to show visible artifacts. If the
-    // full-resolution PNG can't beat the WebP at 192 colors, we
-    // stop the palette search here and fall through to Step 3,
-    // which will trade a tiny bit of resolution for a much higher
-    // palette — a far better quality/size tradeoff.
-    // ==================================================================
-    const MIN_FULL_RES_PALETTE = 192;
-
-    let lowColor = MIN_FULL_RES_PALETTE;
-    let highColor = 256;
-    let bestFullResBlob: Blob | null = null;
-    let bestFullResColors = 0;
-
-    // First try 256 explicitly (already done in Step 1).
-    // Then binary-search only within [192, 256].
-    for (let i = 0; i < 4; i++) {
-        if (highColor - lowColor <= 8) break;
-
-        const mid = Math.max(
-            MIN_FULL_RES_PALETTE,
-            Math.round((lowColor + highColor) / 2 / 8) * 8,
-        );
-        if (mid === lowColor || mid === highColor) break;
-
-        const cand = await encodeAt(1, mid);
-        console.log(
-            `[PixelShrinkAI] WEBP → PNG ${mid} colors @100% → ${cand.blob.size}`,
-        );
-
-        if (cand.blob.size < originalSize) {
-            bestFullResBlob = cand.blob;
-            bestFullResColors = mid;
-            consider(cand.blob, cand.width, cand.height, mid, 1);
-            lowColor = mid;
-        } else {
-            highColor = mid;
-        }
-
-        await new Promise<void>((r) => setTimeout(r, 0));
-    }
-
-    if (bestFullResBlob !== null) {
-        const reduction =
-            (1 - bestFullResBlob.size / originalSize) * 100;
-        console.log(
-            `[PixelShrinkAI] WEBP → PNG ACCEPTED ${bestFullResColors} ` +
-            `@100% (${reduction.toFixed(2)}% smaller)`,
-        );
-        return createOutputFile(
-            bestFullResBlob,
-            file.name,
-            settings.outputFormat,
-            "image/png",
-        );
-    }
-
-    // ==================================================================
-    // STEP 3 — Palette + scale.
-    //
-    // Because Step 2 refused to go below 192 colors, if we're here
-    // it means no full-resolution palette ≥ 192 fits under the WebP.
-    // The right move is a TINY resolution reduction while keeping a
-    // high palette — that preserves colors far better than a large
-    // palette reduction at full resolution.
-    //
-    // We use 192 colors as the palette floor for the scale search
-    // so the result still looks photographic.
-    // ==================================================================
-    const PALETTE_FOR_SCALE = 192;
-
-    // Smaller initial steps near 100% so we only give up as much
-    // resolution as strictly necessary.
-    const initialScales = [
-        0.98, 0.96, 0.94, 0.92, 0.90, 0.88,
-        0.85, 0.82, 0.80, 0.75, 0.70, 0.65, 0.60, 0.55, 0.50,
+    const fullResolutionPalettes = [
+        256,
+        192,
+        128,
+        96,
+        64,
+        32,
     ];
-    let fitScale: number | null = null;
-    let lastTooBigScale = 1.0;
 
-    for (const s of initialScales) {
-        const cand = await encodeAt(s, PALETTE_FOR_SCALE);
-        console.log(
-            `[PixelShrinkAI] WEBP → PNG ${PALETTE_FOR_SCALE} colors ` +
-            `@${(s * 100).toFixed(0)}% → ${cand.blob.size}`,
+    for (const colors of fullResolutionPalettes) {
+        const candidate = encodeAt(1, colors);
+
+        const result = await tryCandidate(
+            candidate.blob,
+            colors,
+            1,
+            candidate.width,
+            candidate.height,
         );
 
-        consider(cand.blob, cand.width, cand.height, PALETTE_FOR_SCALE, s);
+        if (result) return result;
 
-        if (cand.blob.size < originalSize) {
-            fitScale = s;
-            break;
-        }
-
-        lastTooBigScale = s;
-        await new Promise<void>((r) => setTimeout(r, 0));
+        await new Promise<void>((resolve) => setTimeout(resolve, 0));
     }
 
-    // Binary-refine scale — 6 iterations for tighter convergence.
-    if (fitScale !== null) {
-        let low = fitScale;
-        let high = lastTooBigScale;
-        if (high <= low) high = Math.min(1.0, low + 0.02);
+    // ================================================================
+    // STEP 2 — PROGRESSIVE RESOLUTION SEARCH
+    // 99% down to 10%, using 192 colors.
+    // ================================================================
 
-        for (let i = 0; i < 6; i++) {
-            if (high - low < 0.005) break;
-
-            const mid = (low + high) / 2;
-            const cand = await encodeAt(mid, PALETTE_FOR_SCALE);
-            console.log(
-                `[PixelShrinkAI] WEBP → PNG refine ${PALETTE_FOR_SCALE} ` +
-                `@${(mid * 100).toFixed(1)}% → ${cand.blob.size}`,
-            );
-
-            consider(cand.blob, cand.width, cand.height, PALETTE_FOR_SCALE, mid);
-
-            if (cand.blob.size < originalSize) {
-                low = mid;
-            } else {
-                high = mid;
-            }
-
-            await new Promise<void>((r) => setTimeout(r, 0));
-        }
-    }
-    // ------------------------------------------------------------------
-    // Return the best candidate found, using a fresh `const` binding
-    // so TypeScript narrows it correctly.
-    // ------------------------------------------------------------------
-    const bestBlob = best.blob;
-
-    if (bestBlob !== null && bestBlob.size < originalSize) {
-        const reduction = (1 - bestBlob.size / originalSize) * 100;
-        console.log(
-            `[PixelShrinkAI] WEBP → PNG BEST: ` +
-            `${best.colors} colors @${(best.scale * 100).toFixed(1)}% ` +
-            `${best.w}×${best.h} → ${bestBlob.size} ` +
-            `(${reduction.toFixed(2)}% smaller)`,
-        );
-        return createOutputFile(
-            bestBlob,
-            file.name,
-            settings.outputFormat,
-            "image/png",
-        );
-    }
-
-    // ==================================================================
-    // STEP 4 — Nothing fit.
-    // ==================================================================
-    console.warn(
-        `[PixelShrinkAI] WEBP → PNG no result smaller than ${originalSize}. ` +
-        `Keeping original WebP.`,
+    const scales = Array.from(
+        { length: 90 },
+        (_, i) => (99 - i) / 100,
     );
 
-    // ------------------------------------------------------------------
-    // Minimum savings threshold.
-    //
-    // If the best PNG candidate saves less than 3% of the original WebP
-    // size, the conversion isn't worth the quality loss (resolution
-    // reduction and/or palette quantization). Return the original WebP
-    // unchanged so the user gets the best possible image at essentially
-    // the same file size.
-    // ------------------------------------------------------------------
-    const MIN_SAVINGS_PCT = 3;
+    for (const scale of scales) {
+        const candidate = encodeAt(scale, 192);
 
-    if (
-        bestBlob !== null &&
-        bestBlob.size < originalSize
-    ) {
-        const savingsPct =
-            (1 - bestBlob.size / originalSize) * 100;
-
-        if (savingsPct >= MIN_SAVINGS_PCT) {
-            console.log(
-                `[PixelShrinkAI] WEBP → PNG ACCEPTED: ` +
-                `${best.colors} colors @${(best.scale * 100).toFixed(1)}% ` +
-                `${best.w}×${best.h} → ${bestBlob.size} bytes ` +
-                `(${savingsPct.toFixed(2)}% smaller)`,
-            );
-            return createOutputFile(
-                bestBlob,
-                file.name,
-                settings.outputFormat,
-                "image/png",
-            );
-        }
-
-        console.log(
-            `[PixelShrinkAI] WEBP → PNG savings only ` +
-            `${savingsPct.toFixed(2)}%, below ${MIN_SAVINGS_PCT}% threshold. ` +
-            `Keeping original WebP.`,
+        const result = await tryCandidate(
+            candidate.blob,
+            192,
+            scale,
+            candidate.width,
+            candidate.height,
         );
+
+        if (result) return result;
+
+        await new Promise<void>((resolve) => setTimeout(resolve, 0));
     }
 
-    // Below threshold or no candidate fit — return the original WebP.
-    return new File([file], file.name, {
-        type: file.type,
-        lastModified: Date.now(),
-    });
+    // ================================================================
+    // STEP 3 — NO SIZE-COMPLIANT PNG FOUND
+    // ================================================================
 
+    console.error(
+        "[PixelShrinkAI] WEBP → PNG failed: " +
+        "No PNG candidate could satisfy the original size limit.",
+    );
+
+    throw new Error(
+        "PNG conversion could not produce an output smaller than " +
+        "the original WebP. Please try another image.",
+    );
 }
+
+
+
 /*
  * PNG compression for:
  *
