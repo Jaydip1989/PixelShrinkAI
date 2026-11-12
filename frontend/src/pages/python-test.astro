@@ -1,5 +1,9 @@
 ---
 import PythonEngineTest from "../components/python/PythonEngineTest";
+
+if (!import.meta.env.DEV) {
+    return Astro.redirect("/");
+}
 ---
 
 <html lang="en">

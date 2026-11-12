@@ -188,12 +188,11 @@ export default function ConversionSelector({
     return (
         <div ref={containerRef} className="relative z-20 w-full">
             <div className="px-4 pt-3 pb-2.5 sm:px-4">
-                <label
-                    htmlFor="conversion-trigger"
+                <span
                     className="mb-2 block text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500 dark:text-slate-400"
                 >
                     Convert
-                </label>
+                </span>
 
                 <button
                     ref={triggerRef}

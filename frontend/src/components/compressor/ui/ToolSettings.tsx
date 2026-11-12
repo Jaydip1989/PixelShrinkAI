@@ -1,3 +1,4 @@
+import { useState } from "preact/hooks";
 import type { OutputFormat } from "../../../types/image";
 
 interface ToolSettingsProps {
@@ -16,6 +17,19 @@ export default function ToolSettings({
     onOutputFormatChange,
     onCompress
 }: ToolSettingsProps) {
+    const [isFormatOpen, setIsFormatOpen] = useState(false);
+
+    const formatOptions : { value: OutputFormat; label: string}[] = [
+        { value: "original", label: "Original Format" },
+        { value: "jpeg", label: "JPG/JPEG" },
+        { value: "png", label: "PNG" },
+        { value: "webp", label: "WebP"},
+    ];
+
+    const selectedFormat = formatOptions.find(
+        (option) => option.value === outputFormat
+    );
+
     return (
         <section className="w-full rounded-3xl border border-slate-200 bg-white p-6 dark:border-slate-700 dark:bg-slate-900">
             <div>
@@ -60,23 +74,64 @@ export default function ToolSettings({
                 >
                     Output Format
                 </label>
-                <select
-                    id="output-format"
-                    value={outputFormat}
-                    onChange={(event) => 
-                        onOutputFormatChange(
-                            (event.currentTarget as HTMLSelectElement).value as OutputFormat,
-                        )
-                    }
-                    className="mt-2 w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm
-                            font-medium text-slate-900 outltine-none transition focus:border-blue-500
-                            dark:border-slate-700 dark:bg-slate-800 dark:text-white"
-                >
-                    <option value="original">Original Format</option>
-                    <option value="jpeg">JPG/JPEG</option>
-                    <option value="png">PNG</option>
-                    <option value="webp">WebP</option>
-                </select>
+                <div className="relative mt-2">
+                        <button
+                            type="button"
+                            id="output-format"
+                            aria-haspopup="listbox"
+                            aria-expanded={isFormatOpen}
+                            aria-controls="output-format-options"
+                            onClick={() => setIsFormatOpen((open) => !open)}
+                            className="flex w-full items-center justify-between rounded-xl border border-amber-400 bg-slate-800 px-4 py-3 text-left text-sm font-medium text-white outline-none transition focus:ring-2 focus:ring-blue-500"
+                        >
+                            <span>{selectedFormat?.label ?? "Select Format"}</span>
+
+                            <svg
+                                className={`h-4 w-4 transition-transform ${
+                                    isFormatOpen ? "rotate-180" : ""
+                                }`}
+                                viewBox="0 0 20 20"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                            >
+                                <path d="m5 7.5 5 5 5-5" />
+                            </svg>
+                        </button>
+
+                        {isFormatOpen && (
+                            <div
+                                id="output-format-options"
+                                role="listbox"
+                                aria-label="Output format"
+                                className="absolute left-0 top-full z-50 mt-2 max-h-56 w-full overflow-y-auto rounded-xl border border-slate-600 bg-slate-900 p-1 shadow-2xl"
+                            >
+                                {formatOptions.map((option) => (
+                                    <button
+                                        key={option.value}
+                                        type="button"
+                                        role="option"
+                                        aria-selected={outputFormat === option.value}
+                                        onClick={() => {
+                                            onOutputFormatChange(option.value);
+                                            setIsFormatOpen(false);
+                                        }}
+                                        className={`flex w-full items-center justify-between rounded-lg px-4 py-3 text-left text-sm transition ${
+                                            outputFormat === option.value
+                                                ? "bg-blue-600 text-white"
+                                                : "text-slate-200 hover:bg-slate-800"
+                                        }`}
+                                    >
+                                        <span>{option.label}</span>
+
+                                        {outputFormat === option.value && (
+                                            <span aria-hidden="true">✓</span>
+                                        )}
+                                    </button>
+                                ))}
+                            </div>
+                        )}
+                    </div>
                 <button
                     type="button"
                     onClick={onCompress}

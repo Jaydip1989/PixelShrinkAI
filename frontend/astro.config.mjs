@@ -8,8 +8,12 @@ import preact from '@astrojs/preact';
 // https://astro.build/config
 export default defineConfig({
   vite: {
-    plugins: [tailwindcss()]
+    plugins: [tailwindcss()],
+    optimizeDeps: {
+      include: ["@upng/upng-js"],
+    },
   },
 
   integrations: [preact()]
+
 });
