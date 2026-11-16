@@ -52,28 +52,31 @@ export default function DownloadView({
     conversion,
     onSelectAnother,
 }: DownloadViewProps) {
-    const handleDownload =() => {
-        if (!convertedFile.file) {
+    const handleDownload = () => {
+        const file = convertedFile.file;
+
+        if (!file) {
             return;
         }
-        const url = URL.createObjectURL(
-            convertedFile.file,
-        )
 
+        // Use the standard browser download flow across all browsers.
+        // The browser's own download preferences determine whether a
+        // save-location dialog is shown.
+        const url = URL.createObjectURL(file);
         const link = document.createElement("a");
 
         link.href = url;
         link.download = convertedFile.name;
-        link.style.display="none";
+        link.style.display = "none";
 
         document.body.appendChild(link);
         link.click();
         link.remove();
 
-        window.setTimeout(()=>{
+        // Give the browser time to begin reading the Blob before revoking it.
+        window.setTimeout(() => {
             URL.revokeObjectURL(url);
-        }, 1000);
-
+        }, 10000);
     };
 
     const isImagePreview =
@@ -276,21 +279,26 @@ export default function DownloadView({
                         flex flex-1
                         items-center
                         justify-center
-                        gap-2 rounded-2xl
+                        gap-2
+                        rounded-xl
                         bg-linear-to-r
                         from-blue-600
                         via-indigo-500
                         to-pink-500
-                        px-6 py-3 font-semibold text-white
-                        shadow-sm transition-duration
-                        hover:scale-[1.01] hover:shadow-md
-                        focus:outline-none focus:ring-2
+                        px-4 py-3
+                        font-semibold
+                        text-white
+                        shadow-sm
+                        hover:scale-[1.01]
+                        hover:shadow-md
+                        focus:outline-none
+                        focus:ring-2
                         focus:ring-blue-500/40
                         focus:ring-offset-2
+                        dark:focus:ring-offset-slate-900
+                        transition duration-300
                         disabled:cursor-not-allowed
                         disabled:opacity-50
-                        disabled:hover:scale-100
-                        dark:focus:ring-offset-900
                     "
                 >
                     <svg
@@ -314,6 +322,7 @@ export default function DownloadView({
                     </svg>
                     Download Converted File
                 </button>
+
 
                 <button
                     type="button"
