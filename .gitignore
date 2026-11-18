@@ -50,3 +50,8 @@ frontend/python/requirements-freeze.txt
 
 # Backend Python virtual environment
 backend/python/.venv/
+
+backend/python/.backend-test-venv/
+
+# Local SVG-to-PDF benchmark and research files
+backend/python/benchmarks/

@@ -3,15 +3,16 @@ import { formatFileSize } from "../../../utils/imageHelpers";
 
 interface FileInfoProps {
     image: ImageAsset | null;
+    className?: string;
 }
 
 export default function FileInfo({
     image,
+    className = "",
 }: FileInfoProps) {
     if (!image) return null;
     return (
-        <div className="mt-2 rounded-2xl border border-slate-200 bg-slate-50 p-3 
-        dark:border-slate-700 dark:bg-slate-900">
+        <div className={`mt-2 rounded-2xl border border-slate-200 bg-slate-50 p-3 dark:border-slate-700 dark:bg-slate-900 ${className}`}>
             <h3 className="mb-4 text-base font-semibold text-slate-900 dark:text-white">
                 File Information
             </h3>

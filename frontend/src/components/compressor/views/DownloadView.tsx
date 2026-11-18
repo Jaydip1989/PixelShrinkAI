@@ -22,7 +22,7 @@ export default function DownloadView({
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 items-stretch [&>div]:h-full">
 
                 {/* Original */}
-                <div className="min-w-0">
+                <div className="flex min-w-0 flex-col">
                     <div className="mb-3 flex items-center justify-between">
                         <h2 className="text-sm font-semibold text-slate-900 dark:text-white">
                             Original Image
@@ -35,11 +35,11 @@ export default function DownloadView({
 
                     <ImagePreview image={image} />
 
-                    <FileInfo image={image} />
+                    <FileInfo image={image} className="flex-1" />
                 </div>
 
                 {/* Compressed */}
-                <div className="min-w-0">
+                <div className="flex min-w-0 flex-col">
                     <div className="mb-3 flex items-center justify-between">
                         <h2 className="text-sm font-semibold text-slate-900 dark:text-white">
                             Compressed Image
@@ -52,7 +52,7 @@ export default function DownloadView({
 
                     <ImagePreview image={compressedImage} />
 
-                    <FileInfo image={compressedImage} />
+                    <FileInfo image={compressedImage} className="flex-1" />
                 </div>
             </div>
 
