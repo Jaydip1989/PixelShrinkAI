@@ -1,8 +1,12 @@
 from pathlib import Path
+import logging
 import shutil
 import subprocess
 import uuid
 
+from .svg_pdf_optimizer import optimize_pdf_bytes
+
+logger = logging.getLogger(__name__)
 
 OUTPUT_DIR = Path(__file__).parent / "svg-pdf-conversion"
 
@@ -22,6 +26,7 @@ def convert_svg_to_pdf(
         raise ValueError("SVG to PDF conversion requires an SVG file.")
 
     inkscape = shutil.which("inkscape")
+
     if not inkscape:
         raise RuntimeError(
             "Inkscape is not installed or is not available on PATH."
@@ -57,7 +62,9 @@ def convert_svg_to_pdf(
 
     if result.returncode != 0:
         output_path.unlink(missing_ok=True)
+
         details = (result.stderr or result.stdout or "").strip()
+
         raise RuntimeError(
             "Inkscape could not convert this SVG."
             + (f" Details: {details[-1500:]}" if details else "")
@@ -65,6 +72,7 @@ def convert_svg_to_pdf(
 
     if not output_path.is_file() or output_path.stat().st_size == 0:
         output_path.unlink(missing_ok=True)
+
         raise RuntimeError(
             "Inkscape did not produce a valid PDF file."
         )
@@ -75,6 +83,29 @@ def convert_svg_to_pdf(
             raise RuntimeError(
                 "Inkscape produced an invalid PDF file."
             )
+
+    # Best effort PDF image optimization.
+    # If optimization fails, preserve the original inkscape PDF.
+
+    original_pdf = output_path.read_bytes()
+    try:
+        optimized_pdf = optimize_pdf_bytes(original_pdf)
+
+        if len(optimized_pdf) < len(original_pdf):
+            temporary_path = output_path.with_name(
+                f"{output_path.stem}-{uuid.uuid4().hex}.temp"
+            )
+            try:
+                temporary_path.write_bytes(optimized_pdf)
+                temporary_path.replace(output_path)
+            finally:
+                temporary_path.unlink(missing_ok=True)
+
+    except Exception:
+        logger.exception(
+            "SVG-to-PDF optimization failed."
+            "Keeping the original Inkscape PDF."
+        )
 
     return {
         "output": output_path,
