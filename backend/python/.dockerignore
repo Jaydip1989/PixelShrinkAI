@@ -1,0 +1,8 @@
+.venv/
+.backend-test-venv/
+__pycache__/
+*.py[cod]
+.DS_Store
+benchmarks/
+*.before-*
+*.bak
