@@ -36,6 +36,7 @@ app.add_middleware(
         "http://127.0.0.1:4321",
         "https://pixelshrinkai.com",
         "https://www.pixelshrinkai.com",
+        "https://pixelshrinkai.pages.dev",
     ],
     allow_credentials=True,
     allow_methods=["*"],
