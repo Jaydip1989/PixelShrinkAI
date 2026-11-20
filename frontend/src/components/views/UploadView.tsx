@@ -102,14 +102,15 @@ export default function UploadView({
                 <p className="mt-3 text-center leading-6 text-slate-600 dark:text-slate-300">
                     {isConverter
                         ? uploadDescription ??
-                          "Select a file or drag and drop here"
-                        : "Drag & Drop your image here"}
+                        "Select a file or drag and drop here"
+                        : "Click to browse and select your image"}
 
-                    <br />
-
-                    {isConverter
-                        ? "or click to browse"
-                        : "or click to browse"}
+                    {isConverter && (
+                        <>
+                            <br />
+                            or click to browse
+                        </>
+                    )}
                 </p>
 
                 {/* Formats */}
