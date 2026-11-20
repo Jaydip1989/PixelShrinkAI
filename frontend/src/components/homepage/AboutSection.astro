@@ -1,0 +1,119 @@
+<section
+  id="about"
+  class="golden-about-section relative isolate overflow-hidden border-t border-[#D4A64A]/50 px-5 py-14 text-white sm:px-8 sm:py-20 lg:px-10"
+>
+  <div aria-hidden="true" class="about-atmosphere pointer-events-none absolute inset-0"></div>
+
+  <div class="relative z-10 mx-auto max-w-6xl">
+    <div class="mx-auto max-w-3xl text-center">
+      <p class="text-xs font-bold uppercase tracking-[.18em] text-[#FFD34D]">
+        About PixelShrinkAI
+      </p>
+
+      <h2 class="mt-3 text-3xl font-extrabold tracking-[-.045em] sm:text-4xl lg:text-5xl">
+        Powerful Image Tools.
+        <span class="about-heading-accent">Made Simple.</span>
+      </h2>
+
+      <p class="mx-auto mt-5 max-w-2xl text-sm leading-7 text-[#C0CDE0] sm:text-base">
+        PixelShrinkAI brings essential image tools together in one accessible
+        workspace. Our goal is to make working with images simpler, faster and
+        more convenient for creators, students, professionals and everyone in
+        between.
+      </p>
+    </div>
+
+    <div class="mt-10 grid gap-4 md:grid-cols-3 md:gap-5">
+      <article class="about-card">
+        <span class="about-number">01</span>
+        <h3>Our Purpose</h3>
+        <p>
+          Remove unnecessary complexity from everyday image tasks with
+          straightforward tools and easy-to-follow workflows.
+        </p>
+      </article>
+
+      <article class="about-card">
+        <span class="about-number">02</span>
+        <h3>Our Platform</h3>
+        <p>
+          Bring image compression, format conversion and a growing collection
+          of image utilities together in one place.
+        </p>
+      </article>
+
+      <article class="about-card">
+        <span class="about-number">03</span>
+        <h3>Our Vision</h3>
+        <p>
+          Continuously expand our toolkit with useful features shaped by
+          real-world needs and user feedback.
+        </p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<style>
+  .golden-about-section {
+    background:
+      radial-gradient(ellipse 55% 75% at 50% 0%, rgba(255,183,52,.12), transparent 78%),
+      radial-gradient(ellipse 35% 85% at 0% 65%, rgba(37,99,235,.13), transparent 78%),
+      linear-gradient(180deg, #040A16 0%, #090F1D 100%);
+  }
+
+  .about-heading-accent {
+    color: #FFC83D;
+    background: linear-gradient(100deg, #FFE58D 0%, #FFC43D 48%, #F5A900 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .about-card {
+    position: relative;
+    overflow: hidden;
+    padding: 26px 23px;
+    border: 1px solid rgba(220,169,65,.55);
+    border-radius: 18px;
+    background:
+      radial-gradient(ellipse 90% 65% at 50% 0%, rgba(255,205,104,.12), transparent 76%),
+      linear-gradient(145deg, rgba(255,255,255,.055), rgba(5,13,28,.5));
+    box-shadow:
+      0 0 18px rgba(255,184,55,.08),
+      inset 0 1px 0 rgba(255,239,190,.12);
+  }
+
+  .about-number {
+    display: inline-block;
+    margin-bottom: 17px;
+    color: #FFD34D;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: .16em;
+  }
+
+  .about-card h3 {
+    color: #FFFFFF;
+    font-size: 17px;
+    font-weight: 800;
+  }
+
+  .about-card p {
+    margin-top: 10px;
+    color: #B8C8E1;
+    font-size: 13px;
+    line-height: 1.8;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .about-card {
+      transition: border-color .25s ease, box-shadow .25s ease;
+    }
+
+    .about-card:hover {
+      border-color: rgba(255,215,125,.9);
+      box-shadow: 0 0 24px rgba(255,184,55,.16);
+    }
+  }
+</style>

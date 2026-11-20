@@ -5,11 +5,11 @@ import {
 import UpcomingTool from "./UpcomingTool.astro";
 ---
 
-<section id="tools" class="golden-tools-section relative isolate overflow-hidden border-b border-[#D4A64A]/65 px-4 pb-8 pt-8 sm:px-6 lg:px-8">
+<section id="tools" class="golden-tools-section relative isolate overflow-hidden border-b border-[#D4A64A]/65 px-4 pb-6 pt-6 sm:px-6 lg:px-8">
   <div aria-hidden="true" class="tools-gold-wash pointer-events-none absolute inset-0"></div>
   <div aria-hidden="true" class="tools-top-glint pointer-events-none absolute inset-x-0 top-0 h-px"></div>
   <div class="relative z-10 mx-auto max-w-[1475px]">
-    <div class="golden-tool-grid grid grid-cols-2 gap-4 sm:grid-cols-4 lg:grid-cols-8 lg:gap-3.5">
+    <div id="roadmap" class="golden-tool-grid grid grid-cols-2 gap-4 sm:grid-cols-4 lg:grid-cols-8 lg:gap-3.5">
       <UpcomingTool title="Compressor" description="Reduce file size without losing quality." status="live" variant="emerald" featured><Image size={30} strokeWidth={2.2} /></UpcomingTool>
       <UpcomingTool title="Converter" description="Convert between JPG, PNG, WEBP, AVIF, PDF, SVG and more." status="live" variant="violet" featured><ScanSearch size={30} strokeWidth={2.2} /></UpcomingTool>
       <UpcomingTool title="AI Enhancer" description="Improve image quality with AI." status="coming-soon" variant="blue"><Sparkles size={30} strokeWidth={2.2} /></UpcomingTool>

@@ -1,0 +1,118 @@
+<section
+  id="contact"
+  class="golden-contact-section relative isolate overflow-hidden border-t border-[#D4A64A]/50 px-5 py-14 text-white sm:px-8 sm:py-20 lg:px-10"
+>
+  <div aria-hidden="true" class="contact-atmosphere pointer-events-none absolute inset-0"></div>
+
+  <div class="relative z-10 mx-auto max-w-4xl text-center">
+    <p class="text-xs font-bold uppercase tracking-[.18em] text-[#FFD34D]">
+      Contact PixelShrinkAI
+    </p>
+
+    <h2 class="mt-3 text-3xl font-extrabold tracking-[-.045em] sm:text-4xl lg:text-5xl">
+      Let's Build Something
+      <span class="contact-heading-accent">Better.</span>
+    </h2>
+
+    <p class="mx-auto mt-5 max-w-2xl text-sm leading-7 text-[#C0CDE0] sm:text-base">
+      Have a question, suggestion or feedback? We'd love to hear from you.
+      Get in touch with the PixelShrinkAI team.
+    </p>
+
+    <div class="contact-card mx-auto mt-9 max-w-xl">
+      <div class="contact-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <rect x="3" y="5" width="18" height="14" rx="2" />
+          <path d="m3 7 9 6 9-6" />
+        </svg>
+      </div>
+
+      <p class="text-xs font-bold uppercase tracking-[.16em] text-[#FFD34D]">
+        Professional Enquiries
+      </p>
+
+      <a
+        href="mailto:hello@pixelshrinkai.com"
+        class="mt-4 inline-block break-all text-lg font-extrabold text-white transition-colors hover:text-[#FFD978] sm:text-2xl"
+      >
+        hello@pixelshrinkai.com
+      </a>
+
+      <p class="mt-3 text-xs leading-6 text-[#AEBED4]">
+        For general enquiries, feedback and business communication.
+      </p>
+
+      <a
+        href="mailto:hello@pixelshrinkai.com"
+        class="mt-6 inline-flex items-center justify-center gap-2 rounded-full border border-[#D4A64A]/60 bg-gradient-to-r from-[#F5B942]/15 to-[#D99523]/10 px-6 py-3 text-sm font-bold text-[#FFE18A] transition-all duration-300 hover:border-[#FFD978] hover:shadow-[0_0_20px_rgba(245,185,66,0.18)]"
+      >
+        Send Us an Email
+        <svg
+          aria-hidden="true"
+          class="h-4 w-4"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M7 17 17 7M7 7h10v10" />
+        </svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .golden-contact-section {
+    background:
+      radial-gradient(ellipse 55% 80% at 50% 0%, rgba(255,183,52,.13), transparent 78%),
+      radial-gradient(ellipse 35% 85% at 100% 70%, rgba(37,99,235,.13), transparent 78%),
+      linear-gradient(180deg, #040A16 0%, #090F1D 100%);
+  }
+
+  .contact-heading-accent {
+    color: #FFC83D;
+    background: linear-gradient(100deg, #FFE58D 0%, #FFC43D 48%, #F5A900 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .contact-card {
+    padding: 30px 22px;
+    border: 1px solid rgba(220,169,65,.65);
+    border-radius: 22px;
+    background:
+      radial-gradient(ellipse 90% 65% at 50% 0%, rgba(255,205,104,.15), transparent 76%),
+      linear-gradient(145deg, rgba(255,255,255,.065), rgba(5,13,28,.65));
+    box-shadow:
+      0 0 25px rgba(255,184,55,.10),
+      inset 0 1px 0 rgba(255,239,190,.15);
+  }
+
+  .contact-icon {
+    display: flex;
+    width: 58px;
+    height: 58px;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 22px;
+    border: 1px solid rgba(212,166,74,.45);
+    border-radius: 17px;
+    background: rgba(245,185,66,.10);
+    color: #FFD34D;
+  }
+
+  .contact-icon svg {
+    width: 27px;
+    height: 27px;
+  }
+
+  @media (min-width: 640px) {
+    .contact-card {
+      padding: 40px;
+    }
+  }
+</style>

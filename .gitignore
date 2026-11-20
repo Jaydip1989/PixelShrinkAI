@@ -55,3 +55,5 @@ backend/python/.backend-test-venv/
 
 # Local SVG-to-PDF benchmark and research files
 backend/python/benchmarks/
+# Local CMYK diagnostic tests
+/tests/
