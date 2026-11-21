@@ -19,7 +19,6 @@ const company = [
 const legal = [
   { label: "Privacy Policy", href: "#privacy-policy" },
   { label: "Terms & Conditions", href: "#terms-conditions" },
-  { label: "Cookie Policy", href: "#cookie-policy" },
 ];
 
 const support = [
@@ -112,12 +111,28 @@ const support = [
       submitted files for advertising.
     </p>
 
-    <h3>5. Browser storage and cookies</h3>
+    <h3>5. Browser storage, cookies, and advertising</h3>
     <p>
-      The website uses browser local storage to remember your selected
+      PixelShrinkAI uses browser local storage to remember your selected
       theme. This preference is stored in your browser and is not a cookie.
-      We have not verified whether hosting or other service providers use
-      cookies or similar technologies.
+    </p>
+    <p>
+      If advertisements are displayed on PixelShrinkAI, Google AdSense or
+      other advertising partners may use cookies or similar technologies
+      to serve, personalize, and measure advertisements, subject to your
+      applicable privacy and consent choices. These providers may receive
+      information about your browser, device, or visits to this and other
+      websites. PixelShrinkAI does not use advertising technologies to store
+      uploaded images.
+    </p>
+    <p>
+      For information about how Google uses data from sites or apps that use
+      its services, visit
+      <a
+        href="https://policies.google.com/technologies/ads"
+        target="_blank"
+        rel="noopener noreferrer"
+      >Google's Advertising and Privacy information</a>.
     </p>
 
     <h3>6. Service providers</h3>
@@ -150,7 +165,7 @@ const support = [
 
     <h3>10. Contact</h3>
     <p>
-      For privacy questions or requests, email: 
+      For privacy questions or requests, email:
       <a href="mailto:hello@pixelshrinkai.com"> hello@pixelshrinkai.com</a>.
     </p>
     <p>PixelShrinkAI · Mira-Bhayandar, Maharashtra, India</p>
@@ -250,69 +265,6 @@ const support = [
   </div>
 </dialog>
 
-<dialog
-  id="cookie-policy-dialog"
-  aria-labelledby="cookie-policy-title"
-  class="legal-dialog"
->
-  <div class="legal-dialog-header">
-    <h2 id="cookie-policy-title">Cookie Policy</h2>
-    <button
-      type="button"
-      class="legal-dialog-close"
-      aria-label="Close Cookie Policy"
-      data-close-legal
-    >
-    </button>
-  </div>
-
-  <div class="legal-dialog-content">
-    <p><strong>Effective date:</strong> November 21, 2026</p>
-
-    <h3>1. About this policy</h3>
-    <p>
-      This Cookie Policy explains how PixelShrinkAI (“we,” “us,” or “our”)
-      uses cookies and similar technologies when you visit or use the website.
-    </p>
-
-    <h3>2. Browser storage for theme preference</h3>
-    <p>
-      PixelShrinkAI uses browser local storage to remember your selected theme.
-      This preference is stored in your browser so the website can retain your
-      choice when you return. Local storage is not a cookie, but it is a
-      similar browser-storage technology.
-    </p>
-
-    <h3>3. Cookies and service providers</h3>
-    <p>
-      Our hosting and other service providers may use cookies or similar
-      technologies to deliver, secure, or maintain the website. Their use of
-      these technologies is governed by their own practices and policies.
-      We have not independently verified whether every provider uses them.
-    </p>
-
-    <h3>4. Your choices</h3>
-    <p>
-      You can manage or clear browser storage and cookies through your browser
-      settings. Clearing the stored theme preference may reset the website to
-      its default theme. Blocking or deleting cookies or storage may affect
-      some website features.
-    </p>
-
-    <h3>5. Changes to this policy</h3>
-    <p>
-      We may update this policy as the website or its features change. The
-      effective date above indicates when it was last updated.
-    </p>
-
-    <h3>6. Contact</h3>
-    <p>
-      For questions about this policy, email:
-      <a href="mailto:hello@pixelshrinkai.com">hello@pixelshrinkai.com</a>.
-    </p>
-  </div>
-</dialog>
-
 <script>
   document.addEventListener("click", (event) => {
     const target = event.target;
@@ -320,7 +272,7 @@ const support = [
     if (!(target instanceof Element)) return;
 
     const legalLink = target.closest(
-      'a[href="#privacy-policy"], a[href="#terms-conditions"], a[href="#cookie-policy"]',
+      'a[href="#privacy-policy"], a[href="#terms-conditions"]',
     );
 
     if (legalLink) {
@@ -333,9 +285,6 @@ const support = [
           break;
         case "#terms-conditions":
           dialogId = "terms-conditions-dialog";
-          break;
-        case "#cookie-policy":
-          dialogId = "cookie-policy-dialog";
           break;
       }
 
