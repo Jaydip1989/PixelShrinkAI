@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@astrojs/preact": "^6.0.2",
+    "@astrojs/sitemap": "^3.7.6",
     "@jsquash/oxipng": "^2.3.0",
     "@jsquash/webp": "^1.5.0",
     "@tailwindcss/vite": "^4.3.3",
