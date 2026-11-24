@@ -115,8 +115,14 @@ const isWorkspaceAd = placement.startsWith("workspace-");
     display: none;
   }
 
-  .workspace-ad-content {
-    min-height: 250px;
+  .workspace-ad-reserve .workspace-ad-content {
+    box-sizing: border-box;
+    width: 114px;
+    min-width: 114px;
+    max-width: 114px;
+    height: 370px;
+    min-height: 300px;
+    flex: 0 0 114px;
     border-color: rgba(212, 166, 74, 0.2);
     background: rgba(34, 25, 51, 0.55);
   }
