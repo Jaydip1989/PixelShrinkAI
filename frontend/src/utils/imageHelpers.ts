@@ -6,7 +6,6 @@ import type {
 import { optimise } from "@jsquash/oxipng";
 import { encode } from "@jsquash/webp";
 
-
 export async function loadImage(
     file: File,
 ): Promise<ImageAsset> {
@@ -23,7 +22,6 @@ export async function loadImage(
         height,
     };
 }
-
 
 export function formatFileSize(
     bytes: number,
@@ -42,7 +40,6 @@ export function formatFileSize(
 
     return `${mb.toFixed(2)} MB`;
 }
-
 
 export async function getImageDimensions(
     file: File,
@@ -84,7 +81,6 @@ export async function getImageDimensions(
         },
     );
 }
-
 
 /*
  * PNG → PNG
@@ -152,7 +148,6 @@ async function optimizePngFile(
         },
     );
 }
-
 
 export async function compressImage(
     file: File,
@@ -291,7 +286,6 @@ export async function compressImage(
         image.close();
     }
 }
-
 
 /*
  * JPEG / WEBP adaptive compression.
@@ -467,7 +461,6 @@ async function encodeWebP(
     );
 }
 
-
 /*
  * Route encoding to the correct engine.
  */
@@ -499,7 +492,6 @@ async function encodeOutput(
     );
 }
 
-
 /*
  * WEBP → PNG
  *
@@ -517,8 +509,6 @@ async function encodeOutput(
  *    original WebP while preserving maximum
  *    possible visual quality.
  */
-
-
 
 async function convertWebpToPng(
     imageData: ImageData,
@@ -836,8 +826,6 @@ async function convertWebpToPng(
     );
 }
 
-
-
 /*
  * PNG compression for:
  *
@@ -904,8 +892,6 @@ async function compressPng(
     const UPNG =
         upngModule.default ??
         upngModule;
-
-
     /*
      * ============================================================
      * PNG → PNG
@@ -1184,7 +1170,6 @@ async function compressPng(
         0,
     );
 
-
     /*
      * ------------------------------------------------------------
      * Candidate palettes.
@@ -1231,8 +1216,6 @@ async function compressPng(
             0.60,
             0.50,
         ];
-
-
     /*
      * ------------------------------------------------------------
      * Best candidate.
@@ -1623,7 +1606,6 @@ async function compressPng(
         }
     }
 
-
     /*
      * ------------------------------------------------------------
      * EMERGENCY FALLBACK
@@ -1732,7 +1714,6 @@ async function compressPng(
             `candidate: ${emergencyBlob.size} bytes`,
         );
     }
-
 
     /*
      * ------------------------------------------------------------
@@ -1937,7 +1918,6 @@ function canvasToBlob(
     );
 }
 
-
 function getOutputMimeType(
     originalType: string,
     outputFormat:
@@ -1990,7 +1970,6 @@ function getOutputFileName(
         )}`
     );
 }
-
 
 function getExtensionFromMimeType(
     mimeType: string,
