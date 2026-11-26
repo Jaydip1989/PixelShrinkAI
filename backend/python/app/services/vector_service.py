@@ -253,6 +253,101 @@ def _webp_to_svg(
         )
     return selected_svg
 
+# ---------------------------------------------------------
+# PNG -> SVG
+# ---------------------------------------------------------
+def _create_png_svg(
+    png_data: bytes,
+    width: int,
+    height: int,
+) -> str:
+    encoded = base64.b64encode(png_data).decode("ascii")
+    return f"""<?xml version="1.0" encoding="UTF-8"?>
+    <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="{width}"
+        height="{height}"
+        viewBox = "0 0 {width} {height}"
+    >
+        <image
+            width="{width}"
+            height="{height}"
+            href="data:image/png;base64,{encoded}"
+            preserveAspectRatio="none"
+        />
+    </svg>
+    """
+
+def _png_to_svg(image_bytes: bytes) -> str:
+    if not image_bytes:
+        raise ValueError("The uploaded PNG image is empty.")
+
+    try:
+        with Image.open(BytesIO(image_bytes)) as source:
+            if source.format != "PNG":
+                raise ValueError("The uploaded file is not a valid PNG image.")
+
+            source.load()
+            has_alpha = (
+                source.mode in {"RGBA", "LA", "PA"}
+                or "transparency" in source.info
+            )
+            image = source.convert("RGBA" if has_alpha else "RGB")
+
+    except (OSError, ValueError) as exc:
+        raise ValueError("The uploaded PNG image could not be read.") from exc
+
+    original_size = len(image_bytes)
+
+    def make_candidate(png_data: bytes) -> str | None:
+        svg_text = _create_png_svg(
+            png_data = png_data,
+            width = image.width,
+            height = image.height,
+        )
+        svg_text = _scour_svg(svg_text)
+
+        if len(svg_text.encode("utf-8")) <= original_size:
+            return svg_text
+        return None
+
+    # 1. Try loseless PNG re-encoding first.
+    buffer = BytesIO()
+    image.save(buffer, format="PNG", optimize=True, compress_level = 9)
+
+    candidate = make_candidate(buffer.getvalue())
+    if candidate is not None:
+        return candidate
+
+    # 2. if needed, try palette reduction from highest to lowest color count.
+    # This can alter colors, so prefer the largest palette that fits.
+    quantize_method = (
+        Image.Quantize.FASTOCTREE
+        if image.mode == "RGBA"
+        else Image.Quantize.MEDIANCUT
+    )
+    for colors in (256, 192, 128, 96, 64, 48, 32, 24, 16, 8):
+        for dither in (Image.Dither.NONE, Image.Dither.FLOYDSTEINBERG):
+            quantize = image.quantize(
+                colors=colors,
+                method=quantize_method,
+                dither=dither
+            )
+            buffer = BytesIO()
+            quantize.save(
+                buffer,
+                format="PNG",
+                optimize = True,
+                compress_level = 9,
+            )
+            candidate = make_candidate(buffer.getvalue())
+            if candidate is not None:
+                return candidate
+    raise ValueError(
+        "PNG to SVG could not produce an SVG within the original file size. "
+        "Try a simpler image or a smaller PNG."
+    )
+
 #---------------------------------------------------------
 # PUBLIC RASTER -> SVG SERVICE
 #---------------------------------------------------------
@@ -281,92 +376,10 @@ def raster_to_svg(
     # ---------------------------------------------------------
     # Validate supported formats
     # ---------------------------------------------------------
-    if normalized_format != "png":
-        raise ValueError(
-            f"Unsupported raster format for SVG conversion: "
-            f"{normalized_format}"
-        )
-
-    original_size = len(image_bytes)
-
-    # ---------------------------------------------------------
-    # PNG -> SVG: progressively simpler tracing profiles
-    # ---------------------------------------------------------
-    trace_profiles = [
-        {
-            "color_precision": 6,
-            "filter_speckle": 4,
-            "length_threshold": 4.0,
-            "path_precision": 3,
-        },
-        {
-            "color_precision": 5,
-            "filter_speckle": 6,
-            "length_threshold": 5.0,
-            "path_precision": 2,
-        },
-        {
-            "color_precision": 4,
-            "filter_speckle": 8,
-            "length_threshold": 6.0,
-            "path_precision": 2,
-        },
-        {
-            "color_precision": 3,
-            "filter_speckle": 12,
-            "length_threshold": 8.0,
-            "path_precision": 1,
-        },
-    ]
-
-    smallest_size = None
-
-    for profile in trace_profiles:
-        svg_text = vtracer.convert_raw_image_to_svg(
-            image_bytes,
-            img_format="png",
-            **profile,
-        )
-
-        # Verify that the output is well-formed XML.
-        try:
-            ET.fromstring(svg_text)
-        except ET.ParseError as exc:
-            print("Invalid SVG XML:", exc)
-            raise ValueError(
-                "VTracer produced malformed SVG XML."
-            ) from exc
-
-        # Diagnostic check for the path reported by the browser.
-        suspicious_paths = re.findall(
-            r'<path\b[^>]*\bd="([^"]*)"',
-            svg_text,
-        )
-
-        for path_data in suspicious_paths:
-            if "M5 1314 4L19 7" in path_data:
-                print(
-                    "Suspicious SVG path:",
-                    repr(path_data),
-                )
-
-        svg_size = len(svg_text.encode("utf-8"))
-
-        print(
-            f"PNG trace profile {profile}: "
-            f"SVG = {svg_size:,} bytes"
-        )
-
-        if smallest_size is None or svg_size < smallest_size:
-            smallest_size = svg_size
-
-        # Never return an SVG larger than the original PNG.
-        if svg_size <= original_size:
-            return svg_text
+    if normalized_format == "png":
+        return _png_to_svg(image_bytes)
 
     raise ValueError(
-        "PNG -> SVG conversion could not produce an SVG "
-        f"within the original file size ({original_size:,} bytes). "
-        f"The smallest attempted output was {smallest_size:,} bytes. "
-        "Try a simpler image or a smaller PNG."
+        f"Unsupported raster format for SVG conversion: "
+        f"{normalized_format}"
     )
