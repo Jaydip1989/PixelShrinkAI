@@ -351,10 +351,12 @@ export default function ConverterHero() {
                 );
             }
             const blob = await response.blob();
-            if (blob.size > selectedFile.size) {
+            if (
+                blob.size > selectedFile.size &&
+                expectedType !== "image/svg+xml"
+            ) {
                 throw new Error(
-                    "The converted file is larger than the original. This does not meet PixelShrinkAI's \
-                    file-size requirement.",
+                    "The converted file is larger than the original. This does not meet PixelShrinkAI's file-size requirement.",
                 );
             }
             // Validate the output signature or content for known formats.
